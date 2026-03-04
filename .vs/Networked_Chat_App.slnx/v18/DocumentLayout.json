@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docs\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:docs\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     }
@@ -20,14 +24,25 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "README.md",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docs\\README.md",
+              "RelativeDocumentMoniker": "docs\\README.md",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docs\\README.md",
+              "RelativeToolTip": "docs\\README.md",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAAD8AAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-03-03T23:59:40.448Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "README.md",
               "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\README.md",
               "RelativeDocumentMoniker": "README.md",
               "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\README.md",
               "RelativeToolTip": "README.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2026-03-03T23:41:30.041Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-03T23:41:30.041Z"
             }
           ]
         }

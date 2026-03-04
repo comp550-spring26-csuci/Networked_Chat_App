@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Backend-Service",
+    "\\docs"
   ],
-  "SelectedNode": "\\docs",
+  "SelectedNode": "\\docs\\README.md",
   "PreviewInSolutionExplorer": false
 }
