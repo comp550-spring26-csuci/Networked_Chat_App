@@ -2,8 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\Backend-Service",
+    "\\Backend-Service\\Backend.API",
+    "\\Backend-Service\\Backend.API\\Backend.API",
+    "\\Backend-Service\\Backend.API\\Backend.API\\bin\\Debug\\net10.0",
+    "\\Backend-Service\\Backend.API\\Backend.API\\src",
+    "\\Backend-Service\\Backend.API\\Backend.API\\src\\API",
+    "\\Backend-Service\\Backend.API\\Backend.API\\src\\Core",
+    "\\Backend-Service\\Backend.API\\Backend.API\\src\\Core\\Logging",
     "\\docs"
   ],
-  "SelectedNode": "\\docs\\README.md",
+  "SelectedNode": "\\Backend-Service\\Backend.API\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
   "PreviewInSolutionExplorer": false
 }

@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../docs/README.md" />
+  </Folder>
+  <Project Path="../Backend-Service/Backend.API/Backend.API/Backend.API.csproj" />
+</Solution>
