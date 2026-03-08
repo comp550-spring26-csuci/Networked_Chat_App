@@ -3,14 +3,9 @@
     "",
     "\\Backend-Service",
     "\\Backend-Service\\Backend.API",
-    "\\Backend-Service\\Backend.API\\Backend.API",
-    "\\Backend-Service\\Backend.API\\Backend.API\\bin\\Debug\\net10.0",
-    "\\Backend-Service\\Backend.API\\Backend.API\\src",
-    "\\Backend-Service\\Backend.API\\Backend.API\\src\\API",
-    "\\Backend-Service\\Backend.API\\Backend.API\\src\\Core",
-    "\\Backend-Service\\Backend.API\\Backend.API\\src\\Core\\Logging",
-    "\\docs"
+    "\\Backend-Service\\Backend.API\\Controllers",
+    "\\Backend-Service\\Backend.API\\scripts"
   ],
-  "SelectedNode": "\\Backend-Service\\Backend.API\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
+  "SelectedNode": "\\Backend-Service\\README_BACK.md",
   "PreviewInSolutionExplorer": false
 }

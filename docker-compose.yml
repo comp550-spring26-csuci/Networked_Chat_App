@@ -1,0 +1,18 @@
+
+
+services:
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: network_chat_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: network_app_550
+      POSTGRES_DB: NetworkAppDb
+    ports:
+      - "5432:5432" # Mapping computer's port to container's port
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Saves the data so that it is not deleting when Docker stops
+
+volumes:
+  postgres_data:  
+    
