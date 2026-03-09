@@ -1,0 +1,12 @@
+[
+  {
+    "ContainingType": "Backend.API.Controllers.TestController",
+    "Method": "SeedUser",
+    "RelativePath": "api/Test/seed-user",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
