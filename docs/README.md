@@ -66,27 +66,33 @@ ___
  Networked_Chat_App/                                ← Root Folder
 ├── .vs/                                            ← System metadata (Automatically created)
 ├── Backend-Service/                                ← Backend root folder
-│   │
-│   ├──src/                                         ← Folder with implementation
-│   │   ├── API/                                    ← Front Door: Controllers, SignalR Hubs
-│   │   │    ├── Controllers/                       ← REST endpoints for Next.js
-│   │   │    └── Hubs/                              ← SignalsR Hubs for the live path
-│   │   ├── Application/                            ← Brain: Services, DTOs, Business Logic
-│   │   │    ├── Services/                          ← Logic for Login/Signup
-│   │   │    └── DTOs/                              ← Data Transfer Objects for the Frontend
-│   │   ├── Core/                                   ← Soul: Entities, Domain Models, Utils
-│   │   │    ├── Entities/                          ← Create User,cs, Messaage,cs
-│   │   │    └── Interfaces/                        ← Create IUSerRespository,cs
-│   │   └── Infrastructure/                         ← Hands: External Interactions
-│   │       ├── Persistence/                        ← PostgresSAL & MongoDB implementations (User repository)
-│   │       ├── MongoDB/                            ← Chat history implementation here
-│   │       ├── Messaging/                          ← rabbitMQ Logic: Event Producers/Consumers
-│   │       ├── Caching/                            ← Redis Logic
-│   │       └── Logging/                            ← Serilog: classes & Interfaces
-│   │
-│   ├── tests/                                      ← unit and Integration tests
-│   ├── packages.lock.json
-│   └── BackendNetworkChatApp.sln
+│   ├──Backend.API/                                 ← Backend project folder
+│   │   ├──Controllers/                             ← 
+│   │   │   └── TestController.cs                   ← Sample reference for testing communication with the database for CRUD
+│   │   ├──scripts/                                 ← Folder with scripts to help set up paths for the db
+│   │   │   ├── init-paths.ps1                      ← Script to locate root folder 
+│   │   │   └── setup-env.ps1                       ← Script to setup the environment, docker related
+│   │   ├──src/                                     ← Folder with implementation
+│   │   │   ├── API/                                ← Front Door: Controllers, SignalR Hubs
+│   │   │   │    ├── Controllers/                   ← REST endpoints for Next.js
+│   │   │   │    └── Hubs/                          ← SignalsR Hubs for the live path
+│   │   │   ├── Application/                        ← Brain: Services, DTOs, Business Logic
+│   │   │   │    ├── Services/                      ← Logic for Login/Signup
+│   │   │   │    └── DTOs/                          ← Data Transfer Objects for the Frontend
+│   │   │   ├── Core/                               ← Soul: Entities, Domain Models, Utils
+│   │   │   │    ├── Entities/                      ← Create User,cs, Messaage,cs
+│   │   │   │    └── Interfaces/                    ← Create IUSerRespository,cs
+│   │   │   └── Infrastructure/                     ← Hands: External Interactions
+│   │   │       ├── Persistence/                    ← PostgresSAL & MongoDB implementations (User repository)
+│   │   │       ├── MongoDB/                        ← Chat history implementation here
+│   │   │       ├── Messaging/                      ← rabbitMQ Logic: Event Producers/Consumers
+│   │   │       ├── Caching/                        ← Redis Logic
+│   │   │       └── Logging/                        ← Serilog: classes & Interfaces
+│   │   │
+│   │   ├── tests/                                      ← unit and Integration tests
+│   │   ├── packages.lock.json
+│   │   └── BackendNetworkChatApp.sln
+│
 │
 ├── Frontend-Service/                               ← Frontend root folder
 │   │

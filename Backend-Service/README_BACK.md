@@ -1,4 +1,4 @@
-# backend.API Requirements: Netowrk Chat App
+# Backend.API Requirements: Netowrk Chat App
 
 ## Getting Started
 1. Ensure you have **.NET 19 SDK** installed

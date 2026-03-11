@@ -38,7 +38,7 @@ namespace Backend.API.Controllers
             {
 
                 // Creating a dummy user
-                var testUser = new User("testAdmin2", "test2@chat.com", "HashedPassword1232");
+                var testUser = new User("testAdmi8", "test8@chat.com", "HashedPassword1328");
 
                 // Using the repository to add them
                 await _userRepository.AddAsync(testUser);

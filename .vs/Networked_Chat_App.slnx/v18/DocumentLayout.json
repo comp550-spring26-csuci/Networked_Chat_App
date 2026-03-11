@@ -3,6 +3,22 @@
   "WorkspaceRootPath": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\scripts\\init-paths.ps1||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\scripts\\init-paths.ps1||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\scripts\\setup-env.ps1||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\scripts\\setup-env.ps1||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docker-compose.yml||{06C066C6-04A2-4E5D-8202-439FD4234EF1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:docker-compose.yml||{06C066C6-04A2-4E5D-8202-439FD4234EF1}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -11,28 +27,40 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\AppDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\AppDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\bin\\Debug\\net10.0\\logs\\network-chat-log20260310.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\bin\\Debug\\net10.0\\logs\\network-chat-log20260310.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Controllers\\TestController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\Controllers\\TestController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\README_BACK.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\README_BACK.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docker-compose.yml||{06C066C6-04A2-4E5D-8202-439FD4234EF1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:docker-compose.yml||{06C066C6-04A2-4E5D-8202-439FD4234EF1}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\TestRequests.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\TestRequests.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docs\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:docs\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\AppDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\AppDbContext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,11 +70,76 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "init-paths.ps1",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\scripts\\init-paths.ps1",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\scripts\\init-paths.ps1",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\scripts\\init-paths.ps1",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\scripts\\init-paths.ps1",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-03-10T10:35:39.19Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "setup-env.ps1",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\scripts\\setup-env.ps1",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\scripts\\setup-env.ps1",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\scripts\\setup-env.ps1",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\scripts\\setup-env.ps1",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-03-10T10:35:28.786Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IUser.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T06:54:20.849Z"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
+              "ViewState": "AgIAACYAAAAASDMzM3MvwBcBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T06:08:05.741Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T06:54:15.981Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "UserRepository.cs",
               "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs",
               "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs",
@@ -54,51 +147,11 @@
               "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-08T07:33:26.652Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-08T07:33:26.652Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AppLogger.cs",
-              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
-              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
-              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
-              "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAgwDcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-08T07:04:58.013Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "IUser.cs",
-              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs",
-              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs",
-              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs",
-              "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Core\\Interface\\IUser.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-08T06:54:20.849Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "IUserRepository.cs",
-              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
-              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
-              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
-              "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-08T06:54:15.981Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 3,
               "Title": "docker-compose.yml",
               "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docker-compose.yml",
               "RelativeDocumentMoniker": "docker-compose.yml",
@@ -106,16 +159,95 @@
               "RelativeToolTip": "docker-compose.yml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
-              "WhenOpened": "2026-03-08T06:33:25.204Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+              "WhenOpened": "2026-03-08T06:33:25.204Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
+              "Title": "network-chat-log20260310.txt",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\bin\\Debug\\net10.0\\logs\\network-chat-log20260310.txt",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\bin\\Debug\\net10.0\\logs\\network-chat-log20260310.txt",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\bin\\Debug\\net10.0\\logs\\network-chat-log20260310.txt",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\bin\\Debug\\net10.0\\logs\\network-chat-log20260310.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-03-10T10:26:51.072Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "TestController.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Controllers\\TestController.cs",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\Controllers\\TestController.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Controllers\\TestController.cs",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\Controllers\\TestController.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAACgAAABaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T09:24:07.034Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AppLogger.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Core\\Logging\\AppLogger.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAiwBIAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T07:04:58.013Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docs\\README.md",
+              "RelativeDocumentMoniker": "docs\\README.md",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\docs\\README.md",
+              "RelativeToolTip": "docs\\README.md",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAFsAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-03-09T05:46:18.636Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Program.cs",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\Program.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Program.cs",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\Program.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAiwBYAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-10T09:16:10.925Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "README_BACK.md",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\README_BACK.md",
+              "RelativeDocumentMoniker": "Backend-Service\\README_BACK.md",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\README_BACK.md",
+              "RelativeToolTip": "Backend-Service\\README_BACK.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-03-08T05:56:42.534Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TestRequests.http",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\TestRequests.http",
+              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\TestRequests.http",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\TestRequests.http",
+              "RelativeToolTip": "Backend-Service\\Backend.API\\TestRequests.http",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2026-03-10T09:23:56.274Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\AppDbContext.cs",
               "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\AppDbContext.cs",
@@ -123,34 +255,7 @@
               "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\AppDbContext.cs",
               "ViewState": "AgIAABkAAAAAAAAAAAAAACcAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-08T06:31:03.353Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
-              "RelativeDocumentMoniker": "Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
-              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
-              "RelativeToolTip": "Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
-              "ViewState": "AgIAAP8AAAAAAAAAAAAAABcBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-08T06:08:05.741Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "README_BACK.md",
-              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\README_BACK.md",
-              "RelativeDocumentMoniker": "Backend-Service\\README_BACK.md",
-              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\README_BACK.md",
-              "RelativeToolTip": "Backend-Service\\README_BACK.md",
-              "ViewState": "AgIAAHQAAAAAAAAAAAAAAHQAAABOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2026-03-08T05:56:42.534Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-08T06:31:03.353Z"
             }
           ]
         }
