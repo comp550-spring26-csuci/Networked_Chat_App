@@ -1,0 +1,41 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Node modules
+node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+dist-react/
+build/
+
+# Vite cache
+.vite/
+
+# Electron build / packaging
+release/
+*.asar
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Misc
+coverage/
+.cache/
