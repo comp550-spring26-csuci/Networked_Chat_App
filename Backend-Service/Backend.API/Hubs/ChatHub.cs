@@ -9,6 +9,7 @@
 
 using Microsoft.AspNetCore.SignalR;
 using Backend.API.src.Core.Logging;
+using Backend.API.src.Core.Entities;
 
 namespace Backend.API.Hubs
 {
@@ -23,25 +24,41 @@ namespace Backend.API.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            // TODO: Instantiate chat event DTO for user connection (Feature #34)
+            var userName = Context.User?.Identity?.Name ?? "UnknownUser";
+
+            var chatEvent = new ChatEvent
+            {
+                EventType = "UserConnected",
+                Username = userName,
+                Details = $"ConnectionId: {Context.ConnectionId}",
+                Timestamp = DateTime.UtcNow
+            };
 
             // Implement authentication middleware to replace this with actual user information (eg. Context.User?.Identity?.Name)
-            await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
+            await Clients.All.SendAsync("UserConnected", Context.ConnectionId, userName);
 
             await base.OnConnectedAsync();
 
-            AppLogger.ConnectionEvent(Context.ConnectionId, "UserConnected");
+            AppLogger.ConnectionEvent(Context.ConnectionId, "UserConnected", Context.UserIdentifier);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            // TODO: Instantiate chat event DTO for user disconnection (Feature #34)
+            var userName = Context.User?.Identity?.Name ?? "UnknownUser";
 
-            await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId);
+            var chatEvent = new ChatEvent
+            {
+                EventType = "UserDisconnected",
+                Username = userName,
+                Details = $"ConnectionId: {Context.ConnectionId}",
+                Timestamp = DateTime.UtcNow
+            };
+
+            await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId, userName);
 
             await base.OnDisconnectedAsync(exception);
 
-            AppLogger.ConnectionEvent(Context.ConnectionId, "UserDisconnected");
+            AppLogger.ConnectionEvent(Context.ConnectionId, "UserDisconnected", Context.UserIdentifier);
         }
 
         /*
@@ -53,16 +70,17 @@ namespace Backend.API.Hubs
          * UserIdentifier based on the authenticated user's ID.
          */
 
-        public async Task SendMessageToAll(string user, string message)
+        public async Task SendMessageToGroup(string groupName, string message, string user = "UnknownUser")
         {
-            // TODO: Instantiate message DTO (Feature #34)
+            var userName = Context.User?.Identity?.Name ?? user;
 
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
-        }
-
-        public async Task SendMessageToGroup(string groupName, string user, string message)
-        {
-            // TODO: Instantiate message DTO (Feature #34)
+            var chatMessage = new Message
+            {
+                Username = user,
+                Room = groupName,
+                Content = message,
+                Timestamp = DateTime.UtcNow
+            };
 
             await Clients.Group(groupName).SendAsync("ReceiveMessage", user, message);
         }
@@ -70,20 +88,59 @@ namespace Backend.API.Hubs
         // Need to study functionality of groups more to implement this properly, but here are the basic methods to add/remove from groups
         public async Task JoinGroup(string groupName)
         {
+            var userName = Context.User?.Identity?.Name ?? "UnknownUser";
+
+            var chatEvent = new ChatEvent
+            {
+                EventType = "UserJoinedGroup",
+                Username = userName,
+                Details = $"Group: {groupName}",
+                Timestamp = DateTime.UtcNow
+            };
+
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-            // TODO: Instantiate chat event DTO (Feature #34)
-
-            await Clients.Group(groupName).SendAsync("UserJoined", Context.ConnectionId, groupName);
+            await Clients.Group(groupName).SendAsync("UserJoinedGroup", Context.ConnectionId, groupName);
         }
 
         public async Task LeaveGroup(string groupName)
         {
+            var userName = Context.User?.Identity?.Name ?? "UnknownUser";
+
+            var chatEvent = new ChatEvent
+            {
+                EventType = "UserLeftGroup",
+                Username = userName,
+                Details = $"Group: {groupName}",
+                Timestamp = DateTime.UtcNow
+            };
+
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
 
-            // TODO: Instantiate chat event DTO (Feature #34)
+            await Clients.Group(groupName).SendAsync("UserLeftGroup", Context.ConnectionId, groupName);
+        }
 
-            await Clients.Group(groupName).SendAsync("UserLeft", Context.ConnectionId, groupName);
+
+        // ---------------------------------------------------------------------------------------------------------------------
+        // The Message class is less suitable for the following hub methods since it has a "Room" property that doesn't apply to
+        // messages sent to all clients or direct messages. We should probably prioritize traditional chat room/group-based messaging
+        // for the MVP and then refactor the Message class and hub methods to be more flexible if we want to support more complex
+        // messaging patterns later on. For now, we'll just instantiate Message objects in these methods without setting the Room
+        // property, but we should consider how to evolve our data models and hub design as we add features.
+        // ---------------------------------------------------------------------------------------------------------------------
+
+        public async Task SendMessageToAll(string message, string user = "UnknownUser")
+        {
+            var userName = Context.User?.Identity?.Name ?? user;
+
+            var chatMessage = new Message
+            {
+                Username = user,
+                Content = message,
+                Timestamp = DateTime.UtcNow
+            };
+
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
 
         // Sends a private message to a specific client connection.
@@ -93,17 +150,31 @@ namespace Backend.API.Hubs
         // Note that a user could be connected with multiple devices or browser tabs, each having a different connection ID, so this method is
         // for targeting a specific session rather than a user as a whole. See my comment above SendMessageToAll() in the "user" parameter
         // description for more on how we could target users across sessions with additional setup.
-        public async Task SendDirectMessage(string connectionId, string user, string message)
+        public async Task SendDirectMessage(string connectionId, string message, string user = "UnknownUser")
         {
-            // TODO: Instantiate message DTO (Feature #34)
+            var userName = Context.User?.Identity?.Name ?? user;
+
+            var chatMessage = new Message
+            {
+                Username = user,
+                Content = message,
+                Timestamp = DateTime.UtcNow
+            };
 
             await Clients.Client(connectionId).SendAsync("ReceiveMessage", user, message);
         }
 
         // This method sends a message back to the caller only, which can be useful for acknowledgments or private responses.
-        public async Task SendMessageToCaller(string user, string message)
+        public async Task SendMessageToCaller(string message, string user = "UnknownUser")
         {
-            // TODO: Instantiate message DTO (Feature #34)
+            var userName = Context.User?.Identity?.Name ?? user;
+
+            var chatMessage = new Message
+            {
+                Username = user,
+                Content = message,
+                Timestamp = DateTime.UtcNow
+            };
 
             await Clients.Caller.SendAsync("ReceiveMessage", user, message);
         }

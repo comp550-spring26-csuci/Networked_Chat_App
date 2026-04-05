@@ -1,0 +1,21 @@
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+namespace Backend.API.src.Core.Entities
+{
+    public class ChatEvent
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
+
+        public string EventType { get; set; } = null!;
+
+        public string Username { get; set; } = null!;
+
+        public string? Details { get; set; }
+
+        [BsonRepresentation(BsonType.DateTime)]
+        public DateTime Timestamp { get; set; }
+    }
+}
