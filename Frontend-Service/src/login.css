@@ -129,3 +129,41 @@
   .login-btn:hover {
     opacity: 0.88;
   }
+
+  .input.error {
+    border-color: #ff4d4d;
+    box-shadow: 0 0 0 1px #ff4d4d, 0 0 12px rgba(255, 77, 77, 0.2);
+  }
+
+  .error-msg {
+    color: #ff4d4d;
+    font-size: 0.95rem;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    justify-content: center;
+  }
+   
+  .forgot-link {
+    margin-bottom: 20px;
+  }
+   
+  .dob-row {
+    display: flex;
+    gap: 8px;
+  }
+   
+  .dob-select {
+    flex: 1;
+    appearance: none;
+    cursor: pointer;
+  }
+   
+  .dob-select option {
+    background: #111111;
+    color: #ffffff;
+  }
+   
+  .login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
