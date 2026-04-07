@@ -1,0 +1,21 @@
+# =========================
+# BACKEND (C# / .NET)
+# =========================
+.vs/
+bin/
+obj/
+logs/
+*.log
+
+# =========================
+# FRONTEND (Node / React / etc)
+# =========================
+node_modules/
+dist/
+build/
+
+# =========================
+# OPERATIVE SYSTEM
+# =========================
+.DS_Store
+Thumbs.db

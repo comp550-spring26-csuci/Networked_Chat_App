@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\testrequests.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
       "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:testrequests.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
     }
@@ -23,12 +27,25 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAADEAAAAAAAAAAAAgwEYAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-06T05:14:58.991Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "TestRequests.http",
               "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\TestRequests.http",
               "RelativeDocumentMoniker": "TestRequests.http",
               "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\TestRequests.http",
               "RelativeToolTip": "TestRequests.http",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAaAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
               "WhenOpened": "2026-03-08T09:29:15.244Z",
               "EditorCaption": ""

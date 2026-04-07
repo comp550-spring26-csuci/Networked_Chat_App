@@ -3,6 +3,8 @@ using Backend.API.src.Infrastructure.Persistence;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Serilog;
+using FluentValidation;
+using Backend.API.src.Application.Validators;
 
 
 namespace Backend.API
@@ -35,12 +37,28 @@ namespace Backend.API
                 // Adding the IUserRepository and UserRepository
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+                // Adding the Vlaidator to the Applicaiton COntainer
+                // It scans the folder and registers the CreateAccountValidator
+                builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
+
                 // Add services to the container.
                 builder.Services.AddControllers();
 
                 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
                 // Prepares the map
                 builder.Services.AddOpenApi();
+
+                // Connecting with front end
+                builder.Services.AddCors(options =>
+                {
+                    options.AddPolicy("AllowFrontend", Policy =>
+                    {
+                        Policy.AllowAnyOrigin()
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+
+                });
 
                 var app = builder.Build();
 
@@ -53,6 +71,9 @@ namespace Backend.API
                 }
 
                 app.UseHttpsRedirection();
+
+
+                app.UseCors("AllowFrontend");
 
 
                 app.UseAuthorization();
