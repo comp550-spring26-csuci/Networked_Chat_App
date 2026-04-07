@@ -1,4 +1,12 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿// --------------------------------------------
+//  Project: Network Chat App
+//  Engineer: Ian Milin
+//  Date: April 5 2026
+//  Description: Defines the ChatEvent entity.
+//               This will match the "Events" collection
+// --------------------------------------------
+
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
 namespace Backend.API.src.Core.Entities
