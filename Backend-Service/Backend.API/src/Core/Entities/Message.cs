@@ -17,6 +17,10 @@ namespace Backend.API.src.Core.Entities
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
+        public string UserId { get; set; } = string.Empty;
+
+        public string ChatRoomId { get; set; } = string.Empty;
+
         public string Username { get; set; } = null!;
 
         public string Room { get; set; } = null!;

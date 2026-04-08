@@ -10,16 +10,21 @@
 using Microsoft.AspNetCore.SignalR;
 using Backend.API.src.Core.Logging;
 using Backend.API.src.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Backend.API.src.Infrastructure.Persistence.Repositories;
 
 namespace Backend.API.Hubs
 {
+    [Authorize]
     public class ChatHub : Hub
     {
+        private readonly MessageRepository _messageRepository;
 
+        public ChatHub(MessageRepository messageRepositoy) 
+        { 
+            _messageRepository = messageRepositoy;
 
-        //----------------------------------
-        //----------- Methods --------------
-        //----------------------------------
+        }
 
 
         public override async Task OnConnectedAsync()
@@ -72,17 +77,29 @@ namespace Backend.API.Hubs
 
         public async Task SendMessageToGroup(string groupName, string message, string user = "UnknownUser")
         {
-            var userName = Context.User?.Identity?.Name ?? user;
+            AppLogger.DebugState("ChatHub", "Standard room message");
 
-            var chatMessage = new Message
+            try
             {
-                Username = user,
-                Room = groupName,
-                Content = message,
-                Timestamp = DateTime.UtcNow
-            };
+                var userName = Context.User?.Identity?.Name ?? user;
 
-            await Clients.Group(groupName).SendAsync("ReceiveMessage", user, message);
+                var chatMessage = new Message
+                {
+                    Username = user,
+                    Room = groupName,
+                    Content = message,
+                    Timestamp = DateTime.UtcNow
+                };
+
+                await _messageRepository.AddAsync(chatMessage);
+
+                await Clients.Group(groupName).SendAsync("ReceiveMessage", user, message);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.ShieldFailure("TestCOntroller", ex);
+                await Clients.Caller.SendAsync("ReceiveError", $"Internal Error: {ex.Message}");
+            }
         }
 
         // Need to study functionality of groups more to implement this properly, but here are the basic methods to add/remove from groups

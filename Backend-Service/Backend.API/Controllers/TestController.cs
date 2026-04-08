@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace Backend.API.Controllers
@@ -20,12 +23,22 @@ namespace Backend.API.Controllers
     public class TestController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IConfiguration _config;
 
         // Injection of UserRepository
-        public TestController(IUserRepository userRepository)
+        public TestController(IUserRepository userRepository, IConfiguration config)
         {
 
             _userRepository = userRepository;
+
+            _config = config;
+        }
+
+        // Pretending this is what client would use to log in after they've created an account
+        public class TestUserDto
+        {
+            public string? Email { get; set; }
+            public string? Password { get; set; }
         }
 
         // Testing POST for creating a new user
@@ -49,7 +62,40 @@ namespace Backend.API.Controllers
                 if (success)
                 {
                     AppLogger.UserAction(testUser.Id.ToString(), "Created via Test Seed");
-                    return Ok(new { Message = "User created successfully!", UserId = testUser.Id });
+
+                    // Log in
+
+                    TestUserDto loginDto = new TestUserDto
+                    {
+                        Email = "test2@chat.com",
+                        Password = "HashedPassword1232"
+                    };
+
+                    var user = await _userRepository.GetByEmailAsync(loginDto.Email);
+
+                    var tokenHandler = new JwtSecurityTokenHandler();
+
+                    var keyInfo = _config.GetSection("JwtSettings:Key").Value;
+
+                    var key = System.Text.Encoding.UTF8.GetBytes(keyInfo!);
+
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new[]
+                        {
+                            new Claim(ClaimTypes.NameIdentifier, user!.Id.ToString()),
+                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Name, user.Username)
+                        }),
+                        Expires = DateTime.UtcNow.AddHours(24),
+                        Issuer = _config.GetSection("JwtSettings:Issuer").Value,
+                        Audience = _config.GetSection("JwtSettings:Audience").Value,
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
+
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+
+                    return Ok(new { token = tokenHandler.WriteToken(token), userId = user.Id, username = user.Username });
 
                 }
 
@@ -61,6 +107,8 @@ namespace Backend.API.Controllers
                 return StatusCode(500, $"Interal Error: {ex.Message}");
 
             }
+
+            
 
         }
 

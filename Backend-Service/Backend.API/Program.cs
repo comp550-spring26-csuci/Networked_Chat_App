@@ -20,8 +20,13 @@ namespace Backend.API
             // Directions to use PostgreSQL and your AppDbContext
             builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
+            builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDb"));
+            builder.Services.AddSingleton<MongoDbContext>();
+
             // Adding the IUserRepository and UserRepository
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+            builder.Services.AddScoped<MessageRepository>();
 
             // Add services to the container.
             builder.Services.AddControllers();
