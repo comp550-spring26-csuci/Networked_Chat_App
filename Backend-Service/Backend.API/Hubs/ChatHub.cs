@@ -7,11 +7,12 @@
 //  and manage group memberships.
 // --------------------------------------------
 
-using Microsoft.AspNetCore.SignalR;
-using Backend.API.src.Core.Logging;
 using Backend.API.src.Core.Entities;
-using Microsoft.AspNetCore.Authorization;
+using Backend.API.src.Core.Interface;
+using Backend.API.src.Core.Logging;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Backend.API.Hubs
 {
@@ -33,18 +34,16 @@ namespace Backend.API.Hubs
 
             var chatEvent = new ChatEvent
             {
-                EventType = "UserConnected",
-                Username = userName,
+                EventType = "NewConnection",
                 Details = $"ConnectionId: {Context.ConnectionId}",
-                Timestamp = DateTime.UtcNow
             };
 
-            // Implement authentication middleware to replace this with actual user information (eg. Context.User?.Identity?.Name)
             await Clients.All.SendAsync("UserConnected", Context.ConnectionId, userName);
 
             await base.OnConnectedAsync();
 
-            AppLogger.ConnectionEvent(Context.ConnectionId, "UserConnected", Context.UserIdentifier);
+            // By default, SignalR automatically maps the ClaimTypes.NameIdentifier claim to Context.UserIdentifier
+            AppLogger.ConnectionEvent(Context.ConnectionId, "NewConnection", Context.UserIdentifier);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -53,17 +52,15 @@ namespace Backend.API.Hubs
 
             var chatEvent = new ChatEvent
             {
-                EventType = "UserDisconnected",
-                Username = userName,
-                Details = $"ConnectionId: {Context.ConnectionId}",
-                Timestamp = DateTime.UtcNow
+                EventType = "RemovedConnection",
+                Details = $"ConnectionId: {Context.ConnectionId}"
             };
 
             await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId, userName);
 
             await base.OnDisconnectedAsync(exception);
 
-            AppLogger.ConnectionEvent(Context.ConnectionId, "UserDisconnected", Context.UserIdentifier);
+            AppLogger.ConnectionEvent(Context.ConnectionId, "RemovedConnection", Context.UserIdentifier);
         }
 
         /*
@@ -75,33 +72,36 @@ namespace Backend.API.Hubs
          * UserIdentifier based on the authenticated user's ID.
          */
 
-        public async Task SendMessageToGroup(string groupName, string message, string user = "UnknownUser")
+        public async Task SendMessageToGroup(string groupName, string msgString, string userName = "UnknownUser")
         {
             AppLogger.DebugState("ChatHub", "Standard room message");
 
             try
             {
-                var userName = Context.User?.Identity?.Name ?? user;
-
+                var senderId = int.TryParse(Context.UserIdentifier, out var id) ? id : 0;
+                
                 var chatMessage = new Message
                 {
-                    Username = user,
-                    Room = groupName,
-                    Content = message,
-                    Timestamp = DateTime.UtcNow
+                    ChatRoomId = 0, // We would need to map group names to chat room IDs in a real implementation
+                    SenderId = senderId,
+                    Content = msgString
                 };
 
                 await _messageRepository.AddAsync(chatMessage);
 
-                await Clients.Group(groupName).SendAsync("ReceiveMessage", user, message);
+                // If and only if the SenderId is 0, the client should use the userName parameter to display the sender's name, otherwise
+                // they should look up the sender's name based on the SenderId in the message. This allows us to support both authenticated
+                // users (with a valid SenderId) and unauthenticated users (with a SenderId of 0 and a provided userName).
+                await Clients.Group(groupName).SendAsync("ReceiveMessage", chatMessage, userName);
             }
             catch (Exception ex)
             {
-                AppLogger.ShieldFailure("TestCOntroller", ex);
+                AppLogger.ShieldFailure("ChatHub", ex);
                 await Clients.Caller.SendAsync("ReceiveError", $"Internal Error: {ex.Message}");
             }
         }
 
+        /*
         // Need to study functionality of groups more to implement this properly, but here are the basic methods to add/remove from groups
         public async Task JoinGroup(string groupName)
         {
@@ -110,9 +110,7 @@ namespace Backend.API.Hubs
             var chatEvent = new ChatEvent
             {
                 EventType = "UserJoinedGroup",
-                Username = userName,
-                Details = $"Group: {groupName}",
-                Timestamp = DateTime.UtcNow
+                Details = $"Group: {groupName}"
             };
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
@@ -127,16 +125,14 @@ namespace Backend.API.Hubs
             var chatEvent = new ChatEvent
             {
                 EventType = "UserLeftGroup",
-                Username = userName,
-                Details = $"Group: {groupName}",
-                Timestamp = DateTime.UtcNow
+                Details = $"Group: {groupName}"
             };
 
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
 
             await Clients.Group(groupName).SendAsync("UserLeftGroup", Context.ConnectionId, groupName);
         }
-
+        */
 
         // ---------------------------------------------------------------------------------------------------------------------
         // The Message class is less suitable for the following hub methods since it has a "Room" property that doesn't apply to
@@ -145,7 +141,7 @@ namespace Backend.API.Hubs
         // messaging patterns later on. For now, we'll just instantiate Message objects in these methods without setting the Room
         // property, but we should consider how to evolve our data models and hub design as we add features.
         // ---------------------------------------------------------------------------------------------------------------------
-
+        /*
         public async Task SendMessageToAll(string message, string user = "UnknownUser")
         {
             var userName = Context.User?.Identity?.Name ?? user;
@@ -195,5 +191,6 @@ namespace Backend.API.Hubs
 
             await Clients.Caller.SendAsync("ReceiveMessage", user, message);
         }
+        */
     }
 }

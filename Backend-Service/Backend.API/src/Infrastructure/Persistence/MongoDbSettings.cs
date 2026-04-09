@@ -1,4 +1,12 @@
-﻿namespace Backend.API.src.Infrastructure.Persistence
+﻿// --------------------------------------------
+//  Project: Network Chat App
+//  Engineer: Ian Milin
+//  Date: April 6 2026
+//  Description: Defines the class for configuring
+//               MongoDB settings.
+// --------------------------------------------
+
+namespace Backend.API.src.Infrastructure.Persistence
 {
     public class MongoDbSettings
     {

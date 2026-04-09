@@ -43,21 +43,32 @@ namespace Backend.API.Controllers
 
         // Testing POST for creating a new user
         [HttpPost("seed-user")]
-        public async Task<IActionResult> SeedUser()
+        public async Task<IActionResult> SeedUser(string UserName = "testAdmin2")
         {
             AppLogger.DebugState("TestController", "Seed attempt started");
 
             try
             {
+                var oldUser = await _userRepository.GetByEmailAsync("test2@chat.com");
+
+                var success = false;
+
+                if (oldUser != null)
+                {
+                    _userRepository.Delete(oldUser);
+
+                    // Committing to PostgreSQL databas
+                    success = await _userRepository.SaveChangesAsync();
+                }
 
                 // Creating a dummy user
-                var testUser = new User("testAdmin2", "test2@chat.com", "HashedPassword1232");
+                var testUser = new User(UserName, $"{UserName}@chat.com", "HashedPassword1232");
 
                 // Using the repository to add them
                 await _userRepository.AddAsync(testUser);
 
                 // Committing to PostgreSQL database
-                var success = await _userRepository.SaveChangesAsync();
+                success = await _userRepository.SaveChangesAsync();
 
                 if (success)
                 {

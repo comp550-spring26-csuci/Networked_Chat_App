@@ -1,0 +1,5 @@
+$kind: websocket-message
+content: "{\"arguments\":[\"My name is
+  {{\"],\"invocationId\":\"0\",\"target\":\"SendMessageToAll\",\"type\":1}\x1e"
+contentType: json
+order: 2838783016829297

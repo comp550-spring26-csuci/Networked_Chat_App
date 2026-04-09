@@ -20,10 +20,13 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
+        // CRUD operations (create, read, update, delete)
+
+        // CREATE
         public async Task AddAsync(Message message)
         {
             AppLogger.DebugState("MessageRepository", "Creating Message");
-            AppLogger.DebugState("MessageRepository", $"Adding new message from {message.Username} to {message.Room}");
+            AppLogger.DebugState("MessageRepository", $"Adding new message with Sender ID {message.SenderId} to Room ID {message.ChatRoomId}");
 
             await _context.Messages.InsertOneAsync(message);
         }
