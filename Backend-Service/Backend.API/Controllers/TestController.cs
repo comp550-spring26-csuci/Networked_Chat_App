@@ -49,7 +49,7 @@ namespace Backend.API.Controllers
 
             try
             {
-                var oldUser = await _userRepository.GetByEmailAsync("test2@chat.com");
+                var oldUser = await _userRepository.GetByEmailAsync($"{UserName}@chat.com");
 
                 var success = false;
 
@@ -78,7 +78,7 @@ namespace Backend.API.Controllers
 
                     TestUserDto loginDto = new TestUserDto
                     {
-                        Email = "test2@chat.com",
+                        Email = $"{UserName}@chat.com",
                         Password = "HashedPassword1232"
                     };
 

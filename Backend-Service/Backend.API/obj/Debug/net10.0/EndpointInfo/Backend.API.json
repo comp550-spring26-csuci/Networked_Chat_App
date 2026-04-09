@@ -6,6 +6,9 @@
   },
   "servers": [
     {
+      "url": "https://localhost:7081"
+    },
+    {
       "url": "http://localhost:5148"
     }
   ],
@@ -14,6 +17,16 @@
       "post": {
         "tags": [
           "Test"
+        ],
+        "parameters": [
+          {
+            "name": "UserName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "testAdmin2"
+            }
+          }
         ],
         "responses": {
           "200": {

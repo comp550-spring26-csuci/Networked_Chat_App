@@ -1,6 +1,6 @@
 $kind: http-request
 name: CreateAndLoginEachIndividually
-url: http://localhost:5148/api/test/seed-user?UserName=third_user
+url: https://localhost:7081/api/test/seed-user?UserName=third_user
 method: POST
 queryParams:
   UserName: third_user
@@ -14,6 +14,6 @@ scripts:
 
       const connectionId = responseJson.token;
 
-      pm.environment.set(`${responseJson.username}_accessToken`,connectionId)
+      pm.environment.set("access_token",connectionId)
     language: text/javascript
 order: 547
