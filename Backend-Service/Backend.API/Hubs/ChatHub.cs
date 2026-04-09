@@ -13,6 +13,7 @@ using Backend.API.src.Core.Logging;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using MongoDB.Driver.Core.Servers;
 
 namespace Backend.API.Hubs
 {
@@ -141,21 +142,34 @@ namespace Backend.API.Hubs
         // messaging patterns later on. For now, we'll just instantiate Message objects in these methods without setting the Room
         // property, but we should consider how to evolve our data models and hub design as we add features.
         // ---------------------------------------------------------------------------------------------------------------------
-        /*
-        public async Task SendMessageToAll(string message, string user = "UnknownUser")
+        
+        public async Task SendMessageToAll(string msgString, string userName = "UnknownUser")
         {
-            var userName = Context.User?.Identity?.Name ?? user;
+            AppLogger.DebugState("ChatHub", "Standard room message");
 
-            var chatMessage = new Message
+            try
             {
-                Username = user,
-                Content = message,
-                Timestamp = DateTime.UtcNow
-            };
+                var senderId = int.TryParse(Context.UserIdentifier, out var id) ? id : 0;
+                var chatMessage = new Message
+                {
+                    ChatRoomId = 0, // We would need to map group names to chat room IDs in a real implementation
+                    SenderId = senderId,
+                    Content = msgString
+                };
 
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+                await _messageRepository.AddAsync(chatMessage);
+
+                await Clients.All.SendAsync("ReceiveMessage", chatMessage);
+
+            }
+            catch (Exception ex)
+            {
+                AppLogger.ShieldFailure("ChatHub", ex);
+                await Clients.Caller.SendAsync("ReceiveError", $"Internal Error: {ex.Message}");
+            }
         }
 
+        /*
         // Sends a private message to a specific client connection.
         // This method targets a single client based on the specified connection identifier. The
         // param name="connectionId": The unique identifier of the client connection to which the message will be sent. Cannot be null or empty.
