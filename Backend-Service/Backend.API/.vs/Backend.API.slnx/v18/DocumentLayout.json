@@ -7,8 +7,40 @@
       "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\testrequests.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
-      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:testrequests.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\api\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\api\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\application\\validators\\loginrequestvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\application\\validators\\loginrequestvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\application\\dtos\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\application\\dtos\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\core\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\core\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\application\\validators\\createaccountrequestvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\application\\validators\\createaccountrequestvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\core\\interface\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\core\\interface\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\application\\dtos\\authresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\application\\dtos\\authresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\core\\interface\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\core\\interface\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|c:\\users\\shaan\\onedrive\\documents\\github\\networkappproject\\networked_chat_app\\backend-service\\backend.api\\src\\infrastructure\\persistence\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9349287-4A27-835B-C5B7-459B6F93EA96}|Backend.API.csproj|solutionrelative:src\\infrastructure\\persistence\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,11 +50,35 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TestController.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\API\\Controllers\\TestController.cs",
+              "RelativeDocumentMoniker": "src\\API\\Controllers\\TestController.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\API\\Controllers\\TestController.cs",
+              "RelativeToolTip": "src\\API\\Controllers\\TestController.cs",
+              "ViewState": "AgIAAG4AAAAAAAAAAAAwwH0AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T08:00:39.433Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
+              "RelativeDocumentMoniker": "src\\Core\\Entities\\User.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Entities\\User.cs",
+              "RelativeToolTip": "src\\Core\\Entities\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T07:11:15.465Z"
             },
             {
               "$type": "Document",
@@ -32,23 +88,94 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAADEAAAAAAAAAAAAgwEYAAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-06T05:14:58.991Z",
+              "WhenOpened": "2026-04-09T08:37:16.572Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "TestRequests.http",
-              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\TestRequests.http",
-              "RelativeDocumentMoniker": "TestRequests.http",
-              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\TestRequests.http",
-              "RelativeToolTip": "TestRequests.http",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2026-03-08T09:29:15.244Z",
-              "EditorCaption": ""
+              "DocumentIndex": 3,
+              "Title": "LoginRequest.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Application\\DTOs\\LoginRequest.cs",
+              "RelativeDocumentMoniker": "src\\Application\\DTOs\\LoginRequest.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Application\\DTOs\\LoginRequest.cs",
+              "RelativeToolTip": "src\\Application\\DTOs\\LoginRequest.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAQwCEAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T09:43:48.742Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "src\\Infrastructure\\Persistence\\Repositories\\UserRepository.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAG0AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T06:49:27.098Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "src\\Core\\Interface\\IUserRepository.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IUserRepository.cs",
+              "RelativeToolTip": "src\\Core\\Interface\\IUserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADYAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T06:39:23.824Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LoginRequestValidator.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Application\\Validators\\LoginRequestValidator.cs",
+              "RelativeDocumentMoniker": "src\\Application\\Validators\\LoginRequestValidator.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Application\\Validators\\LoginRequestValidator.cs",
+              "RelativeToolTip": "src\\Application\\Validators\\LoginRequestValidator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T10:40:18.583Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CreateAccountRequestValidator.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Application\\Validators\\CreateAccountRequestValidator.cs",
+              "RelativeDocumentMoniker": "src\\Application\\Validators\\CreateAccountRequestValidator.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Application\\Validators\\CreateAccountRequestValidator.cs",
+              "RelativeToolTip": "src\\Application\\Validators\\CreateAccountRequestValidator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T09:58:32.567Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IAuthService.cs",
+              "RelativeDocumentMoniker": "src\\Core\\Interface\\IAuthService.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Core\\Interface\\IAuthService.cs",
+              "RelativeToolTip": "src\\Core\\Interface\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T06:13:38.592Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AuthResult.cs",
+              "DocumentMoniker": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Application\\DTOs\\AuthResult.cs",
+              "RelativeDocumentMoniker": "src\\Application\\DTOs\\AuthResult.cs",
+              "ToolTip": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\src\\Application\\DTOs\\AuthResult.cs",
+              "RelativeToolTip": "src\\Application\\DTOs\\AuthResult.cs",
+              "ViewState": "AgIAADAAAAAAAAAAAAAIwEoAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T06:19:02.229Z"
             }
           ]
         }

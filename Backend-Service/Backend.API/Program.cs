@@ -5,6 +5,7 @@ using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Serilog;
 using FluentValidation;
 using Backend.API.src.Application.Validators;
+using Backend.API.src.Application.Services;
 
 
 namespace Backend.API
@@ -26,6 +27,8 @@ namespace Backend.API
 
                 var builder = WebApplication.CreateBuilder(args);
 
+                builder.Host.UseSerilog();
+
 
                 // Fetching the map from appsettings.json
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -37,7 +40,10 @@ namespace Backend.API
                 // Adding the IUserRepository and UserRepository
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-                // Adding the Vlaidator to the Applicaiton COntainer
+                // Adding the AuthService
+                builder.Services.AddScoped<IAuthService, AuthService>();
+
+                // Adding the Validator to the Application Container
                 // It scans the folder and registers the CreateAccountValidator
                 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
 

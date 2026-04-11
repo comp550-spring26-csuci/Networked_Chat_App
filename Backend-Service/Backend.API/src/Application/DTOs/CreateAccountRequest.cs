@@ -15,7 +15,7 @@ namespace Backend.API.src.Application.DTOs
 {
 
     /// <summary>
-    ///  DTO for incoing account creation requests
+    ///  DTO for incoming account creation requests
     /// </summary>
     public class CreateAccountRequest
     {
