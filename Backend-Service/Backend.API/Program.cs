@@ -35,7 +35,10 @@ namespace Backend.API
 
             // Add services to the container.
             builder.Services.AddControllers();
-            builder.Services.AddSignalR();
+            builder.Services.AddSignalR(options =>
+            {
+                options.EnableDetailedErrors = true;
+            });
 
             // JWT Auth Setup
             var jwtKey = builder.Configuration.GetSection("JwtSettings:SecretKey").Value ?? "SecretDevelopmentKeyWithPlentyOfBits1234567890";

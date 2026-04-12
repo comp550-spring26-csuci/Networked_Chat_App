@@ -13,6 +13,7 @@ using Backend.API.src.Core.Logging;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using MongoDB.Driver.Core.Configuration;
 using MongoDB.Driver.Core.Servers;
 
 namespace Backend.API.Hubs
@@ -145,6 +146,7 @@ namespace Backend.API.Hubs
         
         public async Task SendMessageToAll(string msgString, string userName = "UnknownUser")
         {
+            Console.WriteLine("HELLO HELLO HELLO HELLO");
             AppLogger.DebugState("ChatHub", "Standard room message");
 
             try
@@ -164,6 +166,7 @@ namespace Backend.API.Hubs
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"ERROR ERROR ERROR'{ex.Message}'");
                 AppLogger.ShieldFailure("ChatHub", ex);
                 await Clients.Caller.SendAsync("ReceiveError", $"Internal Error: {ex.Message}");
             }
