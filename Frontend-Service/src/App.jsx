@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./login.css";
 
-const BASE_URL = "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/test/create-account";
+const BASE_URL = "http://vg3jzw0g-7081.usw3.devtunnels.ms";
  
 const EyeIcon = ({ open }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -137,8 +137,27 @@ export default function LoginPage() {
  
   const handleSubmit = async () => {
     if (mode === "login") {
-      // Login: no endpoint yet, placeholder
-      setLoginError("Login endpoint not yet configured.");
+      if (!username.trim()) { setLoginError("Username is required."); return; }
+      if (!password) { setLoginError("Password is required."); return; }
+      setLoading(true);
+      setLoginError("");
+      try {
+        const res = await fetch(`${BASE_URL}/api/test/login`, { //update endpoint when ready
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert(`Welcome back, ${username}!`);
+        } else {
+          setLoginError(data.message || "Invalid username or password.");
+        }
+      } catch (err) {
+        setLoginError("Could not reach the server. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     } else {
       // Validate all fields filled
       if (!suUsername.trim()) { setSignupError("Username is required."); return; }
@@ -146,6 +165,7 @@ export default function LoginPage() {
       if (!suPassword) { setSignupError("Password is required."); return; }
       if (!suConfirm) { setSignupError("Please confirm your password."); return; }
       if (!dob.month || !dob.day || !dob.year) { setDobError("Please select your full date of birth."); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(suEmail)) { setSignupError("Please enter a valid email address."); return; }
  
       if (suPassword !== suConfirm) {
         setConfirmError("Passwords do not match.");
@@ -207,7 +227,7 @@ export default function LoginPage() {
         {mode === "login" ? (
           <>
             <Field
-              label="Username/Email"
+              label="Username"
               value={username}
               onChange={setUsername}
               focused={usernameFocused}
@@ -288,4 +308,3 @@ export default function LoginPage() {
     </div>
   );
 }
- 
