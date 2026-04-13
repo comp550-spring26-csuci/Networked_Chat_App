@@ -16,7 +16,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
 
-namespace Backend.API.Controllers
+namespace Backend.API.src.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
