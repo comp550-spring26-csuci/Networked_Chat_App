@@ -13,6 +13,12 @@ html, body, #root {
 }
 
 /* Left column */
+.dm-list-header {
+  border-bottom: 1px solid #555;
+  padding: 10px;
+  text-align: left;
+}
+
 .dm-list {
   width: 250px;
   background-color: #131415;
@@ -25,16 +31,10 @@ html, body, #root {
 /* Right column */
 .chat-window {
   flex: 1;
-  background-color: #313338;
+  background-color: #131415;
   color: white;
   display: flex;
   flex-direction: column;
-}
-
-.dm-list-header {
-  border-bottom: 1px solid #555;
-  padding: 10px;
-  text-align: left;
 }
 
 /* DM item */
@@ -63,17 +63,53 @@ html, body, #root {
 /* Messages area */
 .messages {
   flex: 1;
-  padding: 16px;
+  padding-left: 30px;
+  padding-top: 30px;
   overflow-y: auto;
 }
 
+.message-text {
+  margin-top: 2px;
+  white-space: pre-wrap;
+}
+
+.message-header {
+  display: flex;
+  gap: 8px; /* space between sender and time */
+  align-items: baseline;
+}
+
+.message-header .time {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+/* Chat input area */
 .text-box {
-  height: 50px;
+  min-height: 55px;
+  max-height: 250px;
   margin: 10px;
+  padding: 17px 30px;
+  box-sizing: border-box;
+  overflow-y: auto;
+
   border-radius: 8px;
-  border: 1px solid #555;     /* visible outline */
+  border: 1px solid #555;
+  outline: none;
+
   background-color: #383a40;
   color: white;
-  outline: none;
-  padding-left: 30px;
+  
+  font-size: 14px;
+  line-height: 20px;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* placeholder (Discord-style) */
+.text-box:empty:before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
 }
