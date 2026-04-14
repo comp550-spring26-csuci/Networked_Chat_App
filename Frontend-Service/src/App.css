@@ -64,12 +64,21 @@ html, body, #root {
 .messages {
   flex: 1;
   padding-left: 30px;
-  padding-top: 30px;
+  padding-top: 15px;
   overflow-y: auto;
 }
 
+.message {
+  margin-top: 15px;
+}
+
+.message.grouped {
+  margin-top: 0;
+}
+
 .message-text {
-  margin-top: 2px;
+  margin: 0;
+  padding: 0;
   white-space: pre-wrap;
 }
 
