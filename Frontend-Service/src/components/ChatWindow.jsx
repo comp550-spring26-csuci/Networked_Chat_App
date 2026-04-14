@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import MessageList from "./MessageList";
+import ChatInput from "./ChatInput";
 
 export default function ChatWindow({ selectedDM }) {
 	/* Focuses input box when swapping DMs */
@@ -14,10 +16,11 @@ export default function ChatWindow({ selectedDM }) {
     		<div className="recipient-name">
 				{selectedDM.name}
 			</div>
-      		<div className="messages">
-        		{/* messages will be populated here */}
-      		</div>
-      		<input className="text-box" ref={inputRef} placeholder={`Message ${selectedDM.name}`} />
+      		<MessageList selectedDM={selectedDM} />
+			<ChatInput 
+				ref={inputRef} 
+				selectedDM={selectedDM} 
+			/>
     	</div>
   	);
 }
