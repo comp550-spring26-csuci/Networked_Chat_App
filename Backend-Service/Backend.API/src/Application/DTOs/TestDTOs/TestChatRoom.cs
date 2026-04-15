@@ -9,17 +9,19 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
 {
     public class TestChatRoom
     {
-        private readonly int _chatRoomId;
-        private readonly string _chatRoomName = string.Empty;
-        
-        public int ChatRoomId
+        private int? _chatRoomId;
+        private string? _chatRoomName;
+
+        public int? ChatRoomId
         {
             get => _chatRoomId;
+            set => _chatRoomId = value;
         }
 
-        public string ChatRoomName
+        public string? ChatRoomName
         {
             get => _chatRoomName;
+            set => _chatRoomName = value;
         }
     }
 }

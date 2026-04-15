@@ -21,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="src\Application\Validators\" />
 	  <Folder Include="src\Application\Services\" />
 	</ItemGroup>
 

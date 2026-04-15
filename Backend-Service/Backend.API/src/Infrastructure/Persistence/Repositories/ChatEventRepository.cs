@@ -26,7 +26,7 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
         // CREATE
         public async Task AddAsync(ChatEvent chatEvent)
         {
-            AppLogger.DebugState("ChatEventRepository", "Creating Event");
+            AppLogger.DebugState("ChatEventRepository", "Creating Event", chatEvent);
 
             await _context.ChatEvents.InsertOneAsync(chatEvent);
         }

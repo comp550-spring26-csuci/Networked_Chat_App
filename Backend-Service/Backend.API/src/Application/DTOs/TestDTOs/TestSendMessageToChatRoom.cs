@@ -1,24 +1,22 @@
 ﻿// --------------------------------------------
 //  Project: Network Chat App
 //  Engineer: Ian Milin
-//  Date: April 11 2026
-//  Description: Defines the TestMessage DTO for testing message data transfer.
+//  Date: April 13 2026
+//  Description
 // --------------------------------------------
-
-using Backend.API.src.Core.Entities;
 
 namespace Backend.API.src.Application.DTOs.TestDTOs
 {
-    public class TestMessage
+    public class TestSendMessageToChatRoom
     {
-        private Message _message = null!;
+        private SendMessageToChatRoom _sendMessageToChatRoom = null!;
         private string? _chatRoomName;
         private string? _username;
 
-        public Message Message
+        public SendMessageToChatRoom SendMessageToChatRoom
         {
-            get => _message;
-            set => _message = value;
+            get => _sendMessageToChatRoom;
+            set => _sendMessageToChatRoom = value;
         }
 
         public string? ChatRoomName

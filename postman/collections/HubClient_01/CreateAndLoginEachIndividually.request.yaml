@@ -1,0 +1,28 @@
+$kind: http-request
+name: CreateAndLoginEachIndividually
+url: https://localhost:7081/api/test/seed-user?UserName={{currentCollection}}
+method: POST
+queryParams:
+  UserName: "{{currentCollection}}"
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+
+      const connectionId = responseJson.token;
+
+      pm.environment.set("access_token",connectionId)
+    language: text/javascript
+  - type: beforeRequest
+    code: |-
+      const collectionName = pm.execution.location[0];
+      pm.variables.set("currentCollection", collectionName); 
+
+      let username = pm.request.url.query.get("UserName");
+
+      pm.collectionVariables.set("username", username)
+    language: text/javascript
+order: 547

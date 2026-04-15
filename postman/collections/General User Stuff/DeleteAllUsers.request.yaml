@@ -1,0 +1,17 @@
+$kind: http-request
+name: DeleteAllUsers
+url: https://localhost:7081/api/test/delete-all-users
+method: GET
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+
+      const connectionId = responseJson.token;
+
+      pm.environment.set("access_token",connectionId)
+    language: text/javascript
+order: 3056559770355727

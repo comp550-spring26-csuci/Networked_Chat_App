@@ -1,9 +1,7 @@
 $kind: http-request
-name: CreateAndLoginEachIndividually
-url: https://localhost:7081/api/test/seed-user?UserName=third_user
-method: POST
-queryParams:
-  UserName: third_user
+name: ViewUsers
+url: https://localhost:7081/api/test/all-users
+method: GET
 body:
   type: json
   content: ""
@@ -16,4 +14,4 @@ scripts:
 
       pm.environment.set("access_token",connectionId)
     language: text/javascript
-order: 547
+order: 1776137944180

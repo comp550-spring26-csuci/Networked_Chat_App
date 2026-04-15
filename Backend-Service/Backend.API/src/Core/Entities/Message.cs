@@ -17,11 +17,11 @@ namespace Backend.API.src.Core.Entities
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
-        public int SenderId { get; set; }
+        public int? SenderId { get; set; }
 
-        public int ChatRoomId { get; set; }
+        public int? ChatRoomId { get; set; }
 
-        public required string Content { get; set; }
+        public string? Content { get; set; }
 
         [BsonRepresentation(BsonType.DateTime)]
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;

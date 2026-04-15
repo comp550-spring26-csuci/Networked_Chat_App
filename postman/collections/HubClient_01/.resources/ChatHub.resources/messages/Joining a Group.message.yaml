@@ -1,0 +1,22 @@
+$kind: websocket-message
+content: "{
+
+  \    \"arguments\":[
+
+  \        {
+
+  \            \"ChatRoomName\": \"room_{{username}}\"
+
+  \        }
+
+  \    ],
+
+  \    \"invocationId\":\"0\",
+
+  \    \"target\":\"JoinChatRoom\",
+
+  \    \"type\":1
+
+  }\x1e"
+contentType: json
+order: 2838783016829297
