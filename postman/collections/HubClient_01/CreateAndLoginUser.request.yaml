@@ -1,9 +1,9 @@
 $kind: http-request
-name: CreateAndLoginEachIndividually
-url: https://localhost:7081/api/test/seed-user?UserName={{currentCollection}}
+name: CreateAndLoginUser
+url: https://localhost:7081/api/test/seed-user?UserName={{username}}
 method: POST
 queryParams:
-  UserName: "{{currentCollection}}"
+  UserName: "{{username}}"
 body:
   type: json
   content: ""
@@ -14,15 +14,16 @@ scripts:
 
       const connectionId = responseJson.token;
 
-      pm.environment.set("access_token",connectionId)
+      pm.collectionVariables.set("access_token",connectionId)
     language: text/javascript
   - type: beforeRequest
-    code: |-
+    code: |+
       const collectionName = pm.execution.location[0];
-      pm.variables.set("currentCollection", collectionName); 
 
-      let username = pm.request.url.query.get("UserName");
+      let username = collectionName;
 
       pm.collectionVariables.set("username", username)
+
     language: text/javascript
+examples: .resources/CreateAndLoginUser.resources/examples
 order: 547

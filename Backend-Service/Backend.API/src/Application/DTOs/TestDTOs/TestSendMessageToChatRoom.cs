@@ -2,7 +2,7 @@
 //  Project: Network Chat App
 //  Engineer: Ian Milin
 //  Date: April 13 2026
-//  Description
+//  Description: Defines the TestSendMessageToChatRoom DTO for testing sending messages to chat rooms.
 // --------------------------------------------
 
 namespace Backend.API.src.Application.DTOs.TestDTOs
@@ -17,12 +17,6 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
         {
             get => _sendMessageToChatRoom;
             set => _sendMessageToChatRoom = value;
-        }
-
-        public string? ChatRoomName
-        {
-            get => _chatRoomName;
-            set => _chatRoomName = value;
         }
 
         public string? Username

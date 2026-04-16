@@ -8,6 +8,7 @@
 
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Logging;
+using MongoDB.Driver;
 
 namespace Backend.API.src.Infrastructure.Persistence.Repositories
 {
@@ -30,5 +31,29 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
 
             await _context.Messages.InsertOneAsync(message);
         }
+
+        public async Task RemoveAsync(Message message)
+        {
+            AppLogger.DebugState("MessageRepository", "Removing Message");
+            AppLogger.DebugState("MessageRepository", $"Removing message with Sender ID {message.SenderId} from Room ID {message.ChatRoomId}");
+
+            await _context.Messages.DeleteOneAsync(m => m.Id == message.Id);
+        }
+
+        public async Task<List<Message>> GetAllMessagesAsync()
+        {
+            return await _context.Messages.Find(_ => true).ToListAsync();
+        }
+
+        public async Task<List<Message>> GetMessagesByRoomIdAsync(Guid roomId)
+        {
+            return await _context.Messages.Find(m => m.ChatRoomId == roomId).ToListAsync();
+        }
+
+        public async Task<Message?> GetMessageByIdAsync(string id)
+        {
+            return await _context.Messages.Find(m => m.Id == id).FirstOrDefaultAsync();
+        }
+
     }
 }

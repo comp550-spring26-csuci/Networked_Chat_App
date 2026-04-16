@@ -27,6 +27,7 @@ namespace Backend.API.src.Core.Interface
         // READ
         Task<User?> GetByIdAsync(Guid id);
         Task<User?> GetByEmailAsync(string email);
+        Task<User?> GetByUsernameAsync(string username);
         Task<IEnumerable<User>> GetAllAsync();
 
         // UPDATE

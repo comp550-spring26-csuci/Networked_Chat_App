@@ -1,0 +1,16 @@
+$kind: http-request
+name: GetRecipientId
+url: https://localhost:7081/api/test/user-by-username?UserName={{destination_user_name}}
+method: GET
+queryParams:
+  UserName: "{{destination_user_name}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+
+      const recipientId = responseJson.id;
+
+      pm.collectionVariables.set("destination_user_id",recipientId)
+    language: text/javascript
+order: 898

@@ -19,12 +19,19 @@ namespace Backend.API.src.Infrastructure.Persistence
         public readonly IMongoCollection<Message> Messages;
         public readonly IMongoCollection<ChatEvent> ChatEvents;
 
+        public Dictionary<Guid, string> ChatRooms = new Dictionary<Guid, string>();
+
         public MongoDbContext(IOptions<MongoDbSettings> mongoDbSettings)
         {
             var mongoClient = new MongoClient(mongoDbSettings.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(mongoDbSettings.Value.DatabaseName);
             Messages = mongoDatabase.GetCollection<Message>(mongoDbSettings.Value.MessagesCollectionName);
             ChatEvents = mongoDatabase.GetCollection<ChatEvent>(mongoDbSettings.Value.EventsCollectionName);
+        }
+
+        public Guid NextChatRoomId()
+        {
+            return Guid.NewGuid();
         }
     }
 }

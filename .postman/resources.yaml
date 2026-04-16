@@ -16,7 +16,7 @@ cloudResources:
     ../postman/collections/Test Hub Websocket: 69b249650f85bd344a258644
     ../postman/collections/General User Stuff: 53057896-92eb0f39-cce3-4448-a99b-b6188734e2e6
     ../postman/collections/HubClient_01: 69dee218b17b7dd9660e9dd5
+    ../postman/collections/Message history: 53057896-49dc2c8b-20c0-4c21-bedc-8e695daf2703
   specs:
     ../Backend-Service/Backend.API/obj/Debug/net10.0/EndpointInfo/Backend.API.json: e62a036d-c6c3-48ea-b33a-78c1ffbcbc34
-  environments:
-    ../postman/environments/New Environment.environment.yaml: cec3bf42-7851-43be-842f-05f806dcaf87
+  environments: {}

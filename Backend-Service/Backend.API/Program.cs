@@ -1,12 +1,16 @@
-using Microsoft.EntityFrameworkCore;
-using Backend.API.src.Infrastructure.Persistence;
-using Backend.API.src.Core.Interface;
-using Backend.API.src.Infrastructure.Persistence.Repositories;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Backend.API.src.API.Hubs;
+using Backend.API.src.Core.Interface;
+using Backend.API.src.Infrastructure.Persistence;
+using Backend.API.src.Infrastructure.Persistence.Repositories;
+using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using Serilog;
+using System.Text;
 
 namespace Backend.API
 {
@@ -36,12 +40,16 @@ namespace Backend.API
                 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
                 builder.Services.AddSingleton<MongoDbContext>();
 
+                BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
                 // Adding the IUserRepository and UserRepository
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
                 builder.Services.AddScoped<MessageRepository>();
 
                 builder.Services.AddScoped<ChatEventRepository>();
+
+                builder.Services.AddSingleton<TestChatRoomRepository>();
 
                 // Add services to the container.
                 builder.Services.AddControllers();

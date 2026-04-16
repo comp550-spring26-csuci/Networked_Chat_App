@@ -1,4 +1,8 @@
 $kind: collection
 name: HubClient_01
 variables:
+  destination_user_name: ""
   username: ""
+  access_token: ""
+  destination_user_id: ""
+  chatroom_id: ""

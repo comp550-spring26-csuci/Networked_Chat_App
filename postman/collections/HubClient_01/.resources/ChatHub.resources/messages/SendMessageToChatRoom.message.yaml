@@ -1,0 +1,30 @@
+$kind: websocket-message
+content: "{
+
+  \    \"arguments\":[
+
+  \        {
+
+  \            \"SendMessageToChatRoom\": {
+
+  \                \"ChatRoomId\": \"{{chatroom_id}}\",
+
+  \                \"Content\": \"I didn't think of anything to say.\"
+
+  \            },
+
+  \            \"Username\": \"{{username}}\"
+
+  \        }
+
+  \    ],
+
+  \    \"invocationId\":\"0\",
+
+  \    \"target\":\"SendMessageToChatRoom\",
+
+  \    \"type\":1
+
+  }\x1e"
+contentType: text
+order: 4446639385476503

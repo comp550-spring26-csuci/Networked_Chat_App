@@ -5,14 +5,14 @@
 //  Description: Defines the TestChatRoom DTO for testing chat room data transfer.
 // --------------------------------------------
 
-namespace Backend.API.src.Application.DTOs.TestDTOs
+namespace Backend.API.src.Application.DTOs
 {
-    public class TestChatRoom
+    public class ChatRoom
     {
-        private int? _chatRoomId;
+        private Guid _chatRoomId;
         private string? _chatRoomName;
 
-        public int? ChatRoomId
+        public Guid ChatRoomId
         {
             get => _chatRoomId;
             set => _chatRoomId = value;

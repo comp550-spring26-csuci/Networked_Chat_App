@@ -13,17 +13,42 @@ namespace Backend.API.src.Core.Entities
 {
     public class Message
     {
+        private string? _id;
+        private Guid _senderId = default!;
+        private Guid _chatRoomId = default!;
+        private string _content = default!;
+        private readonly DateTime _timestamp = DateTime.UtcNow;
+
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string? Id
+        {
+            get => _id;
+            set => _id = value;
+        }
 
-        public int? SenderId { get; set; }
+        public Guid SenderId 
+        { 
+            get => _senderId; 
+            set => _senderId = value; 
+        }
 
-        public int? ChatRoomId { get; set; }
+        public Guid ChatRoomId
+        {
+            get => _chatRoomId;
+            set => _chatRoomId = value;
+        }
 
-        public string? Content { get; set; }
+        public required string Content
+        {
+            get => _content;
+            set => _content = value;
+        }
 
         [BsonRepresentation(BsonType.DateTime)]
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamp
+        {
+            get => _timestamp;
+        }
     }
 }

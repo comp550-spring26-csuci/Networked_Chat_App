@@ -7,10 +7,12 @@
 //  and manage group memberships.
 // --------------------------------------------
 
+using Backend.API.src.Application.DTOs;
 using Backend.API.src.Application.DTOs.TestDTOs;
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Logging;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
+using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 namespace Backend.API.src.API.Hubs
@@ -20,66 +22,24 @@ namespace Backend.API.src.API.Hubs
     {
         private readonly MessageRepository _messageRepository;
         private readonly ChatEventRepository _chatEventRepository;
+        private readonly TestChatRoomRepository _testChatRoomRepository;
 
-        public ChatHub(MessageRepository messageRepositoy, ChatEventRepository chatEventRepository) 
+        public ChatHub(MessageRepository messageRepositoy, ChatEventRepository chatEventRepository, TestChatRoomRepository testChatRoomRepository) 
         { 
             _messageRepository = messageRepositoy;
             _chatEventRepository = chatEventRepository;
+            _testChatRoomRepository = testChatRoomRepository;
         }
 
         // -------------------------------------
         // ******USER INFO HELPER METHODS*******
         // -------------------------------------
 
-        //private string? GetUsername(TestSendMessage? testSendMessage = null)
-        //{
-        //    return Context.User?.Identity?.Name ?? testSendMessage?.Username ?? "UnknownUser";
-        //}
-
-        //private string GetUsername()
-        //{
-        //    return Context.User?.Identity?.Name ?? "UnknownUser";
-        //}
-
-        //private string TestGetUsername(TestMessage testMessage) {
-        //    var username = GetUsername();
-        //    if (username == "UnknownUser")
-        //    {
-        //        return testMessage.Username ?? "UnknownUser";
-        //    }
-        //    return Context.User?.Identity?.Name ?? testMessage.Username ?? "UnknownUser";
-        //}
-
         // By default, SignalR automatically maps the ClaimTypes.NameIdentifier claim to Context.UserIdentifier
-        private int? GetUserId()
+        private Guid GetUserId()
         {
-            return int.TryParse(Context.UserIdentifier, out var userId) ? userId : null;
+            return Guid.TryParse(Context.UserIdentifier, out var userId) ? userId : Guid.Empty;
         }
-
-        //private int GetChatRoomId(Message message)
-        //{
-        //    return message.ChatRoomId;
-        //}
-
-        //private string GetChatRoomName(Message message)
-        //{
-        //    // TODO: In a real application, you would likely want to look up the chat room name
-        //    // based on the ChatRoomId in the message, rather than just returning a placeholder value.
-        //    return "UnknownChatRoom";
-        //}
-
-        //private string TestGetChatRoomName(TestMessage testSendMessage)
-        //{
-
-        //    // TODO: In a real application, you would likely want to look up the chat room name
-        //    // based on the ChatRoomId in the message, rather than just returning a placeholder value.
-        //    return testSendMessage.ChatRoomName ?? "UnknownChatRoom";
-        //}
-
-        //private string GetMessageContent(TestSendMessage? testSendMessage = null)
-        //{
-        //    return testSendMessage?.SendMessage?.Content ?? string.Empty;
-        //}
 
         // -------------------------------------
         // ***MESSAGE SENDING HELPER METHODS****
@@ -87,18 +47,8 @@ namespace Backend.API.src.API.Hubs
 
         private async Task SendMessageToGroupAsync(TestMessage testMessage)
         {
-            string group = testMessage.Message.ChatRoomId.ToString() ?? testMessage.ChatRoomName ?? "UnknownChatRoom";
+            string group = testMessage.Message.ChatRoomId.ToString();
             await Clients.Group(group).SendAsync("ReceiveMessage", testMessage);
-        }
-
-        private async Task SendMessageToAllAsync(TestMessage testMessage)
-        {
-            await Clients.All.SendAsync("ReceiveMessage", testMessage);
-        }
-
-        private async Task SendMessageToCallerAsync(TestMessage testMessage)
-        {
-            await Clients.Caller.SendAsync("ReceiveMessage", testMessage);
         }
 
         // -------------------------------------
@@ -121,8 +71,8 @@ namespace Backend.API.src.API.Hubs
 
         private async Task SendEventToGroupAsync(TestChatEvent testChatEvent)
         {
-            string group = testChatEvent.ChatEvent.ChatRoomId?.ToString() ?? testChatEvent.ChatRoomName;
-            await Clients.Group(group).SendAsync("ReceiveEvent", testChatEvent.ChatEvent);
+            string group = testChatEvent.ChatEvent.ChatRoomId.ToString();
+            await Clients.Group(group).SendAsync("ReceiveEvent", testChatEvent);
         }
 
         // -------------------------------------
@@ -172,26 +122,39 @@ namespace Backend.API.src.API.Hubs
         }
 
         // Note: In a real application, you would likely want to check if the user is already in the chat room
-        public async Task JoinChatRoom(TestChatRoom testChatRoom)
+        public async Task JoinChatRoom(ChatRoom ChatRoom)
         {
             try
-            { 
+            {
+                Guid guid;
+                string chatRoomName;
+
+                if (_testChatRoomRepository.ChatRoomExists(ChatRoom.ChatRoomId))
+                {
+                    guid = ChatRoom.ChatRoomId;
+                    chatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom";
+                }
+                else
+                {
+                    guid = _testChatRoomRepository.AddChatRoom(ChatRoom.ChatRoomName ?? "UnnamedChatRoom");
+                    chatRoomName = ChatRoom.ChatRoomName ?? "UnnamedChatRoom";
+                }
+                
+                await Groups.AddToGroupAsync(Context.ConnectionId, guid.ToString());
+
                 var chatEvent = new ChatEvent
                 {
                     EventType = "UserJoinedChatRoom",
-                    ChatRoomId = testChatRoom.ChatRoomId,
-                    Details = $"ChatRoom: {testChatRoom.ChatRoomId?.ToString() ?? testChatRoom.ChatRoomName ?? "NullChatRoom"}"
+                    ChatRoomId = guid,
+                    Details = $"ChatRoom: {chatRoomName}"
                 };
-
-
-                await Groups.AddToGroupAsync(Context.ConnectionId, testChatRoom.ChatRoomId?.ToString() ?? testChatRoom.ChatRoomName ?? "NullChatRoom");
 
                 await _chatEventRepository.AddAsync(chatEvent);
 
                 var testChatEvent = new TestChatEvent
                 {
                     ChatEvent = chatEvent,
-                    ChatRoomName = testChatRoom.ChatRoomName
+                    ChatRoomName = ChatRoom.ChatRoomName
                 };
 
                 await SendEventToGroupAsync(testChatEvent);
@@ -205,25 +168,26 @@ namespace Backend.API.src.API.Hubs
         // Note: In a real application, you would likely want to check if the user is actually in the chat room
         // before allowing them to leave it, and handle cases where they try to leave a room they're not in. For
         // simplicity, this example just attempts to remove them from the group and logs the event.
-        public async Task LeaveChatRoom(TestChatRoom testChatRoom)
+        public async Task LeaveChatRoom(ChatRoom ChatRoom)
         {
             try
             { 
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom");
                 var chatEvent = new ChatEvent
                 {
                     EventType = "UserLeftChatRoom",
-                    ChatRoomId = testChatRoom.ChatRoomId ?? 0,
-                    Details = $"ChatRoom: {testChatRoom.ChatRoomId?.ToString() ?? testChatRoom.ChatRoomName ?? "NullChatRoom"}"
+                    ChatRoomId = ChatRoom.ChatRoomId,
+                    Details = $"ChatRoom: {_testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom"}"
                 };
 
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, testChatRoom.ChatRoomId?.ToString() ?? testChatRoom.ChatRoomName ?? "NullChatRoom");
-                
+                _testChatRoomRepository.RemoveChatRoom(ChatRoom.ChatRoomId);
+
                 await _chatEventRepository.AddAsync(chatEvent);
 
                 var testChatEvent = new TestChatEvent
                 {
                     ChatEvent = chatEvent,
-                    ChatRoomName = testChatRoom.ChatRoomName
+                    ChatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom"
                 };
 
                 await SendEventToGroupAsync(testChatEvent);
@@ -249,13 +213,12 @@ namespace Backend.API.src.API.Hubs
 
                 await _messageRepository.AddAsync(message);
 
-                // Find ChatRoom by ChatRoomId. If it exists, use ChatRoomId as the group name. If it doesn't exist, we can either create a new group
-                // or return an error. For now, we'll just use the ChatRoomId as the group name and assume it exists.
+                // Find ChatRoom by ChatRoomId.
 
                 var testMessage = new TestMessage
                 {
                     Message = message,
-                    ChatRoomName = testSendMessageToChatRoom.ChatRoomName,
+                    ChatRoomName = _testChatRoomRepository.GetChatRoomName(message.ChatRoomId) ?? "UnknownChatRoom",
                     Username = testSendMessageToChatRoom.Username
                 };
 
@@ -267,60 +230,29 @@ namespace Backend.API.src.API.Hubs
             }
         }
 
-        public async Task SendMessageToAll(TestSendMessage testSendMessage)
+        public async Task StartDirectMessage(StartDirectMessage startDirectMessage)
         {
             try
             {
-                var message = new Message
-                {
-                    Content = testSendMessage.SendMessage.Content,
-                    SenderId = GetUserId()
-                };
+                Guid guid = _testChatRoomRepository.AddChatRoom(startDirectMessage.ChatRoomName);
 
-                await _messageRepository.AddAsync(message);
+                await Groups.AddToGroupAsync(Context.ConnectionId, guid.ToString());
 
-                var testMessage = new TestMessage
-                {
-                    Message = message,
-                    Username = testSendMessage.Username
-                };
-
-                await SendMessageToAllAsync(testMessage);
-            }
-            catch (Exception ex)
-            {
-                await SendErrorToClientAsync($"Internal Error: {ex.Message}");
-            }
-        }
-
-        // This method sends a message back to the caller only, which can be useful for acknowledgments or private responses.
-        public async Task SendMessageToCaller(TestSendMessage testSendMessage)
-        {
-            AppLogger.DebugState("ChatHub", "SendMessageToCaller called", new { testSendMessage });
-            try
-            {
-                var message = new Message
+                var acknowledgeDirectMessage = new AcknowledgeDirectMessage
                 {
                     SenderId = GetUserId(),
-                    Content = testSendMessage.SendMessage.Content
-                };
-                
-                await _messageRepository.AddAsync(message);
-
-                var testMessage = new TestMessage
-                {
-                    Message = message,
-                    Username = testSendMessage.Username
+                    Username = Context.User?.Identity?.Name ?? "UnknownUser",
+                    ChatRoomId = guid,
+                    ChatRoomName = startDirectMessage.ChatRoomName
                 };
 
-                await SendMessageToCallerAsync(testMessage);
+                await Clients.User(startDirectMessage.OtherUserId.ToString()).SendAsync("AcknowledgeDirectMessage", acknowledgeDirectMessage);
             }
             catch (Exception ex)
             {
                 await SendErrorToClientAsync($"Internal Error: {ex.Message}");
-
-                AppLogger.ShieldFailure("ChatHub.SendMessageToCaller", ex);
             }
         }
+
     }
 }

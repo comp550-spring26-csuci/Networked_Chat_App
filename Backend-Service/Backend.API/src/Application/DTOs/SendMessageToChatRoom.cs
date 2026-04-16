@@ -9,7 +9,18 @@ namespace Backend.API.src.Application.DTOs
 {
     public class SendMessageToChatRoom
     {
-        public int? ChatRoomId { get; set; }
-        public required string Content { get; set; }
+        private Guid _chatRoomId;
+        private string _content = default!;
+
+        public Guid ChatRoomId 
+        { 
+            get => _chatRoomId;
+            set => _chatRoomId = value;
+        }
+        public required string Content 
+        { 
+            get => _content; 
+            set => _content = value; 
+        }
     }
 }

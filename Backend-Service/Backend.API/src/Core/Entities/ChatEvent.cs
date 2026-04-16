@@ -13,17 +13,43 @@ namespace Backend.API.src.Core.Entities
 {
     public class ChatEvent
     {
+        private string? _id;
+        private Guid _chatRoomId;
+        private string _eventType = default!;
+        private string _details = default!;
+        private readonly DateTime _timestamp = DateTime.UtcNow;
+
+
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        public string? Id
+        {     
+            get => _id; 
+            set => _id = value;
+        }
 
-        public int? ChatRoomId { get; set; }
+        public Guid ChatRoomId
+        {
+            get => _chatRoomId;
+            set => _chatRoomId = value;
+        }
 
-        public required string? EventType { get; set; }
+        public required string EventType
+        {
+            get => _eventType;
+            set => _eventType = value;
+        }
 
-        public string? Details { get; set; }
+        public string Details
+        {
+            get => _details;
+            set => _details = value;
+        }
 
         [BsonRepresentation(BsonType.DateTime)]
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamp
+        {
+            get => _timestamp;
+        }
     }
 }

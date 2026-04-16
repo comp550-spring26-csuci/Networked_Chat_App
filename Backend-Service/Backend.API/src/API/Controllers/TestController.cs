@@ -147,5 +147,24 @@ namespace Backend.API.src.API.Controllers
 
 
         }
+
+        [HttpGet("user-by-username")]
+        public async Task<IActionResult> GetUserByUsername(string username)
+        {
+            try
+            {
+                var user = await _userRepository.GetByUsernameAsync(username);
+                if (user == null)
+                {
+                    return NotFound($"No user found with username: {username}");
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                AppLogger.ShieldFailure("TestController", ex);
+                return StatusCode(500, $"Internal Error: {ex.Message}");
+            }
+        }
     }
 }

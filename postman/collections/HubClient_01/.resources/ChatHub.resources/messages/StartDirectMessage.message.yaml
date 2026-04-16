@@ -1,0 +1,25 @@
+$kind: websocket-message
+content: "{
+
+  \    \"arguments\":[
+
+  \        {
+
+  \            \"OtherUserId\": \"{{destination_user_id}}\",
+
+  \            \"ChatRoomName\": \"{{username}}_{{destination_user_name}}\"
+
+  \        }
+
+  \    ],
+
+  \    \"invocationId\":\"0\",
+
+  \    \"target\":\"StartDirectMessage\",
+
+  \    \"type\":1
+
+  }\x1e"
+contentType: json
+order: 4279517387045950
+name: StartDirectMessage
