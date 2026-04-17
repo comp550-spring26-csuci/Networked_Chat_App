@@ -1,9 +1,10 @@
 $kind: http-request
 name: CreateAndLoginUser
-url: https://localhost:7081/api/test/seed-user?UserName={{username}}
+url: https://localhost:7081/api/test/seed-user?UserName={{username}}&OverWrite={{overwrite_login}}
 method: POST
 queryParams:
   UserName: "{{username}}"
+  OverWrite: "{{overwrite_login}}"
 body:
   type: json
   content: ""

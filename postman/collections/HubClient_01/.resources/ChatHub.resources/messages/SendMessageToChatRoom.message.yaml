@@ -9,7 +9,7 @@ content: "{
 
   \                \"ChatRoomId\": \"{{chatroom_id}}\",
 
-  \                \"Content\": \"I didn't think of anything to say.\"
+  \                \"Content\": \"{{message}}\"
 
   \            },
 
@@ -26,5 +26,5 @@ content: "{
   \    \"type\":1
 
   }\x1e"
-contentType: text
+contentType: json
 order: 4446639385476503

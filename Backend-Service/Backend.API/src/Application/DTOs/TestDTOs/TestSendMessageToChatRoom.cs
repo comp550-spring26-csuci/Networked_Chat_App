@@ -2,7 +2,10 @@
 //  Project: Network Chat App
 //  Engineer: Ian Milin
 //  Date: April 13 2026
-//  Description: Defines the TestSendMessageToChatRoom DTO for testing sending messages to chat rooms.
+//  Description: More verbose DTO envelope for sending a message to a chat room, containing the
+//  SendMessageToChatRoom object, the username of the sender, and the name of the chat room.
+//  This is used for testing purposes to ensure that the correct data is being sent from the
+//  client to the server when a message is sent.
 // --------------------------------------------
 
 namespace Backend.API.src.Application.DTOs.TestDTOs
@@ -17,6 +20,12 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
         {
             get => _sendMessageToChatRoom;
             set => _sendMessageToChatRoom = value;
+        }
+
+        public string? ChatRoomName
+        {
+            get => _chatRoomName;
+            set => _chatRoomName = value;
         }
 
         public string? Username

@@ -2,7 +2,9 @@
 //  Project: Network Chat App
 //  Engineer: Ian Milin
 //  Date: April 13 2026
-//  Description: Defines the TestChatEvent DTO for testing chat event data transfer.
+//  Description: More verbose DTO envelope for a chat event, containing the ChatEvent object
+//  and the name of the chat room. This is used for testing purposes to ensure that the correct
+//  data is being sent from the client to the server when a chat event occurs.
 // --------------------------------------------
 
 using Backend.API.src.Core.Entities;

@@ -5,7 +5,7 @@ content: "{
 
   \        {
 
-  \            \"ChatRoomId\": \"{{chatRoomId}}\"
+  \            \"ChatRoomId\": \"{{chatroom_id}}\"
 
   \        }
 

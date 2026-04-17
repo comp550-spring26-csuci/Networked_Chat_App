@@ -43,7 +43,7 @@ namespace Backend.API.src.API.Controllers
 
         // Testing POST for creating a new user
         [HttpPost("seed-user")]
-        public async Task<IActionResult> SeedUser(string UserName = "testAdmin2")
+        public async Task<IActionResult> SeedUser(string UserName = "testAdmin2", bool OverWrite = true)
         {
             AppLogger.DebugState("TestController", "Seed attempt started");
 
@@ -53,7 +53,9 @@ namespace Backend.API.src.API.Controllers
 
                 var success = false;
 
-                if (oldUser != null)
+                User testUser;
+
+                if (oldUser != null && OverWrite)
                 {
                     _userRepository.Delete(oldUser);
 
@@ -61,18 +63,32 @@ namespace Backend.API.src.API.Controllers
                     success = await _userRepository.SaveChangesAsync();
                 }
 
-                // Creating a dummy user
-                var testUser = new User(UserName, $"{UserName}@chat.com", "HashedPassword1232");
+                if (oldUser == null || OverWrite)
+                { 
+                    // Creating a dummy user
+                    testUser = new User(UserName, $"{UserName}@chat.com", "HashedPassword1232");
 
-                // Using the repository to add them
-                await _userRepository.AddAsync(testUser);
+                    // Using the repository to add them
+                    await _userRepository.AddAsync(testUser);
 
-                // Committing to PostgreSQL database
-                success = await _userRepository.SaveChangesAsync();
-
-                if (success)
+                    // Committing to PostgreSQL database
+                    success = await _userRepository.SaveChangesAsync();
+                }
+                else 
                 {
-                    AppLogger.UserAction(testUser.Id.ToString(), "Created via Test Seed");
+                    testUser = oldUser;
+                }
+
+                if (success || testUser == oldUser)
+                {
+                    if (testUser == oldUser)
+                    {
+                        AppLogger.DebugState("TestController", "User already exists, skipping creation");
+                    }
+                    else
+                    {
+                        AppLogger.UserAction(testUser.Id.ToString(), "Created via Test Seed");
+                    }
 
                     // Log in
 
@@ -127,6 +143,7 @@ namespace Backend.API.src.API.Controllers
         [HttpGet("all-users")]
         public async Task<IActionResult> GetAllUsers()
         {
+            AppLogger.DebugState("TestController", "GetAllUsers attempt started");
             try
             {
                 //Asking the dabase for all the users
@@ -149,14 +166,14 @@ namespace Backend.API.src.API.Controllers
         }
 
         [HttpGet("user-by-username")]
-        public async Task<IActionResult> GetUserByUsername(string username)
+        public async Task<IActionResult> GetUserByUsername(string Username)
         {
             try
             {
-                var user = await _userRepository.GetByUsernameAsync(username);
+                var user = await _userRepository.GetByUsernameAsync(Username);
                 if (user == null)
                 {
-                    return NotFound($"No user found with username: {username}");
+                    return NotFound($"No user found with username: {Username}");
                 }
                 return Ok(user);
             }

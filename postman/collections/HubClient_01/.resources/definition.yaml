@@ -6,3 +6,5 @@ variables:
   access_token: ""
   destination_user_id: ""
   chatroom_id: ""
+  message: ""
+  overwrite_login: ""

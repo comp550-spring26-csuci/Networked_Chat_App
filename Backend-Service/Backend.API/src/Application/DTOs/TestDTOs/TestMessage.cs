@@ -2,7 +2,9 @@
 //  Project: Network Chat App
 //  Engineer: Ian Milin
 //  Date: April 11 2026
-//  Description: Defines the TestMessage DTO for testing message data transfer.
+//  Description: More verbose DTO envelope for a message, containing the Message object, the username of the sender,
+//  and the name of the chat room. This is used for testing purposes to ensure that the correct data is being sent
+//  from the client to the server when a message is sent.
 // --------------------------------------------
 
 using Backend.API.src.Core.Entities;

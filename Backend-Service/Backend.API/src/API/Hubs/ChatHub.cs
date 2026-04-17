@@ -41,6 +41,11 @@ namespace Backend.API.src.API.Hubs
             return Guid.TryParse(Context.UserIdentifier, out var userId) ? userId : Guid.Empty;
         }
 
+        private string GetUsername()
+        {
+            return Context.User?.Identity?.Name ?? "UnknownUser";
+        }
+
         // -------------------------------------
         // ***MESSAGE SENDING HELPER METHODS****
         // -------------------------------------
@@ -49,6 +54,15 @@ namespace Backend.API.src.API.Hubs
         {
             string group = testMessage.Message.ChatRoomId.ToString();
             await Clients.Group(group).SendAsync("ReceiveMessage", testMessage);
+        }
+
+        // -------------------------------------
+        // ****DIRECT MESSAGE HELPER METHODS****
+        // -------------------------------------
+
+        private async Task SendMessageToUserAsync(Guid userId, TestAcknowledgeDirectMessage testAcknowledgeDirectMessage)
+        {
+            await Clients.User(userId.ToString()).SendAsync("AcknowledgeDirectMessage", testAcknowledgeDirectMessage);
         }
 
         // -------------------------------------
@@ -85,7 +99,8 @@ namespace Backend.API.src.API.Hubs
             { 
                 var chatEvent = new ChatEvent
                 {
-                    EventType = "NewConnection"
+                    EventType = "NewConnection",
+                    Details = $"Username: {GetUsername()}"
                 };
 
                 await _chatEventRepository.AddAsync(chatEvent);
@@ -107,6 +122,7 @@ namespace Backend.API.src.API.Hubs
                 var chatEvent = new ChatEvent
                 {
                     EventType = "RemovedConnection",
+                    Details = $"Username: {GetUsername()}"
                 };
 
                 await _chatEventRepository.AddAsync(chatEvent);
@@ -129,7 +145,7 @@ namespace Backend.API.src.API.Hubs
                 Guid guid;
                 string chatRoomName;
 
-                if (_testChatRoomRepository.ChatRoomExists(ChatRoom.ChatRoomId))
+                if (ChatRoom.ChatRoomId != default && _testChatRoomRepository.ChatRoomExists(ChatRoom.ChatRoomId))
                 {
                     guid = ChatRoom.ChatRoomId;
                     chatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom";
@@ -241,12 +257,17 @@ namespace Backend.API.src.API.Hubs
                 var acknowledgeDirectMessage = new AcknowledgeDirectMessage
                 {
                     SenderId = GetUserId(),
-                    Username = Context.User?.Identity?.Name ?? "UnknownUser",
                     ChatRoomId = guid,
+                };
+
+                var testAcknowledgeDirectMessage = new TestAcknowledgeDirectMessage
+                {
+                    AcknowledgeDirectMessage = acknowledgeDirectMessage,
+                    Username = Context.User?.Identity?.Name ?? "UnknownUser",
                     ChatRoomName = startDirectMessage.ChatRoomName
                 };
 
-                await Clients.User(startDirectMessage.OtherUserId.ToString()).SendAsync("AcknowledgeDirectMessage", acknowledgeDirectMessage);
+                await SendMessageToUserAsync(startDirectMessage.OtherUserId, testAcknowledgeDirectMessage);
             }
             catch (Exception ex)
             {
