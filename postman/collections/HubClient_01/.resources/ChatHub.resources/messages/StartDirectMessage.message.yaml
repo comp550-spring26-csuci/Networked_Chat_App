@@ -5,7 +5,7 @@ content: "{
 
   \        {
 
-  \            \"TestStartDirectMessage\": {
+  \            \"StartDirectMessage\": {
 
   \                \"TargetUserId\": \"{{target_user_id}}\",
 

@@ -155,8 +155,6 @@ namespace Backend.API.src.API.Hubs
                     chatRoomName = ChatRoom.ChatRoomName ?? "UnnamedChatRoom";
                 }
                 
-                await Groups.AddToGroupAsync(Context.ConnectionId, guid.ToString());
-
                 var chatEvent = new ChatEvent
                 {
                     EventType = "UserJoinedChatRoom",
@@ -164,13 +162,15 @@ namespace Backend.API.src.API.Hubs
                     Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
                 };
 
-                await _chatEventRepository.AddAsync(chatEvent);
-
                 var testChatEvent = new TestChatEvent
                 {
                     ChatEvent = chatEvent,
-                    ChatRoomName = ChatRoom.ChatRoomName
+                    ChatRoomName = chatRoomName
                 };
+
+                await _chatEventRepository.AddAsync(chatEvent);
+
+                await Groups.AddToGroupAsync(Context.ConnectionId, guid.ToString());
 
                 await SendEventToGroupAsync(testChatEvent);
             }
@@ -184,25 +184,28 @@ namespace Backend.API.src.API.Hubs
         {
             try
             { 
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom");
+                string chatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom";
+
+                // If everyone leaves the chat room, we can remove it from the repository to prevent clutter.
+
                 var chatEvent = new ChatEvent
                 {
                     EventType = "UserLeftChatRoom",
                     ChatRoomId = ChatRoom.ChatRoomId,
-                    Details = $"ChatRoom: {_testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom"}, Username: {GetUsername()}"
+                    Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
                 };
-
-                _testChatRoomRepository.RemoveChatRoom(ChatRoom.ChatRoomId);
-
-                await _chatEventRepository.AddAsync(chatEvent);
 
                 var testChatEvent = new TestChatEvent
                 {
                     ChatEvent = chatEvent,
-                    ChatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom"
+                    ChatRoomName = chatRoomName
                 };
 
+                await _chatEventRepository.AddAsync(chatEvent);
+
                 await SendEventToGroupAsync(testChatEvent);
+
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, ChatRoom.ChatRoomId.ToString());
             }
             catch (Exception ex)
             {

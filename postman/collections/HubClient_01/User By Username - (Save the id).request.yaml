@@ -11,6 +11,6 @@ scripts:
 
       const recipientId = responseJson.id;
 
-      pm.collectionVariables.set("destination_user_id",recipientId)
+      pm.collectionVariables.set("target_user_id",recipientId)
     language: text/javascript
 order: 898

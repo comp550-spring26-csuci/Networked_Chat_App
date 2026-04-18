@@ -1,10 +1,10 @@
 $kind: collection
 name: HubClient_01
 variables:
-  target_username: ""
+  overwrite_login: ""
   username: ""
   access_token: ""
+  target_username: ""
   target_user_id: ""
   chatroom_id: ""
   message: ""
-  overwrite_login: ""
