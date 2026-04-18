@@ -137,7 +137,6 @@ namespace Backend.API.src.API.Hubs
             }
         }
 
-        // Note: In a real application, you would likely want to check if the user is already in the chat room
         public async Task JoinChatRoom(ChatRoom ChatRoom)
         {
             try
@@ -162,7 +161,7 @@ namespace Backend.API.src.API.Hubs
                 {
                     EventType = "UserJoinedChatRoom",
                     ChatRoomId = guid,
-                    Details = $"ChatRoom: {chatRoomName}"
+                    Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
                 };
 
                 await _chatEventRepository.AddAsync(chatEvent);
@@ -181,9 +180,6 @@ namespace Backend.API.src.API.Hubs
             }
         }
 
-        // Note: In a real application, you would likely want to check if the user is actually in the chat room
-        // before allowing them to leave it, and handle cases where they try to leave a room they're not in. For
-        // simplicity, this example just attempts to remove them from the group and logs the event.
         public async Task LeaveChatRoom(ChatRoom ChatRoom)
         {
             try
@@ -193,7 +189,7 @@ namespace Backend.API.src.API.Hubs
                 {
                     EventType = "UserLeftChatRoom",
                     ChatRoomId = ChatRoom.ChatRoomId,
-                    Details = $"ChatRoom: {_testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom"}"
+                    Details = $"ChatRoom: {_testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom"}, Username: {GetUsername()}"
                 };
 
                 _testChatRoomRepository.RemoveChatRoom(ChatRoom.ChatRoomId);
@@ -214,8 +210,6 @@ namespace Backend.API.src.API.Hubs
             }
         }
 
-        // Parameters are sent from the client as a TestSendMessage DTO, which
-        // contains both the message content and the chat room name.
         public async Task SendMessageToChatRoom(TestSendMessageToChatRoom testSendMessageToChatRoom)
         {
             try
@@ -235,7 +229,7 @@ namespace Backend.API.src.API.Hubs
                 {
                     Message = message,
                     ChatRoomName = _testChatRoomRepository.GetChatRoomName(message.ChatRoomId) ?? "UnknownChatRoom",
-                    Username = testSendMessageToChatRoom.Username
+                    SenderUsername = GetUsername()
                 };
 
                 await SendMessageToGroupAsync(testMessage);
@@ -246,13 +240,12 @@ namespace Backend.API.src.API.Hubs
             }
         }
 
-        public async Task StartDirectMessage(StartDirectMessage startDirectMessage)
+        public async Task StartDirectMessage(TestStartDirectMessage testStartDirectMessage)
         {
             try
             {
-                Guid guid = _testChatRoomRepository.AddChatRoom(startDirectMessage.ChatRoomName);
-
-                await Groups.AddToGroupAsync(Context.ConnectionId, guid.ToString());
+                Guid guid = _testChatRoomRepository.AddChatRoom(testStartDirectMessage.StartDirectMessage.ChatRoomName);
+                await JoinChatRoom(new ChatRoom { ChatRoomId = guid, ChatRoomName = testStartDirectMessage.StartDirectMessage.ChatRoomName });
 
                 var acknowledgeDirectMessage = new AcknowledgeDirectMessage
                 {
@@ -263,11 +256,11 @@ namespace Backend.API.src.API.Hubs
                 var testAcknowledgeDirectMessage = new TestAcknowledgeDirectMessage
                 {
                     AcknowledgeDirectMessage = acknowledgeDirectMessage,
-                    Username = Context.User?.Identity?.Name ?? "UnknownUser",
-                    ChatRoomName = startDirectMessage.ChatRoomName
+                    SenderUsername = GetUsername(),
+                    ChatRoomName = testStartDirectMessage.StartDirectMessage.ChatRoomName
                 };
 
-                await SendMessageToUserAsync(startDirectMessage.OtherUserId, testAcknowledgeDirectMessage);
+                await SendMessageToUserAsync(testStartDirectMessage.StartDirectMessage.TargetUserId, testAcknowledgeDirectMessage);
             }
             catch (Exception ex)
             {

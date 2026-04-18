@@ -9,13 +9,13 @@ namespace Backend.API.src.Application.DTOs
 {
     public class StartDirectMessage
     {
-        private Guid _otherUserId;
+        private Guid _targetUserId;
         private string _chatRoomName = default!;
 
-        public required Guid OtherUserId
+        public required Guid TargetUserId
         {
-            get => _otherUserId;
-            set => _otherUserId = value;
+            get => _targetUserId;
+            set => _targetUserId = value;
         }
 
         public string ChatRoomName

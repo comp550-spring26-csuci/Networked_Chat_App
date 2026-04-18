@@ -5,9 +5,15 @@ content: "{
 
   \        {
 
-  \            \"OtherUserId\": \"{{destination_user_id}}\",
+  \            \"TestStartDirectMessage\": {
 
-  \            \"ChatRoomName\": \"{{username}}_{{destination_user_name}}\"
+  \                \"TargetUserId\": \"{{target_user_id}}\",
+
+  \                \"ChatRoomName\": \"{{username}}_{{target_username}}\"
+
+  \            },
+
+  \            \"TargetUsername\": \"{{target_username}}\"
 
   \        }
 
@@ -22,4 +28,3 @@ content: "{
   }\x1e"
 contentType: json
 order: 4279517387045950
-name: StartDirectMessage

@@ -1,10 +1,9 @@
 $kind: http-request
-name: Get User By Username
-url: https://localhost:7081/api/test/user-by-username?UserName={{destination_user_name}}
+name: User By Username - (Save the id)
+url: https://localhost:7081/api/test/user-by-username?UserName={{target_username}}
 method: GET
 queryParams:
-  - key: UserName
-    value: "{{destination_user_name}}"
+  UserName: "{{target_username}}"
 scripts:
   - type: afterResponse
     code: |-

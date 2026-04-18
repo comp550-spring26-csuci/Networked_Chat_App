@@ -11,7 +11,7 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
     public class TestAcknowledgeDirectMessage
     {
         private AcknowledgeDirectMessage _acknowledgeDirectMessage = null!;
-        private string _username = default!;
+        private string _senderUsername = default!;
         private string _chatRoomName = default!;
 
         public required AcknowledgeDirectMessage AcknowledgeDirectMessage
@@ -20,10 +20,10 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
             set => _acknowledgeDirectMessage = value;
         }
 
-        public required string Username
+        public required string SenderUsername
         {
-            get => _username;
-            set => _username = value;
+            get => _senderUsername;
+            set => _senderUsername = value;
         }
 
         public required string ChatRoomName

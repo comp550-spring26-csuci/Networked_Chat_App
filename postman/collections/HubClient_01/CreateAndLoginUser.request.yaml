@@ -21,9 +21,7 @@ scripts:
     code: |+
       const collectionName = pm.execution.location[0];
 
-      let username = collectionName;
-
-      pm.collectionVariables.set("username", username)
+      pm.collectionVariables.set("username", collectionName)
 
     language: text/javascript
 examples: .resources/CreateAndLoginUser.resources/examples
