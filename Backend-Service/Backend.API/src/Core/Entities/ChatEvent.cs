@@ -8,14 +8,21 @@
 
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using System.Text.Json.Serialization;
 
 namespace Backend.API.src.Core.Entities
-{
+{ 
+    public enum ChatEventType
+    {
+        UserJoined,
+        UserLeft
+    }
+
     public class ChatEvent
     {
         private string? _id;
         private Guid _chatRoomId;
-        private string _eventType = default!;
+        private ChatEventType _eventType;
         private string _details = default!;
         private readonly DateTime _timestamp = DateTime.UtcNow;
 
@@ -34,7 +41,9 @@ namespace Backend.API.src.Core.Entities
             set => _chatRoomId = value;
         }
 
-        public required string EventType
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [BsonRepresentation(BsonType.String)]
+        public required ChatEventType EventType
         {
             get => _eventType;
             set => _eventType = value;

@@ -89,6 +89,11 @@ namespace Backend.API.src.API.Hubs
             await Clients.Group(group).SendAsync("ReceiveEvent", testChatEvent);
         }
 
+        private async Task SendEventToCallerUserAsync(TestChatEvent testChatEvent)
+        {
+            await Clients.User(GetUserId().ToString()).SendAsync("ReceiveEvent", testChatEvent);
+        }
+
         // -------------------------------------
         // *************HUB METHODS*************
         // -------------------------------------
@@ -99,7 +104,7 @@ namespace Backend.API.src.API.Hubs
             { 
                 var chatEvent = new ChatEvent
                 {
-                    EventType = "NewConnection",
+                    EventType = ChatEventType.UserJoined,
                     Details = $"Username: {GetUsername()}"
                 };
 
@@ -121,7 +126,7 @@ namespace Backend.API.src.API.Hubs
             {
                 var chatEvent = new ChatEvent
                 {
-                    EventType = "RemovedConnection",
+                    EventType = ChatEventType.UserLeft,
                     Details = $"Username: {GetUsername()}"
                 };
 
@@ -157,7 +162,7 @@ namespace Backend.API.src.API.Hubs
                 
                 var chatEvent = new ChatEvent
                 {
-                    EventType = "UserJoinedChatRoom",
+                    EventType = ChatEventType.UserJoined,
                     ChatRoomId = guid,
                     Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
                 };
@@ -184,13 +189,19 @@ namespace Backend.API.src.API.Hubs
         {
             try
             { 
+                if (ChatRoom.ChatRoomId == default || !_testChatRoomRepository.ChatRoomExists(ChatRoom.ChatRoomId))
+                {
+                    await SendErrorToClientAsync("Chat room does not exist.");
+                    return;
+                }
+
                 string chatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom";
 
                 // If everyone leaves the chat room, we can remove it from the repository to prevent clutter.
 
                 var chatEvent = new ChatEvent
                 {
-                    EventType = "UserLeftChatRoom",
+                    EventType = ChatEventType.UserLeft,
                     ChatRoomId = ChatRoom.ChatRoomId,
                     Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
                 };
@@ -203,9 +214,11 @@ namespace Backend.API.src.API.Hubs
 
                 await _chatEventRepository.AddAsync(chatEvent);
 
-                await SendEventToGroupAsync(testChatEvent);
-
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, ChatRoom.ChatRoomId.ToString());
+
+                await SendEventToCallerUserAsync(testChatEvent);
+
+                await SendEventToGroupAsync(testChatEvent);
             }
             catch (Exception ex)
             {
