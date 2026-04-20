@@ -5,7 +5,7 @@ content: "{
 
   \        {
 
-  \            \"ChatRoomId\": \"{{chatroom_id}}\"
+  \            \"ChatRoomId\": \"{{target_chatroom_id}}\"
 
   \        }
 
@@ -13,7 +13,7 @@ content: "{
 
   \    \"invocationId\":\"0\",
 
-  \    \"target\":\"JoinChatRoom\",
+  \    \"target\":\"LeaveChatRoom\",
 
   \    \"type\":1
 

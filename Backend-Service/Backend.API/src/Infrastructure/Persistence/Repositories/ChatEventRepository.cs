@@ -37,7 +37,7 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
             return await _context.ChatEvents.Find(_ => true).ToListAsync();
         }
 
-        public async Task<List<ChatEvent>> GetChatEventsByRoomIdAsync(Guid roomId)
+        public async Task<List<ChatEvent>> GetEventsByRoomIdAsync(Guid roomId)
         {
             return await _context.ChatEvents.Find(e => e.ChatRoomId == roomId).ToListAsync();
         }

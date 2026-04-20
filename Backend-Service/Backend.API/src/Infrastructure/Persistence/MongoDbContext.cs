@@ -10,16 +10,49 @@
 using Backend.API.src.Core.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Collections.ObjectModel;
 
 
 namespace Backend.API.src.Infrastructure.Persistence
 {
+    public enum ChatRoomId
+    {
+        ian_kenneth,
+        ian_brielle,
+        ian_ivana,
+        kenneth_brielle,
+        kenneth_ivana,
+        brielle_ivana
+    }
+
     public class MongoDbContext
     {
         public readonly IMongoCollection<Message> Messages;
         public readonly IMongoCollection<ChatEvent> ChatEvents;
 
-        public Dictionary<Guid, string> ChatRooms = new Dictionary<Guid, string>();
+        // public Dictionary<Guid, string> ChatRooms = new Dictionary<Guid, string>();
+
+        public static Guid ToGuid(ChatRoomId chatRoomId)
+        {
+            // Convert the enum value to a string and then to a GUID
+            string name = chatRoomId.ToString();
+            byte[] bytes = new byte[16];
+            int hash = name.GetHashCode();
+            BitConverter.GetBytes(hash).CopyTo(bytes, 0);
+            return new Guid(bytes);
+        }
+
+        private Dictionary<Guid, string> _chatRooms = new Dictionary<Guid, string>()
+        {
+            { ToGuid(ChatRoomId.ian_kenneth),     "ian_kenneth" },
+            { ToGuid(ChatRoomId.ian_brielle),     "ian_brielle" },
+            { ToGuid(ChatRoomId.ian_ivana),       "ian_ivana" },
+            { ToGuid(ChatRoomId.kenneth_brielle), "kenneth_brielle" },
+            { ToGuid(ChatRoomId.kenneth_ivana),   "kenneth_ivana" },
+            { ToGuid(ChatRoomId.brielle_ivana),   "brielle_ivana" }
+        };
+
+        public readonly ReadOnlyDictionary<Guid, string> ChatRooms;
 
         public MongoDbContext(IOptions<MongoDbSettings> mongoDbSettings)
         {
@@ -27,6 +60,8 @@ namespace Backend.API.src.Infrastructure.Persistence
             var mongoDatabase = mongoClient.GetDatabase(mongoDbSettings.Value.DatabaseName);
             Messages = mongoDatabase.GetCollection<Message>(mongoDbSettings.Value.MessagesCollectionName);
             ChatEvents = mongoDatabase.GetCollection<ChatEvent>(mongoDbSettings.Value.EventsCollectionName);
+
+            ChatRooms = new ReadOnlyDictionary<Guid, string>(_chatRooms);
         }
 
         public Guid NextChatRoomId()

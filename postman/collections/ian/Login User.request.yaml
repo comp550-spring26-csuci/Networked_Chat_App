@@ -1,10 +1,9 @@
 $kind: http-request
-name: CreateAndLoginUser
-url: https://localhost:7081/api/test/seed-user?UserName={{username}}&OverWrite={{overwrite_login}}
+url: https://localhost:7081/api/test/seed-user?UserName={{username}}&OverWrite=false
 method: POST
 queryParams:
   UserName: "{{username}}"
-  OverWrite: "{{overwrite_login}}"
+  OverWrite: "false"
 body:
   type: json
   content: ""
@@ -13,9 +12,7 @@ scripts:
     code: |-
       const responseJson = pm.response.json();
 
-      const connectionId = responseJson.token;
-
-      pm.collectionVariables.set("access_token",connectionId)
+      pm.collectionVariables.set("access_token",responseJson.token)
     language: text/javascript
   - type: beforeRequest
     code: |+
@@ -24,5 +21,5 @@ scripts:
       pm.collectionVariables.set("username", collectionName)
 
     language: text/javascript
-examples: .resources/CreateAndLoginUser.resources/examples
+examples: .resources/Login User.resources/examples
 order: 547

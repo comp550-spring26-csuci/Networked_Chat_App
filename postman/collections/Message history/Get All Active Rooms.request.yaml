@@ -1,5 +1,0 @@
-$kind: http-request
-name: Get All Active Rooms
-url: https://localhost:7081/api/chathistory/rooms
-method: GET
-order: 3606504249715376

@@ -60,10 +60,10 @@ namespace Backend.API.src.API.Hubs
         // ****DIRECT MESSAGE HELPER METHODS****
         // -------------------------------------
 
-        private async Task SendMessageToUserAsync(Guid userId, TestAcknowledgeDirectMessage testAcknowledgeDirectMessage)
-        {
-            await Clients.User(userId.ToString()).SendAsync("AcknowledgeDirectMessage", testAcknowledgeDirectMessage);
-        }
+        //private async Task SendMessageToUserAsync(Guid userId, TestAcknowledgeDirectMessage testAcknowledgeDirectMessage)
+        //{
+        //    await Clients.User(userId.ToString()).SendAsync("AcknowledgeDirectMessage", testAcknowledgeDirectMessage);
+        //}
 
         // -------------------------------------
         // ****ERROR SENDING HELPER METHODS*****
@@ -156,8 +156,8 @@ namespace Backend.API.src.API.Hubs
                 }
                 else
                 {
-                    guid = _testChatRoomRepository.AddChatRoom(ChatRoom.ChatRoomName ?? "UnnamedChatRoom");
-                    chatRoomName = ChatRoom.ChatRoomName ?? "UnnamedChatRoom";
+                    await SendErrorToClientAsync("Chat room does not exist. Please provide a valid ChatRoomId.");
+                    return;
                 }
                 
                 var chatEvent = new ChatEvent
@@ -196,8 +196,6 @@ namespace Backend.API.src.API.Hubs
                 }
 
                 string chatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom";
-
-                // If everyone leaves the chat room, we can remove it from the repository to prevent clutter.
 
                 var chatEvent = new ChatEvent
                 {
@@ -255,34 +253,5 @@ namespace Backend.API.src.API.Hubs
                 await SendErrorToClientAsync($"Internal Error: {ex.Message}");
             }
         }
-
-        public async Task StartDirectMessage(TestStartDirectMessage testStartDirectMessage)
-        {
-            try
-            {
-                Guid guid = _testChatRoomRepository.AddChatRoom(testStartDirectMessage.StartDirectMessage.ChatRoomName);
-                await JoinChatRoom(new ChatRoom { ChatRoomId = guid, ChatRoomName = testStartDirectMessage.StartDirectMessage.ChatRoomName });
-
-                var acknowledgeDirectMessage = new AcknowledgeDirectMessage
-                {
-                    SenderId = GetUserId(),
-                    ChatRoomId = guid,
-                };
-
-                var testAcknowledgeDirectMessage = new TestAcknowledgeDirectMessage
-                {
-                    AcknowledgeDirectMessage = acknowledgeDirectMessage,
-                    SenderUsername = GetUsername(),
-                    ChatRoomName = testStartDirectMessage.StartDirectMessage.ChatRoomName
-                };
-
-                await SendMessageToUserAsync(testStartDirectMessage.StartDirectMessage.TargetUserId, testAcknowledgeDirectMessage);
-            }
-            catch (Exception ex)
-            {
-                await SendErrorToClientAsync($"Internal Error: {ex.Message}");
-            }
-        }
-
     }
 }
