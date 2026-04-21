@@ -1,5 +1,7 @@
 export default function Message({ message, hideHeader }) {
-	const time = new Date(message.id).toLocaleTimeString([], {
+	console.log("MSG in message:", message);
+
+	const time = new Date(message.message.timestamp).toLocaleTimeString([], {
 		hour: "numeric",
 		minute: "2-digit",
 	});
@@ -8,12 +10,12 @@ export default function Message({ message, hideHeader }) {
 		<div className={`message ${hideHeader ? "grouped" : ""}`}>
 			{!hideHeader && (
 				<div className="message-header">
-					<strong>{message.sender}</strong>
+					<strong>{message.senderUsername}</strong>
 					<span className="time">{time}</span>
 				</div>
 			)}
 			<p className="message-text">
-				{message.text}
+				{message.message.content}
 			</p>
 		</div>
 	)

@@ -25,7 +25,7 @@ const ChatInput = forwardRef (({selectedDM, onSend}, ref) => {
 			contentEditable
 			ref={ref}
       		onKeyDown={handleKeyDown}
-			data-placeholder={`Message ${selectedDM.name}`}
+			data-placeholder={`Message ${selectedDM?.name || ""}`}
 		/>
 	)
 })
