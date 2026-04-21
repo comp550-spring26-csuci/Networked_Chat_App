@@ -1,0 +1,61 @@
+{
+  "info": {
+    "_postman_id": "4b1b075c-d84f-4878-80d8-d1231936a50c",
+    "name": "MastersNetworkChatApp",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "4911722"
+  },
+  "item": [
+    {
+      "name": "http://localhost:5000/api/test/seed-user",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/test/seed-user",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "test",
+            "seed-user"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "http://localhost:5000/api/test/all-users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/test/all-users",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "test",
+            "all-users"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

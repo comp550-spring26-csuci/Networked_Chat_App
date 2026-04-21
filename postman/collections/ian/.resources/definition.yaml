@@ -1,0 +1,7 @@
+$kind: collection
+name: ian
+variables:
+  username: ""
+  access_token: ""
+  target_chatroom_id: ""
+  message: ""
