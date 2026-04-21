@@ -2,7 +2,7 @@ import { useState } from "react";
 import DMList from "./DMList";
 import ChatWindow from "./ChatWindow";
 
-export default function ChatLayout() {
+export default function ChatLayout({ username }) {
 	// hard coded names, will later be done with api
   	const dms = [
     	{ id: 1, name: "Kenneth" },
@@ -19,7 +19,7 @@ export default function ChatLayout() {
         		selectedDM={selectedDM}
         		onSelect={setSelectedDM}
       		/>
-      		<ChatWindow selectedDM={selectedDM} />
+      		<ChatWindow selectedDM={selectedDM} sender={username} />
     	</div>
   	);
 }

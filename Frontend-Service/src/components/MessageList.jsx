@@ -6,9 +6,9 @@ export default function MessageList({ messages }) {
 			return false;
 		} 
 		const sameUser = prev.sender === current.sender;
-		// optional: time gap rule (set at .1 minutes or 6 seconds for in class demo)
+		// optional: time gap rule (currently set to group messages within 5 minutes of each other)
 		const timeDiff =
-			current.id - prev.id < .1 * 60 * 1000;
+			current.id - prev.id < 5 * 60 * 1000;
 		return sameUser && timeDiff;
 	}
 
