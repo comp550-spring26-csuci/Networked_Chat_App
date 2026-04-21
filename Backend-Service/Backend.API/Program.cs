@@ -58,6 +58,19 @@ namespace Backend.API
                     options.EnableDetailedErrors = true;
                 });
 
+                builder.Services.AddCors(options =>
+                {
+                    options.AddPolicy("ElectronClient", policy =>
+                    {
+                        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+                    });
+                });
+
+                // JWT Auth Setup
+
                 // JWT Auth Setup
                 var jwtKey = builder.Configuration.GetSection("JwtSettings:SecretKey").Value ?? "SecretDevelopmentKeyWithPlentyOfBits1234567890";
                 var key = Encoding.UTF8.GetBytes(jwtKey!);
@@ -121,6 +134,7 @@ namespace Backend.API
 
                 app.UseHttpsRedirection();
 
+                app.UseCors("ElectronClient");
 
                 app.UseAuthorization();
 
