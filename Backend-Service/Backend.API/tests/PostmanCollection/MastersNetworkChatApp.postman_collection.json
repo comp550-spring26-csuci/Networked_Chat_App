@@ -7,7 +7,391 @@
   },
   "item": [
     {
-      "name": "http://localhost:5000/api/test/seed-user",
+      "name": "BadEntries-Test",
+      "item": [
+        {
+          "name": "1-Testing_Age_Under_18",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"YoungStargazer\",\r\n  \"email\": \"star@cosmos.com\",\r\n  \"password\": \"SuperSecretPassword123!\",\r\n  \"age\": 16\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2-Testing_Bad_Format_Email",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"CosmicCoder\",\r\n  \"email\": \"this-is-not-an-email\",\r\n  \"password\": \"SuperSecretPassword123!\",\r\n  \"age\": 25\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3-Testing_Username_And_Password_min_Length",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"Io\",\r\n  \"email\": \"io@jupiter.com\",\r\n  \"password\": \"pass\",\r\n  \"age\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4-Testing_Missing_Everything",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"\",\r\n  \"email\": \"\",\r\n  \"password\": \"\",\r\n  \"age\": 0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5-TestingEverything_Wrong",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"A\",\r\n  \"email\": \"void\",\r\n  \"password\": \"123\",\r\n  \"age\": 12\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Server",
+      "item": [
+        {
+          "name": "1-Create-Account-Tunnel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"Alegria\",\r\n  \"email\": \"ana@14thdimension.com\",\r\n  \"password\": \"SuperSecretPassword12388!\",\r\n  \"age\": 24\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "vg3jzw0g-5148",
+                "usw3",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2-Create-Account-Tunnel-2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"Co\",\r\n  \"email\": \"\",\r\n  \"password\": \"SuperSecretPassword12389!\",\r\n  \"age\": 24\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "vg3jzw0g-5148",
+                "usw3",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3-Create-Account-Tunnel-https",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"CosmicCoder999\",\r\n  \"email\": \"ivynova999@13thdimension.com\",\r\n  \"password\": \"SuperSecretPassword129993!\",\r\n  \"age\": 24\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://vg3jzw0g-5148.usw3.devtunnels.ms/api/test/create-account",
+              "protocol": "https",
+              "host": [
+                "vg3jzw0g-5148",
+                "usw3",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1-Get-All-Users-Tunnel-http",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/test/all-users",
+              "protocol": "http",
+              "host": [
+                "vg3jzw0g-5148",
+                "usw3",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "api",
+                "test",
+                "all-users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2-Get-All-Users-Tunnel-https",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://vg3jzw0g-5148.usw3.devtunnels.ms/api/test/all-users",
+              "protocol": "https",
+              "host": [
+                "vg3jzw0g-5148",
+                "usw3",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "api",
+                "test",
+                "all-users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "1-Login-Tunnel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                "value": "true",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"username\": \"testAdmin\",\r\n        \"password\": \"HashedPassword123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/test/login",
+              "protocol": "http",
+              "host": [
+                "vg3jzw0g-5148",
+                "usw3",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "api",
+                "test",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2-Login-Empty-Tunnel",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n        \"username\": \"\",\r\n        \"password\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/test/login",
+              "protocol": "http",
+              "host": [
+                "vg3jzw0g-5148",
+                "usw3",
+                "devtunnels",
+                "ms"
+              ],
+              "path": [
+                "api",
+                "test",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1-A-Local-SeedUser",
       "request": {
         "method": "POST",
         "header": [],
@@ -37,7 +421,7 @@
       "response": []
     },
     {
-      "name": "http://localhost:5000/api/test/all-users",
+      "name": "1-A-Local-All-Users",
       "request": {
         "method": "GET",
         "header": [],
