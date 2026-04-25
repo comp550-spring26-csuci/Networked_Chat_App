@@ -3,14 +3,7 @@
     "",
     "\\Backend-Service",
     "\\Backend-Service\\Backend.API",
-    "\\Backend-Service\\Backend.API\\Properties",
-    "\\Backend-Service\\Backend.API\\src",
-    "\\Backend-Service\\Backend.API\\src\\Application",
-    "\\Backend-Service\\Backend.API\\src\\Application\\Validators",
-    "\\Backend-Service\\Backend.API\\src\\Core",
-    "\\Backend-Service\\Backend.API\\src\\Core\\MongoDB",
-    "\\Backend-Service\\Backend.API\\src\\Infrastructure"
+    "\\Backend-Service\\Backend.API\\Properties"
   ],
-  "SelectedNode": "\\Backend-Service\\Backend.API\\Backend.API.csproj",
   "PreviewInSolutionExplorer": false
 }
