@@ -63,30 +63,61 @@ ___
 ## ⭐️ Folder Structure
 ```
 
- Networked_Chat_App/                                ← Root Folder
-├── .vs/                                            ← System metadata (Automatically created)
-├── Backend-Service/                                ← Backend root folder
-│   │
-│   ├──src/                                         ← Folder with implementation
-│   │   ├── API/                                    ← Front Door: Controllers, SignalR Hubs
-│   │   │    ├── Controllers/                       ← REST endpoints for Next.js
-│   │   │    └── Hubs/                              ← SignalsR Hubs for the live path
-│   │   ├── Application/                            ← Brain: Services, DTOs, Business Logic
-│   │   │    ├── Services/                          ← Logic for Login/Signup
-│   │   │    └── DTOs/                              ← Data Transfer Objects for the Frontend
-│   │   ├── Core/                                   ← Soul: Entities, Domain Models, Utils
-│   │   │    ├── Entities/                          ← Create User,cs, Messaage,cs
-│   │   │    └── Interfaces/                        ← Create IUSerRespository,cs
-│   │   └── Infrastructure/                         ← Hands: External Interactions
-│   │       ├── Persistence/                        ← PostgresSAL & MongoDB implementations (User repository)
-│   │       ├── MongoDB/                            ← Chat history implementation here
-│   │       ├── Messaging/                          ← rabbitMQ Logic: Event Producers/Consumers
-│   │       ├── Caching/                            ← Redis Logic
-│   │       └── Logging/                            ← Serilog: classes & Interfaces
-│   │
-│   ├── tests/                                      ← unit and Integration tests
-│   ├── packages.lock.json
-│   └── BackendNetworkChatApp.sln
+ Networked_Chat_App/                                      ← Root Folder
+├── .vs/                                                  ← System metadata (Automatically created)
+├── .gitignore                                            ← Files, folders or formats to ignore from git repo
+├── docker-compose.yml                                    ← Docker related info for DBs running on it
+├── Backend-Service/                                      ← Backend root folder
+│   ├── README_BACK.md  							      ← BackEnd specific README file
+│   ├── Backend.API/                                      ← Backend project folder
+│   │   ├── Properties/                                   ← 
+│   │   │   └── launchSettings.json                       ← Configuration info for app initiation with ports and vars for Swagger
+|   |   |   
+│   │   ├──scripts/                                       ← Folder with scripts to help set up paths for the db
+│   │   │   ├── init-paths.ps1                            ← Script to locate root folder 
+│   │   │   └── setup-env.ps1                             ← Script to setup the environment, docker related
+|   |   |   
+│   │   ├──src/                                           ← Folder with implementation
+│   │   │   ├── API/                                      ← Front Door: Controllers, SignalR Hubs
+│   │   │   │    ├── Controllers/                         ← REST endpoints for Next.js
+│   │   │   │    │    └──TestController.cs                ← Sample reference for testing communication with the database for CRUD
+│   │   │   │    └── Hubs/                                ← SignalsR Hubs for the live path
+|   |   |   |
+│   │   │   ├── Application/                              ← Brain: Services, DTOs, Business Logic
+│   │   │   │    ├── DTOs/                                ← Data Transfer Objects for the Frontend
+│   │   │   │    │    ├── AuthResult.cs				      ← DTO API's response to auth attemptdelivering access token or error message
+│   │   │   │    │    ├── CreateAccountRequest.cs	      ← DTO defines required schema and initial validation rules for registration
+│   │   │   │    │    └── LoginRequest.cs			      ← DTO to capture and validate user credentials sent form client during login
+|   |   |   |    |
+│   │   │   │    ├── Services/                            ← Logic for Login/Signup
+│   │   │   │    │    └── AuthService.cs			      ← Core service responsible for business login for authenticaiton and more
+|   |   |   |    |
+│   │   │   │    └── Validators/                            ← Logic for data integrity, ensuring incoming DTOs meet requirements 
+│   │   │   │         ├── CreateAccountRequestValidator.cs	← Implements ruls for new user registration, passowrd complexity, valid email format, etc.
+│   │   │   │         └── LoginRequestValidator.cs			← Validates login attempts contain proper formatted credentials 
+|   |   |   |
+│   │   │   ├── Core/                                     ← Central domain layer with business logic: Entities, Domain Models, Utils
+│   │   │   │    ├── Caching/                             ← Houses strategies for temporal data storage to improve performance and reduce redundance db calls
+│   │   │   │    ├── Entities/                            ← Domain Models: User,cs, Message,cs , etc.
+│   │   │   │    │    └── User.cs				          ← Represents the persistent data structures stored in the database
+│   │   │   │    ├── Interfaces/                          ← Defines contracts and decoup[le business log form specific technical implementations
+│   │   │   │    │     ├── IAuthService.cs	              ← Defines contract for authentication operations
+│   │   │   │    │     ├── IUser.cs						  ← provides blueprint for user related properties and behaviors
+│   │   │   │    │     └── IUserRepository.cs		      ← Outlines the data access methods for user persistence
+│   │   │   │    └── Logging/                             ← Manages system diagnostics ourput
+│   │   │   │          └── AppLogger.cs		              ← Logger class for teh backend, tracking applicaiton events and errors for easier debugging
+|   |   |   |
+│   │   │   └── Infrastructure/                           ← Hands: External Interactions
+│   │   │       ├── Persistence/                          ← PostgresSAL & MongoDB implementations (User repository)
+│   │   │       ├── MongoDB/                              ← Chat history implementation here
+│   │   │       ├── Messaging/                            ← rabbitMQ Logic: Event Producers/Consumers
+│   │   │       ├── Caching/                              ← Redis Logic
+│   │   │       └── Logging/                              ← Serilog: classes & Interfaces # TO DO: (will be moved here in the futre)
+│   │   │
+│   │   ├── tests/                                        ← unit and Integration tests
+│   │   ├── packages.lock.json
+│   │   └── BackendNetworkChatApp.sln
+│
 │
 ├── Frontend-Service/                               ← Frontend root folder
 │   │
