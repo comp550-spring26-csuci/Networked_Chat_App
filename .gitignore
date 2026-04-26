@@ -8,11 +8,37 @@ logs/
 *.log
 
 # =========================
-# FRONTEND (Node / React / etc)
+# FRONTEND (Node / React / Vite / Electron)
 # =========================
 node_modules/
 dist/
+dist-react/
 build/
+.vite/
+release/
+*.asar
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+.cache/
+
+# =========================
+# SECURITY & CONFIG (.env)
+# =========================
+# Critical to prevent leaking credentials
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE & EDITORS
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # =========================
 # OPERATIVE SYSTEM

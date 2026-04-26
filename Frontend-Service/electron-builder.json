@@ -1,0 +1,15 @@
+{
+    "appId": "com.cs-550.chat-app",
+    "files": ["src/electron", "dist-react"],
+    "icon": "./1fa.png",
+    "mac": {
+        "target": "dmg"
+    },
+    "linux": {
+        "target": "AppImage",
+        "category": "Utility"
+    },
+    "win": {
+        "target": ["portable", "msi"]
+    }
+}
