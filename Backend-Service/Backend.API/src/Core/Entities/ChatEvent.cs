@@ -24,7 +24,7 @@ namespace Backend.API.src.Core.Entities
         private Guid _chatRoomId;
         private ChatEventType _eventType;
         private string _details = default!;
-        private readonly DateTime _timestamp = DateTime.UtcNow;
+        private DateTime _timestamp = DateTime.UtcNow;
 
 
         [BsonId]
@@ -59,6 +59,7 @@ namespace Backend.API.src.Core.Entities
         public DateTime Timestamp
         {
             get => _timestamp;
+            set => _timestamp = value;
         }
     }
 }

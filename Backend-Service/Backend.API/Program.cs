@@ -1,4 +1,5 @@
 using Backend.API.src.API.Hubs;
+using Backend.API.src.Application.Services;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Infrastructure.Persistence;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
@@ -29,6 +30,8 @@ namespace Backend.API
             {
                 var builder = WebApplication.CreateBuilder(args);
 
+                builder.Host.UseSerilog();
+
 
                 // Fetching the map from appsettings.json
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -37,7 +40,11 @@ namespace Backend.API
                 // Directions to use PostgreSQL and your AppDbContext
                 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-                builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
+                var mongoDbSettings = builder.Configuration.GetSection("MongoDB"); 
+
+                Console.WriteLine($"---> MONGODB CONNECTION STRING: '{mongoDbSettings["ConnectionString"]}'");
+
+                builder.Services.Configure<MongoDbSettings>(mongoDbSettings);
                 builder.Services.AddSingleton<MongoDbContext>();
 
                 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
@@ -49,7 +56,9 @@ namespace Backend.API
 
                 builder.Services.AddScoped<ChatEventRepository>();
 
-                builder.Services.AddSingleton<TestChatRoomRepository>();
+                builder.Services.AddScoped<TestChatRoomRepository>();
+
+                builder.Services.AddTransient<JwtTokenService>();
 
                 // Add services to the container.
                 builder.Services.AddControllers();
@@ -58,25 +67,18 @@ namespace Backend.API
                     options.EnableDetailedErrors = true;
                 });
 
-                //builder.Services.AddCors(options =>
-                //{
-                //    options.AddDefaultPolicy(policy =>
-                //    {
-                //        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174") // React app URL
-                //               .AllowAnyHeader()
-                //               .AllowAnyMethod()
-                //               .AllowCredentials();
-                //    });
-                //});
+                // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+                // Prepares the map
+                builder.Services.AddOpenApi();
 
                 builder.Services.AddCors(options =>
                 {
-                    options.AddPolicy("ElectronClient", policy =>
+                    options.AddPolicy("AllowFrontend", builder =>
                     {
-                        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .AllowCredentials();
+                        builder.SetIsOriginAllowed(origin => true) // Effectively allows any origin
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowCredentials();
                     });
                 });
 
@@ -121,10 +123,6 @@ namespace Backend.API
                     };
                 });
 
-                // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-                // Prepares the map
-                builder.Services.AddOpenApi();
-
                 var app = builder.Build();
 
                 using (var scope = app.Services.CreateScope())
@@ -143,7 +141,7 @@ namespace Backend.API
 
                 app.UseHttpsRedirection();
 
-                app.UseCors("ElectronClient");
+                app.UseCors("AllowFrontend");
 
                 app.UseAuthorization();
 

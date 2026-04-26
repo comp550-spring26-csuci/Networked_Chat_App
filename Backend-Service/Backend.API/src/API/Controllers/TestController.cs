@@ -2,8 +2,8 @@
 //  Project: Network Chat App
 //  Engineer: Ivana Bavin-Gomez-San Basilio
 //  Date: March 7th 2026
-//  Description: S,moke test for the UserRepository
-//		fucntions
+//  Description: Smoke test for the UserRepository
+//		functions
 // -------------------------------------------------------------------
 
 
@@ -11,9 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
+using Backend.API.src.Application.Services;
 
 
 namespace Backend.API.src.API.Controllers
@@ -23,15 +21,14 @@ namespace Backend.API.src.API.Controllers
     public class TestController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _config;
+        private readonly JwtTokenService _tokenService;
 
         // Injection of UserRepository
-        public TestController(IUserRepository userRepository, IConfiguration config)
+        public TestController(IUserRepository userRepository, JwtTokenService tokenService)
         {
 
             _userRepository = userRepository;
-
-            _config = config;
+            _tokenService = tokenService;
         }
 
         // Pretending this is what client would use to log in after they've created an account
@@ -193,30 +190,14 @@ namespace Backend.API.src.API.Controllers
 
                     var user = await _userRepository.GetByEmailAsync(loginDto.Email);
 
-                    var tokenHandler = new JwtSecurityTokenHandler();
-
-                    var keyInfo = _config.GetSection("JwtSettings:Key").Value;
-
-                    var key = System.Text.Encoding.UTF8.GetBytes(keyInfo!);
-
-                    var tokenDescriptor = new SecurityTokenDescriptor
+                    if (user == null)
                     {
-                        Subject = new ClaimsIdentity(new[]
-                        {
-                            new Claim(ClaimTypes.NameIdentifier, user!.Id.ToString()),
-                            new Claim(ClaimTypes.Email, user.Email),
-                            new Claim(ClaimTypes.Name, user.Username)
-                        }),
-                        Expires = DateTime.UtcNow.AddHours(24),
-                        Issuer = _config.GetSection("JwtSettings:Issuer").Value,
-                        Audience = _config.GetSection("JwtSettings:Audience").Value,
-                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                    };
+                        return NotFound("User not found");
+                    }
 
-                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    var token = _tokenService.GenerateToken(user, TimeSpan.FromHours(24));
 
-                    return Ok(new { token = tokenHandler.WriteToken(token), userId = user.Id, username = user.Username });
-
+                    return Ok(new { token, userId = user.Id, username = user.Username });
                 }
 
                 return BadRequest("Failed to save user to database");

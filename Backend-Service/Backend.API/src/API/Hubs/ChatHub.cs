@@ -56,6 +56,25 @@ namespace Backend.API.src.API.Hubs
             await Clients.Group(group).SendAsync("ReceiveMessage", testMessage);
         }
 
+        private TestMessage ConstructMessageDto(TestSendMessageToChatRoom testSendMessageToChatRoom)
+        {
+            var message = new Message
+            {
+                ChatRoomId = testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId,
+                Content = testSendMessageToChatRoom.SendMessageToChatRoom.Content,
+                SenderId = GetUserId()
+            };
+
+            var testMessage = new TestMessage
+            {
+                Message = message,
+                ChatRoomName = _testChatRoomRepository.GetChatRoomName(message.ChatRoomId) ?? "UnknownChatRoom",
+                SenderUsername = GetUsername()
+            };
+            
+            return testMessage;
+        }
+
         // -------------------------------------
         // ****DIRECT MESSAGE HELPER METHODS****
         // -------------------------------------
@@ -78,9 +97,9 @@ namespace Backend.API.src.API.Hubs
         // **CHAT EVENT SENDING HELPER METHODS**
         // -------------------------------------
 
-        private async Task SendEventToAllAsync(ChatEvent chatEvent)
+        private async Task SendEventToAllAsync(TestChatEvent testChatEvent)
         {
-            await Clients.All.SendAsync("ReceiveEvent", chatEvent);
+            await Clients.All.SendAsync("ReceiveEvent", testChatEvent);
         }
 
         private async Task SendEventToGroupAsync(TestChatEvent testChatEvent)
@@ -94,162 +113,152 @@ namespace Backend.API.src.API.Hubs
             await Clients.User(GetUserId().ToString()).SendAsync("ReceiveEvent", testChatEvent);
         }
 
+        private TestChatEvent ConstructChatEventDto(ChatEventType eventType, string chatRoomName, Guid chatRoomId = default)
+        {
+            var chatEvent = new ChatEvent
+            {
+                EventType = eventType,
+                ChatRoomId = chatRoomId,
+                Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
+            };
+
+            var testChatEvent = new TestChatEvent
+            {
+                ChatEvent = chatEvent,
+                ChatRoomName = chatRoomName
+            };
+
+            return testChatEvent;
+        }
+
         // -------------------------------------
         // *************HUB METHODS*************
         // -------------------------------------
 
         public override async Task OnConnectedAsync()
         {
+            AppLogger.ConnectionEvent(Context.ConnectionId, "Connected", GetUserId().ToString());
             try
             { 
-                var chatEvent = new ChatEvent
-                {
-                    EventType = ChatEventType.UserJoined,
-                    Details = $"Username: {GetUsername()}"
-                };
+                var testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, "Global");
 
-                await _chatEventRepository.AddAsync(chatEvent);
+                await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
-                await SendEventToAllAsync(chatEvent);
+                await SendEventToAllAsync(testChatEvent);
 
                 await base.OnConnectedAsync();
+
+                AppLogger.DebugState("ChatHub", $"User connection initialization completed for Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()}");
             }
             catch (Exception ex)
             {
+                AppLogger.ShieldFailure("ChatHub", ex);
                 await SendErrorToClientAsync($"Internal Error: {ex.Message}");
             }
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
+            AppLogger.ConnectionEvent(Context.ConnectionId, "Disconnected", GetUserId().ToString());
             try 
             {
-                var chatEvent = new ChatEvent
-                {
-                    EventType = ChatEventType.UserLeft,
-                    Details = $"Username: {GetUsername()}"
-                };
+                var testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, "Global");
 
-                await _chatEventRepository.AddAsync(chatEvent);
+                await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
-                await SendEventToAllAsync(chatEvent);
+                await SendEventToAllAsync(testChatEvent);
 
                 await base.OnDisconnectedAsync(exception);
+
+                AppLogger.DebugState("ChatHub", $"User disconnection handling completed for Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()}");
             }
             catch (Exception ex)
             {
+                AppLogger.ShieldFailure("ChatHub", ex);
                 await SendErrorToClientAsync($"Internal Error: {ex.Message}");
             }
         }
 
         public async Task JoinChatRoom(ChatRoom ChatRoom)
         {
+            AppLogger.DebugState("ChatHub.JoinChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to join Chat Room ID: {ChatRoom.ChatRoomId}");
             try
             {
-                Guid guid;
-                string chatRoomName;
+                var guid = ChatRoom.ChatRoomId;
+                var chatRoomName = _testChatRoomRepository.GetChatRoomName(guid) ?? "UnnamedChatRoom";
 
-                if (ChatRoom.ChatRoomId != default && _testChatRoomRepository.ChatRoomExists(ChatRoom.ChatRoomId))
-                {
-                    guid = ChatRoom.ChatRoomId;
-                    chatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom";
-                }
-                else
+                if (guid == default || !_testChatRoomRepository.ChatRoomExists(guid))
                 {
                     await SendErrorToClientAsync("Chat room does not exist. Please provide a valid ChatRoomId.");
                     return;
                 }
-                
-                var chatEvent = new ChatEvent
-                {
-                    EventType = ChatEventType.UserJoined,
-                    ChatRoomId = guid,
-                    Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
-                };
 
-                var testChatEvent = new TestChatEvent
-                {
-                    ChatEvent = chatEvent,
-                    ChatRoomName = chatRoomName
-                };
+                var testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, chatRoomName, guid);
 
-                await _chatEventRepository.AddAsync(chatEvent);
+                await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
                 await Groups.AddToGroupAsync(Context.ConnectionId, guid.ToString());
 
                 await SendEventToGroupAsync(testChatEvent);
+
+                AppLogger.DebugState("ChatHub.JoinChatRoom", $"User successfully joined Chat Room ID: {ChatRoom.ChatRoomId}. Event broadcasted to group.");
             }
             catch (Exception ex)
             {
+                AppLogger.ShieldFailure("ChatHub.JoinChatRoom", ex);
                 await SendErrorToClientAsync($"Internal Error: {ex.Message}");
             }
         }
 
         public async Task LeaveChatRoom(ChatRoom ChatRoom)
         {
+            AppLogger.DebugState("ChatHub.LeaveChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to leave Chat Room ID: {ChatRoom.ChatRoomId}");
             try
-            { 
-                if (ChatRoom.ChatRoomId == default || !_testChatRoomRepository.ChatRoomExists(ChatRoom.ChatRoomId))
+            {
+                var guid = ChatRoom.ChatRoomId;
+                string chatRoomName = _testChatRoomRepository.GetChatRoomName(guid) ?? "UnnamedChatRoom";
+
+                if (guid == default || !_testChatRoomRepository.ChatRoomExists(guid))
                 {
                     await SendErrorToClientAsync("Chat room does not exist.");
                     return;
                 }
 
-                string chatRoomName = _testChatRoomRepository.GetChatRoomName(ChatRoom.ChatRoomId) ?? "UnnamedChatRoom";
+                var testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, chatRoomName, guid);
 
-                var chatEvent = new ChatEvent
-                {
-                    EventType = ChatEventType.UserLeft,
-                    ChatRoomId = ChatRoom.ChatRoomId,
-                    Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
-                };
+                await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
-                var testChatEvent = new TestChatEvent
-                {
-                    ChatEvent = chatEvent,
-                    ChatRoomName = chatRoomName
-                };
-
-                await _chatEventRepository.AddAsync(chatEvent);
-
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, ChatRoom.ChatRoomId.ToString());
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, guid.ToString());
 
                 await SendEventToCallerUserAsync(testChatEvent);
 
                 await SendEventToGroupAsync(testChatEvent);
+
+                AppLogger.DebugState("ChatHub.LeaveChatRoom", $"User successfully left Chat Room ID: {ChatRoom.ChatRoomId}. Event broadcasted to group and caller.");
             }
             catch (Exception ex)
             {
+                AppLogger.ShieldFailure("ChatHub.LeaveChatRoom", ex);
                 await SendErrorToClientAsync($"Internal Error: {ex.Message}");
             }
         }
 
         public async Task SendMessageToChatRoom(TestSendMessageToChatRoom testSendMessageToChatRoom)
         {
+            AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to send a message to Chat Room ID: {testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId}");
             try
             {
-                var message = new Message
-                {
-                    ChatRoomId = testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId,
-                    Content = testSendMessageToChatRoom.SendMessageToChatRoom.Content, 
-                    SenderId = GetUserId()
-                };
+                var testMessage = ConstructMessageDto(testSendMessageToChatRoom);
 
-                await _messageRepository.AddAsync(message);
-
-                // Find ChatRoom by ChatRoomId.
-
-                var testMessage = new TestMessage
-                {
-                    Message = message,
-                    ChatRoomName = _testChatRoomRepository.GetChatRoomName(message.ChatRoomId) ?? "UnknownChatRoom",
-                    SenderUsername = GetUsername()
-                };
+                await _messageRepository.AddAsync(testMessage.Message);
 
                 await SendMessageToGroupAsync(testMessage);
+
+                AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"Message successfully sent to Chat Room ID: {testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId} and stored in database.");
             }
             catch (Exception ex)
             {
+                AppLogger.ShieldFailure("ChatHub.SendMessageToChatRoom", ex);
                 await SendErrorToClientAsync($"Internal Error: {ex.Message}");
             }
         }

@@ -1,7 +1,13 @@
-﻿using Backend.API.src.Infrastructure.Persistence.Repositories;
+﻿// -------------------------------------------------------------------
+//  Project: Network Chat App
+//  Engineer: Ian Milin
+//  Date: April 20 2026
+//  Description: Controller for managing chat history, messages, and chat rooms
+// -------------------------------------------------------------------
+
+using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.API.src.API.Controllers

@@ -30,28 +30,33 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
             AppLogger.DebugState("MessageRepository", $"Adding new message with Sender ID {message.SenderId} to Room ID {message.ChatRoomId}");
 
             await _context.Messages.InsertOneAsync(message);
+            AppLogger.DataStore("Insert", "Messages", true);
         }
 
-        public async Task RemoveAsync(Message message)
+        public async Task DeleteAsync(Message message)
         {
             AppLogger.DebugState("MessageRepository", "Removing Message");
             AppLogger.DebugState("MessageRepository", $"Removing message with Sender ID {message.SenderId} from Room ID {message.ChatRoomId}");
 
             await _context.Messages.DeleteOneAsync(m => m.Id == message.Id);
+            AppLogger.DataStore("Delete", "Messages", true);
         }
 
         public async Task<List<Message>> GetAllMessagesAsync()
         {
+            AppLogger.DebugState("MessageRepository", "Retrieving all messages");
             return await _context.Messages.Find(_ => true).ToListAsync();
         }
 
         public async Task<List<Message>> GetMessagesByRoomIdAsync(Guid roomId)
         {
+            AppLogger.DebugState("MessageRepository", $"Retrieving messages for Room ID {roomId}");
             return await _context.Messages.Find(m => m.ChatRoomId == roomId).ToListAsync();
         }
 
         public async Task<Message?> GetMessageByIdAsync(string id)
         {
+            AppLogger.DebugState("MessageRepository", $"Retrieving message with ID {id}");
             return await _context.Messages.Find(m => m.Id == id).FirstOrDefaultAsync();
         }
 
