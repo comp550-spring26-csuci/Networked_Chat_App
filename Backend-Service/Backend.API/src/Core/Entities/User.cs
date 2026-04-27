@@ -15,7 +15,7 @@ using Backend.API.src.Core.Logging;
 namespace Backend.API.src.Core.Entities
 {
     /// <summary>
-    /// This class implements IUser
+    /// This class implementes IUser
     /// </summary>
     public class User : IUser
     {

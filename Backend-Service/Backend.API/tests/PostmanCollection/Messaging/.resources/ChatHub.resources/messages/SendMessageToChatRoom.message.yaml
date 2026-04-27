@@ -1,0 +1,30 @@
+$kind: websocket-message
+content: "{
+
+  \    \"arguments\":[
+
+  \        {
+
+  \            \"SendMessageToChatRoom\": {
+
+  \                \"ChatRoomId\": \"{{target_chatroom_id}}\",
+
+  \                \"Content\": \"{{message}}\"
+
+  \            },
+
+  \            \"SenderUsername\": \"{{username}}\"
+
+  \        }
+
+  \    ],
+
+  \    \"invocationId\":\"0\",
+
+  \    \"target\":\"SendMessageToChatRoom\",
+
+  \    \"type\":1
+
+  }\x1e"
+contentType: json
+order: 4446639385476503

@@ -1,12 +1,23 @@
-using Microsoft.EntityFrameworkCore;
-using Backend.API.src.Infrastructure.Persistence;
-using Backend.API.src.Core.Interface;
-using Backend.API.src.Infrastructure.Persistence.Repositories;
-using Serilog;
-using FluentValidation;
+// --- YOUR NAMESPACES (Commented out for Ian) ---
 using Backend.API.src.Application.Validators;
 using Backend.API.src.Application.Services;
 
+//Messaging & Security Namespaces
+using Backend.API.src.API.Hubs;
+using Backend.API.src.Application.Services;
+using Backend.API.src.Core.Interface;
+using Backend.API.src.Infrastructure.Persistence;
+using Backend.API.src.Infrastructure.Persistence.Repositories;
+using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using Serilog;
+using System.Text;
 
 namespace Backend.API
 {
@@ -14,98 +25,124 @@ namespace Backend.API
     {
         public static void Main(string[] args)
         {
-
-            // Initiating the Serilog
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug() // allowing debug level
-                .WriteTo.Console() //logging to terminal
-                .WriteTo.File("logs/network-chat-log.txt", rollingInterval: RollingInterval.Day) // log to file
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/network-chat-log.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
             try
             {
-
                 var builder = WebApplication.CreateBuilder(args);
-
                 builder.Host.UseSerilog();
 
-
-                // Fetching the map from appsettings.json
+                // --- 2. DATABASE CONFIGURATION ---
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-                Console.WriteLine($"---> DATABASE CONNECTION STRING: '{connectionString}'");
-
-                // Directions to use PostgreSQL and your AppDbContext
                 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-                // Adding the IUserRepository and UserRepository
+                var mongoDbSettings = builder.Configuration.GetSection("MongoDB");
+                builder.Services.Configure<MongoDbSettings>(mongoDbSettings);
+                builder.Services.AddSingleton<MongoDbContext>();
+                BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
+
+                // --- 3. DEPENDENCY INJECTION ---
+
+                // --- User Services
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-                // Adding the AuthService
                 builder.Services.AddScoped<IAuthService, AuthService>();
-
-                // Adding the Validator to the Application Container
-                // It scans the folder and registers the CreateAccountValidator
                 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
 
-                // Add services to the container.
-                builder.Services.AddControllers();
+                // Messaging Services 
+                builder.Services.AddScoped<MessageRepository>();
+                builder.Services.AddScoped<ChatEventRepository>();
+                builder.Services.AddScoped<TestChatRoomRepository>();
 
-                // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-                // Prepares the map
+                // --- COMPATIBILITY FIX ---
+                var jwtSection = builder.Configuration.GetSection("JwtSettings");
+                var issuer = jwtSection["Issuer"] ?? "ChatApp";
+                var audience = jwtSection["Audience"] ?? "ChatAppUsers";
+                var jwtKeyString = jwtSection["Key"] ?? "SecretDevelopmentKey1234567890";
+
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKeyString));
+                var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+
+                builder.Services.AddSingleton(signingCredentials);
+                builder.Services.AddSingleton(issuer);
+                builder.Services.AddSingleton(audience);
+
+                builder.Services.AddTransient<JwtTokenService>(provider => new JwtTokenService(signingCredentials, issuer, audience));
+                // --- ---
+
+                builder.Services.AddControllers();
+                builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; });
                 builder.Services.AddOpenApi();
 
-                // Connecting with front end
                 builder.Services.AddCors(options =>
                 {
-                    options.AddPolicy("AllowFrontend", Policy =>
+                    options.AddPolicy("AllowEverything", policy =>
                     {
-                        Policy.AllowAnyOrigin()
-                              .AllowAnyHeader()
-                              .AllowAnyMethod();
+                        policy.SetIsOriginAllowed(_ => true)
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowCredentials();
                     });
+                });
 
+                // --- 5. JWT SECURITY DEFINITION ---
+                builder.Services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = issuer,
+                        ValidAudience = audience,
+                        IssuerSigningKey = securityKey
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
                 var app = builder.Build();
 
-                // Configure the HTTP request pipeline.
-                if (app.Environment.IsDevelopment())
-                {
-                    // Creates the JSON file
-                    app.MapOpenApi();
-
-                }
+                if (app.Environment.IsDevelopment()) { app.MapOpenApi(); }
 
                 app.UseHttpsRedirection();
+                app.UseCors("AllowEverything");
 
-
-                app.UseCors("AllowFrontend");
-
-
-                app.UseAuthorization();
-
+                app.UseWhen(context => context.Request.Path.StartsWithSegments("/chathub"), appBuilder =>
+                {
+                    appBuilder.UseAuthentication();
+                    appBuilder.UseAuthorization();
+                });
 
                 app.MapControllers();
-
+                app.MapHub<ChatHub>("/chathub");
 
                 app.Run();
-
             }
-
-            catch (Exception ex)
-            {
-
-                Log.Fatal(ex, "There was an issue starting the application");
-
-            }
-
-            finally
-            {
-                // all logs will be written before the app closes
-                Log.CloseAndFlush();
-
-            }
-
+            catch (Exception ex) { Log.Fatal(ex, "App failed to start"); }
+            finally { Log.CloseAndFlush(); }
         }
     }
 }

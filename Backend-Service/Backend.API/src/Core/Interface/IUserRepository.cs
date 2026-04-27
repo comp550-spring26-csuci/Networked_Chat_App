@@ -8,7 +8,6 @@
 
 
 using System;
-using System.Collections.Generic;
 using Backend.API.src.Core.Entities;
 using System.Threading.Tasks;
 
@@ -22,37 +21,22 @@ namespace Backend.API.src.Core.Interface
     {
         // CRUD operations (create, read, update, delete)
 
-
-        // CREATE --------------------------------------
+        // CREATE
         Task AddAsync(User user);
 
-
-        // READ -----------------------------------------
+        // READ
         Task<User?> GetByIdAsync(Guid id);
-
         Task<User?> GetByEmailAsync(string email);
-
-        // Used during login
         Task<User?> GetByUsernameAsync(string username);
-
-        // Used to verify username exists
-        Task<bool> UsernameExistsAsync(string username);
-
-        // Used to verify the email already exist
-        Task<bool> EmailExistsAsync(string email);
-
         Task<IEnumerable<User>> GetAllAsync();
 
-
-        // UPDATE --------------------------------------
+        // UPDATE
         void Update(User user);
 
-
-        // DELETE --------------------------------------
+        // DELETE
         void Delete(User user);
 
-
-        // COMMIT (saving it to the physical DB) -------
+        // COMMIT (saving it to the physical DB)
         Task<bool> SaveChangesAsync();
 
 

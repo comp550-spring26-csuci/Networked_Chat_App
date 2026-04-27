@@ -52,38 +52,12 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
         }
 
-
-        // READ: Find by Username (used for login/auth)
-        public async Task<User?> GetByUsernameAsync(string username) 
+        public async Task<User?> GetByUsernameAsync(string username)
         {
             AppLogger.DebugState("UserRepository", "Find User by username");
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
-        
         }
-
-
-        // READ: Check if Username already exists (used for registration)
-        public async Task<bool> UsernameExistsAsync(string username)
-        {
-            AppLogger.DebugState("UserRepository", "Checking if Username exists");
-            // AnyAsync optimized for returning a simple true/false
-            return await _context.Users
-                .AnyAsync(u => u.Username.ToLower() == username.ToLower());
-
-        }
-
-
-        // READ: Check if Email already exists (used for registration)
-        public async Task<bool> EmailExistsAsync(string email)
-        {
-            AppLogger.DebugState("UserRepository", "Checking if Email exists");
-            // AnyAsync optimized for returning a simple true/false
-            return await _context.Users
-                .AnyAsync(u => u.Email.ToLower() == email.ToLower());
-
-        }
-
 
 
         // READ: Get all users

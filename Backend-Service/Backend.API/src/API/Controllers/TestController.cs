@@ -7,12 +7,13 @@
 // -------------------------------------------------------------------
 
 
-using Microsoft.AspNetCore.Mvc;
+using Backend.API.src.Application.DTOs;
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
 using FluentValidation;
-using Backend.API.src.Application.DTOs;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Backend.API.src.API.Controllers
 
         // Injection of UserRepository, the validator, and AuthService
         public TestController(
-            IUserRepository userRepository, 
+            IUserRepository userRepository,
             IValidator<CreateAccountRequest> validator,
             IAuthService authService,
             IValidator<LoginRequest> loginValidator)
@@ -49,7 +50,7 @@ namespace Backend.API.src.API.Controllers
         // -------------------------------------
 
         [HttpPost("create-account")]
-        public async Task<IActionResult> CreateAccount([FromBody]CreateAccountRequest request)
+        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
         {
             AppLogger.DebugState("TestController", $"Account creation request initiated for: {request.Email}");
 
@@ -64,7 +65,7 @@ namespace Backend.API.src.API.Controllers
                     AppLogger.DebugState("TestController", $"Validation failed for {request.Email}, Reasons: {errorMessages}");
 
                     return BadRequest(validationResult.Errors);
-            
+
                 }
 
 
@@ -83,14 +84,14 @@ namespace Backend.API.src.API.Controllers
                 AppLogger.UserAction(authResult.CreatedUser!.Id.ToString(), "The account was created after being validated securely.");
                 return Ok(new { Message = "Welcome!. The account was created successfully.", UserId = authResult.CreatedUser.Id });
 
-            } 
+            }
             catch (Exception ex)
             {
                 AppLogger.ShieldFailure("testController", ex);
                 return StatusCode(500, $"Internal Error: {ex.Message}");
 
             }
-            
+
         }
 
 
