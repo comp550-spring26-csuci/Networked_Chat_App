@@ -19,6 +19,7 @@ namespace Backend.API
     {
         public static void Main(string[] args)
         {
+
             // Initiating the Serilog
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug() // allowing debug level
@@ -28,6 +29,7 @@ namespace Backend.API
 
             try
             {
+
                 var builder = WebApplication.CreateBuilder(args);
 
                 builder.Host.UseSerilog();
@@ -125,12 +127,6 @@ namespace Backend.API
 
                 var app = builder.Build();
 
-                using (var scope = app.Services.CreateScope())
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    dbContext.Database.Migrate();
-                }
-
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
                 {
@@ -143,6 +139,9 @@ namespace Backend.API
 
                 app.UseCors("AllowFrontend");
 
+                app.UseCors("AllowFrontend");
+
+
                 app.UseAuthorization();
 
                 // Added route to connect to a hub
@@ -152,6 +151,7 @@ namespace Backend.API
 
 
                 app.Run();
+
             }
 
             catch (Exception ex)
@@ -167,6 +167,7 @@ namespace Backend.API
                 Log.CloseAndFlush();
 
             }
+
         }
     }
 }

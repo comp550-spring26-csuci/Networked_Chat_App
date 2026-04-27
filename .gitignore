@@ -41,7 +41,7 @@ coverage/
 *.swo
 
 # =========================
-# OPERATING SYSTEM
+# OPERATIVE SYSTEM
 # =========================
 .DS_Store
 Thumbs.db
