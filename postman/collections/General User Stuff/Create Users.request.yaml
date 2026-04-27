@@ -1,6 +1,6 @@
 $kind: http-request
 name: Create Users
-url: https://localhost:7081/api/test/seed-create-users
+url: https://localhost:7081/api/testdm/seed-create-users
 method: POST
 body:
   type: json
