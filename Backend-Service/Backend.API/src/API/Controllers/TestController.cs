@@ -2,16 +2,21 @@
 //  Project: Network Chat App
 //  Engineer: Ivana Bavin-Gomez-San Basilio
 //  Date: March 7th 2026
-//  Description: Smoke test for the UserRepository
-//		functions
+//  Description: S,moke test for the UserRepository
+//		fucntions
 // -------------------------------------------------------------------
 
 
-using Microsoft.AspNetCore.Mvc;
+using Backend.API.src.Application.DTOs;
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
-using Backend.API.src.Application.Services;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 
 namespace Backend.API.src.API.Controllers
@@ -21,183 +26,158 @@ namespace Backend.API.src.API.Controllers
     public class TestController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly JwtTokenService _tokenService;
+        private readonly IValidator<CreateAccountRequest> _validator;
+        private readonly IAuthService _authService;
+        private readonly IValidator<LoginRequest> _loginValidator;
 
-        // Injection of UserRepository
-        public TestController(IUserRepository userRepository, JwtTokenService tokenService)
+        // Injection of UserRepository, the validator, and AuthService
+        public TestController(
+            IUserRepository userRepository,
+            IValidator<CreateAccountRequest> validator,
+            IAuthService authService,
+            IValidator<LoginRequest> loginValidator)
         {
 
             _userRepository = userRepository;
-            _tokenService = tokenService;
+            _validator = validator;
+            _authService = authService;
+            _loginValidator = loginValidator;
         }
 
-        // Pretending this is what client would use to log in after they've created an account
-        public class TestUserDto
-        {
-            public string? Email { get; set; }
-            public string? Password { get; set; }
-        }
 
-        // Testing POST for creating a new user
-        [HttpPost("seed-create-users")]
-        public async Task<IActionResult> SeedCreateUsers()
+        // -------------------------------------
+        // *****VALIDATED ACCOUNT CREATION******
+        // -------------------------------------
+
+        [HttpPost("create-account")]
+        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
         {
-            AppLogger.DebugState("TestController", "Seed attempt started");
+            AppLogger.DebugState("TestController", $"Account creation request initiated for: {request.Email}");
 
             try
             {
-                bool updateSuccess = false;
-                foreach (var UserName in new[] { "ian", "kenneth", "brielle", "ivana" })
+                // 1. Validate the incoming data (DTO envelope)
+                var validationResult = await _validator.ValidateAsync(request);
+
+                if (!validationResult.IsValid)
                 {
-                    var oldUser = await _userRepository.GetByEmailAsync($"{UserName}@chat.com");
+                    var errorMessages = string.Join(" | ", validationResult.Errors.Select(equals => equals.ErrorMessage));
+                    AppLogger.DebugState("TestController", $"Validation failed for {request.Email}, Reasons: {errorMessages}");
 
-                    var success = false;
+                    return BadRequest(validationResult.Errors);
 
-                    User testUser;
-
-                    if (oldUser != null && oldUser.Username != UserName)
-                    {
-                        _userRepository.Delete(oldUser);
-
-                        // Committing to PostgreSQL databas
-                        success = await _userRepository.SaveChangesAsync();
-
-                        oldUser = null;
-                    }
-
-                    if (oldUser == null)
-                    {
-                        // Creating a dummy user
-                        testUser = new User(UserName, $"{UserName}@chat.com", "HashedPassword1232");
-
-                        // Using the repository to add them
-                        await _userRepository.AddAsync(testUser);
-
-                        // Committing to PostgreSQL database
-                        success = await _userRepository.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        testUser = oldUser;
-                    }
-
-                    if (success || testUser == oldUser)
-                    {
-                        if (testUser == oldUser)
-                        {
-                            AppLogger.DebugState("TestController", "User already exists, skipping creation");
-                        }
-                        else
-                        {
-                            AppLogger.UserAction(testUser.Id.ToString(), "Created via Test Seed");
-                        }
-                    }
-
-                    if (success)
-                    {
-                        updateSuccess = true;
-                    }
                 }
 
-                if (updateSuccess)
+
+                // 2. Delegating the creation and validation of dulicates to the AuthService
+                var authResult = await _authService.CheckAndRegisterUserAsync(request.Username, request.Email, request.Password);
+
+                // 3. We verify if there was a conflict (e.g. if user already exists)
+                if (!authResult.IsSuccess)
                 {
-                    return Ok(new { message = "Users seeded successfully with updates." });
+                    AppLogger.DebugState("TestController", $"Business validation failed: {authResult.ErrorMessage}");
+                    // We return error 409 conflict with the message
+                    return Conflict(new { Message = authResult.ErrorMessage });
                 }
-                else
-                {
-                    return Ok(new { message = "Users seeded successfully without updates." });
-                }
+
+                // 4. Success
+                AppLogger.UserAction(authResult.CreatedUser!.Id.ToString(), "The account was created after being validated securely.");
+                return Ok(new { Message = "Welcome!. The account was created successfully.", UserId = authResult.CreatedUser.Id });
+
             }
             catch (Exception ex)
             {
-                AppLogger.ShieldFailure("TestCOntroller", ex);
-                return StatusCode(500, $"Interal Error: {ex.Message}");
+                AppLogger.ShieldFailure("testController", ex);
+                return StatusCode(500, $"Internal Error: {ex.Message}");
+
             }
+
         }
 
-        // Testing POST for creating a new user
-        [HttpPost("seed-user")]
-        public async Task<IActionResult> SeedUser(string UserName = "testAdmin2", bool OverWrite = true)
+
+        // -------------------------------------
+        // *********** USER LOGIN **************
+        // -------------------------------------
+
+        [HttpPost("login")]
+        // We use the class LoginRequest
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            AppLogger.DebugState("TestController", "Seed attempt started");
 
-            switch (UserName)
+            // We check if the request is empty or invalid before even touching the data
+            var validationResult = await _loginValidator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
             {
-                case "ian":
-                case "kenneth":
-                case "brielle":
-                case "ivana":
-                    break;
-                default:
-                    return BadRequest("Invalid username. Please use 'ian', 'kenneth', 'brielle', or 'ivana'.");
+                AppLogger.DebugState("testController", "Login blocked: Empty or invalid fields provided.");
+                return BadRequest(validationResult.Errors);
             }
 
-            if (OverWrite == true)
-            {
-                return BadRequest("OverWrite is set to true, which will delete existing user. Please set to false if you do not want to overwrite.");
-            }
+            AppLogger.DebugState("TestController", $"Login attempt initiated for user: {request.Username}");
 
             try
             {
-                var oldUser = await _userRepository.GetByEmailAsync($"{UserName}@chat.com");
+                // 1. Passing the data from the LoginRequest to the AuthService
+                // the AuthService class will communicate with teh database
+                var authResult = await _authService.ValidateLoginAsync(request.Username, request.Password);
 
-                var success = false;
-
-                User testUser;
-
-                if (oldUser != null && OverWrite)
+                // 2. We Check if all was successful
+                if (!authResult.IsSuccess)
                 {
-                    _userRepository.Delete(oldUser);
-
-                    // Committing to PostgreSQL databas
-                    success = await _userRepository.SaveChangesAsync();
+                    AppLogger.DebugState("testController", $"Login rejected: {authResult.ErrorMessage}");
+                    return Unauthorized(new { Message = authResult.ErrorMessage });
                 }
 
-                if (oldUser == null || OverWrite)
-                { 
-                    // Creating a dummy user
-                    testUser = new User(UserName, $"{UserName}@chat.com", "HashedPassword1232");
+                // 3. If everything is successful we return a success message
+                AppLogger.UserAction(authResult.CreatedUser!.Id.ToString(), "User logged in successfully.");
 
-                    // Using the repository to add them
-                    await _userRepository.AddAsync(testUser);
 
-                    // Committing to PostgreSQL database
-                    success = await _userRepository.SaveChangesAsync();
-                }
-                else 
+                return Ok(new
                 {
-                    testUser = oldUser;
+                    Message = "Login successful! Welcome back.",
+                    UserId = authResult.CreatedUser.Id
                 }
+                );
 
-                if (success || testUser == oldUser)
+            }
+            catch (Exception ex)
+            {
+                AppLogger.ShieldFailure("TestController", ex);
+                return StatusCode(500, $"Internal Error: {ex.Message}");
+            }
+
+        }
+
+
+
+
+        // -------------------------------------
+        // *********** SMOKE TESTS**************
+        // -------------------------------------
+
+        // Testing POST for creating a new user
+        [HttpPost("seed-user")]
+        public async Task<IActionResult> SeedUser()
+        {
+            AppLogger.DebugState("TestController", "Seed attempt started");
+
+            try
+            {
+
+                // Creating a dummy user
+                var testUser = new User("testAdmi8", "test8@chat.com", "HashedPassword1328");
+
+                // Using the repository to add them
+                await _userRepository.AddAsync(testUser);
+
+                // Committing to PostgreSQL database
+                var success = await _userRepository.SaveChangesAsync();
+
+                if (success)
                 {
-                    if (testUser == oldUser)
-                    {
-                        // AppLogger.DebugState("TestController", "User already exists, skipping creation");
-                    }
-                    else
-                    {
-                        AppLogger.UserAction(testUser.Id.ToString(), "Created via Test Seed");
-                    }
+                    AppLogger.UserAction(testUser.Id.ToString(), "Created via Test Seed");
+                    return Ok(new { Message = "User created successfully!", UserId = testUser.Id });
 
-                    // Log in
-
-                    TestUserDto loginDto = new TestUserDto
-                    {
-                        Email = $"{UserName}@chat.com",
-                        Password = "HashedPassword1232"
-                    };
-
-                    var user = await _userRepository.GetByEmailAsync(loginDto.Email);
-
-                    if (user == null)
-                    {
-                        return NotFound("User not found");
-                    }
-
-                    var token = _tokenService.GenerateToken(user, TimeSpan.FromHours(24));
-
-                    return Ok(new { token, userId = user.Id, username = user.Username });
                 }
 
                 return BadRequest("Failed to save user to database");
@@ -208,13 +188,13 @@ namespace Backend.API.src.API.Controllers
                 return StatusCode(500, $"Interal Error: {ex.Message}");
 
             }
+
         }
 
         // Testing GET to see all the users
         [HttpGet("all-users")]
         public async Task<IActionResult> GetAllUsers()
         {
-            AppLogger.DebugState("TestController", "GetAllUsers attempt started");
             try
             {
                 //Asking the dabase for all the users
@@ -236,23 +216,5 @@ namespace Backend.API.src.API.Controllers
 
         }
 
-        [HttpGet("user-by-username")]
-        public async Task<IActionResult> GetUserByUsername(string Username)
-        {
-            try
-            {
-                var user = await _userRepository.GetByUsernameAsync(Username);
-                if (user == null)
-                {
-                    return NotFound($"No user found with username: {Username}");
-                }
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                AppLogger.ShieldFailure("TestController", ex);
-                return StatusCode(500, $"Internal Error: {ex.Message}");
-            }
-        }
     }
 }

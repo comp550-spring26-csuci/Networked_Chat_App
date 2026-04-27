@@ -1,8 +1,8 @@
 // --- YOUR NAMESPACES (Commented out for Ian) ---
-// using Backend.API.src.Application.Validators;
-// using Backend.API.src.Application.Services;
+using Backend.API.src.Application.Validators;
+using Backend.API.src.Application.Services;
 
-// Messaging & Security Namespaces
+//Messaging & Security Namespaces
 using Backend.API.src.API.Hubs;
 using Backend.API.src.Application.Services;
 using Backend.API.src.Core.Interface;
@@ -50,8 +50,8 @@ namespace Backend.API
 
                 // --- User Services
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
-                // builder.Services.AddScoped<IAuthService, AuthService>();
-                // builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
+                builder.Services.AddScoped<IAuthService, AuthService>();
+                builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
 
                 // Messaging Services 
                 builder.Services.AddScoped<MessageRepository>();
@@ -72,7 +72,6 @@ namespace Backend.API
                 builder.Services.AddSingleton(audience);
 
                 builder.Services.AddTransient<JwtTokenService>(provider => new JwtTokenService(signingCredentials, issuer, audience));
-                // builder.Services.AddTransient<JwtTokenService>();
                 // --- ---
 
                 builder.Services.AddControllers();
