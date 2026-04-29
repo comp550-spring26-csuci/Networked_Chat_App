@@ -8,6 +8,7 @@ npm install
 ```
 To start the vite server and run the frontend in browser, use:
 ```
+npm run build
 npm run dev:react
 ```
 To run the frontend as an electron app window after starting the vite server, use:
