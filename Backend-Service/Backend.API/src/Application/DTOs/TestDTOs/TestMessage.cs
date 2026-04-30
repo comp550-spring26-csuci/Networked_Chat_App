@@ -1,0 +1,38 @@
+﻿// --------------------------------------------
+//  Project: Network Chat App
+//  Engineer: Ian Milin
+//  Date: April 11 2026
+//  Description: More verbose DTO envelope for a message, containing the Message object, the username of the sender,
+//  and the name of the chat room. This is used for testing purposes to ensure that the correct data is being sent
+//  from the client to the server when a message is sent.
+// --------------------------------------------
+
+using Backend.API.src.Core.Entities;
+
+namespace Backend.API.src.Application.DTOs.TestDTOs
+{
+    public class TestMessage
+    {
+        private Message _message = null!;
+        private string? _chatRoomName;
+        private string? _senderUsername;
+
+        public Message Message
+        {
+            get => _message;
+            set => _message = value;
+        }
+
+        public string? ChatRoomName
+        {
+            get => _chatRoomName;
+            set => _chatRoomName = value;
+        }
+
+        public string? SenderUsername
+        {
+            get => _senderUsername;
+            set => _senderUsername = value;
+        }
+    }
+}

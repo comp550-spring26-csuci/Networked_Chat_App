@@ -1,5 +1,103 @@
 [
   {
+    "ContainingType": "Backend.API.src.API.Controllers.ChatHistoryController",
+    "Method": "Index",
+    "RelativePath": "api/ChatHistory",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.ChatHistoryController",
+    "Method": "GetMessageById",
+    "RelativePath": "api/ChatHistory/message/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.ChatHistoryController",
+    "Method": "GetAllMessages",
+    "RelativePath": "api/ChatHistory/messages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.ChatHistoryController",
+    "Method": "GetEventsByRoomId",
+    "RelativePath": "api/ChatHistory/room/{roomId}/events",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.ChatHistoryController",
+    "Method": "GetMessagesByRoomId",
+    "RelativePath": "api/ChatHistory/room/{roomId}/messages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roomId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.ChatHistoryController",
+    "Method": "GetAllChatRooms",
+    "RelativePath": "api/ChatHistory/rooms",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.ChatHistoryController",
+    "Method": "GetMyUserId",
+    "RelativePath": "api/ChatHistory/user/mine/id",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.ChatHistoryController",
+    "Method": "GetMyChatRooms",
+    "RelativePath": "api/ChatHistory/user/mine/rooms",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Backend.API.src.API.Controllers.TestController",
     "Method": "GetAllUsers",
     "RelativePath": "api/Test/all-users",
@@ -49,6 +147,37 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.TestDmController",
+    "Method": "SeedCreateUsers",
+    "RelativePath": "api/TestDm/seed-create-users",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.API.src.API.Controllers.TestDmController",
+    "Method": "SeedUser",
+    "RelativePath": "api/TestDm/seed-user",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "OverWrite",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   }
 ]

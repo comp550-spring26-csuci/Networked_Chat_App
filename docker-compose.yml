@@ -12,7 +12,19 @@ services:
       - "5432:5432" # Mapping computer's port to container's port
     volumes:
       - postgres_data:/var/lib/postgresql/data # Saves the data so that it is not deleting when Docker stops
+      
+  mongodb:
+    image: mongo:6-jammy
+    container_name: network_chat_history_db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: network_app_550
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/var/lib/mongodb/data
 
 volumes:
   postgres_data:  
+  mongodb_data:
     

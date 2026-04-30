@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Backend.API.csproj": {}
+    "C:\\Users\\ianmilin\\source\\repos\\Feature-28-34-Networked_Chat_App\\Networked_Chat_App\\Backend-Service\\Backend.API\\Backend.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Backend.API.csproj": {
+    "C:\\Users\\ianmilin\\source\\repos\\Feature-28-34-Networked_Chat_App\\Networked_Chat_App\\Backend-Service\\Backend.API\\Backend.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Backend.API.csproj",
+        "projectUniqueName": "C:\\Users\\ianmilin\\source\\repos\\Feature-28-34-Networked_Chat_App\\Networked_Chat_App\\Backend-Service\\Backend.API\\Backend.API.csproj",
         "projectName": "Backend.API",
-        "projectPath": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\Backend.API.csproj",
-        "packagesPath": "C:\\Users\\shaan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\shaan\\OneDrive\\Documents\\GitHub\\NetworkAppProject\\Networked_Chat_App\\Backend-Service\\Backend.API\\obj\\",
+        "projectPath": "C:\\Users\\ianmilin\\source\\repos\\Feature-28-34-Networked_Chat_App\\Networked_Chat_App\\Backend-Service\\Backend.API\\Backend.API.csproj",
+        "packagesPath": "C:\\Users\\ianmilin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ianmilin\\source\\repos\\Feature-28-34-Networked_Chat_App\\Networked_Chat_App\\Backend-Service\\Backend.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\shaan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ianmilin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,11 +26,11 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -45,15 +45,20 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.100"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "FluentValidation.DependencyInjectionExtensions": {
               "target": "Package",
               "version": "[12.1.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[10.0.7, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
@@ -80,6 +85,10 @@
             "Serilog.Sinks.Console": {
               "target": "Package",
               "version": "[6.1.1, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.17.0, )"
             }
           },
           "imports": [
@@ -101,7 +110,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
