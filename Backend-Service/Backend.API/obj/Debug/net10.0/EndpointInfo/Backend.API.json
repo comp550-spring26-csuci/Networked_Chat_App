@@ -10,6 +10,134 @@
     }
   ],
   "paths": {
+    "/api/ChatHistory": {
+      "get": {
+        "tags": [
+          "ChatHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ChatHistory/room/{roomId}/messages": {
+      "get": {
+        "tags": [
+          "ChatHistory"
+        ],
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ChatHistory/room/{roomId}/events": {
+      "get": {
+        "tags": [
+          "ChatHistory"
+        ],
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ChatHistory/message/{id}": {
+      "get": {
+        "tags": [
+          "ChatHistory"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ChatHistory/rooms": {
+      "get": {
+        "tags": [
+          "ChatHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ChatHistory/user/mine/rooms": {
+      "get": {
+        "tags": [
+          "ChatHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ChatHistory/user/mine/id": {
+      "get": {
+        "tags": [
+          "ChatHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/ChatHistory/messages": {
+      "get": {
+        "tags": [
+          "ChatHistory"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Test/create-account": {
       "post": {
         "tags": [
@@ -97,6 +225,48 @@
           }
         }
       }
+    },
+    "/api/TestDm/seed-create-users": {
+      "post": {
+        "tags": [
+          "TestDm"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/TestDm/seed-user": {
+      "post": {
+        "tags": [
+          "TestDm"
+        ],
+        "parameters": [
+          {
+            "name": "UserName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "testAdmin2"
+            }
+          },
+          {
+            "name": "OverWrite",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -138,7 +308,13 @@
   },
   "tags": [
     {
+      "name": "ChatHistory"
+    },
+    {
       "name": "Test"
+    },
+    {
+      "name": "TestDm"
     }
   ]
 }
