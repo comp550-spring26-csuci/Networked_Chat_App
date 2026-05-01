@@ -1,6 +1,4 @@
-// --- YOUR NAMESPACES (Commented out for Ian) ---
-using Backend.API.src.Application.Validators;
-using Backend.API.src.Application.Services;
+//using Backend.API.src.Application.Validators;
 
 //Messaging & Security Namespaces
 using Backend.API.src.API.Hubs;
@@ -9,8 +7,9 @@ using Backend.API.src.Core.Interface;
 using Backend.API.src.Infrastructure.Persistence;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
-using FluentValidation;
+//using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
@@ -50,8 +49,8 @@ namespace Backend.API
 
                 // --- User Services
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
-                builder.Services.AddScoped<IAuthService, AuthService>();
-                builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
+                //builder.Services.AddScoped<IAuthService, AuthService>();
+                //builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
 
                 // Messaging Services 
                 builder.Services.AddScoped<MessageRepository>();
@@ -122,6 +121,20 @@ namespace Backend.API
                         }
                     };
                 });
+
+                
+                var devTunnelUrl = Environment.GetEnvironmentVariable("VS_TUNNEL_URL");
+
+                if (!string.IsNullOrEmpty(devTunnelUrl))
+                {
+                    builder.WebHost.ConfigureKestrel(options =>
+                    {
+                        options.ConfigureEndpointDefaults(listenOptions =>
+                        {
+                            listenOptions.Protocols = HttpProtocols.Http1;
+                        });
+                    });
+                }
 
                 var app = builder.Build();
 

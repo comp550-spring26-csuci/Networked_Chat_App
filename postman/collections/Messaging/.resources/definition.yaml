@@ -1,8 +1,0 @@
-$kind: collection
-id: 1558CDAFAaBFD967eb2ee829
-name: Messaging
-variables:
-  username: ""
-  access_token: ""
-  target_chatroom_id: ""
-  message: ""

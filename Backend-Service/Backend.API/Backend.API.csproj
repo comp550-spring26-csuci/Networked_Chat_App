@@ -23,15 +23,6 @@
 
 	<ItemGroup>
 	  <Folder Include="src\Application\Validators\" />
-	  <Folder Include="tests\PostmanCollection\Messaging\.resources\Login User.resources\examples\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="tests\PostmanCollection\Messaging\.resources\ChatHub.resources\messages\JoinChatRoom.message.yaml" />
-	  <None Include="tests\PostmanCollection\Messaging\.resources\ChatHub.resources\messages\LeaveChatRoom.message.yaml" />
-	  <None Include="tests\PostmanCollection\Messaging\.resources\ChatHub.resources\messages\Protocol.message.yaml" />
-	  <None Include="tests\PostmanCollection\Messaging\.resources\ChatHub.resources\messages\SendMessageToChatRoom.message.yaml" />
-	  <None Include="tests\PostmanCollection\Messaging\.resources\definition.yaml" />
 	</ItemGroup>
 
 </Project>

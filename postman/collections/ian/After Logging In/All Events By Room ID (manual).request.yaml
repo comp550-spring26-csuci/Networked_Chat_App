@@ -1,0 +1,4 @@
+$kind: http-request
+url: https://{{tunnel-id}}-{{port}}.{{cluster-id}}.{{domain}}/api/chathistory/room/{{target_chatroom_id}}/events
+method: GET
+order: 3000

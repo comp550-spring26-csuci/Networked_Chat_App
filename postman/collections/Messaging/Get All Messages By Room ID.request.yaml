@@ -1,5 +1,0 @@
-$kind: http-request
-name: Get All Messages By Room ID
-url: https://localhost:7081/api/chathistory/room/{{target_chatroom_id}}/messages
-method: GET
-order: 659

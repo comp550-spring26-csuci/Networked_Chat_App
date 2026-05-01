@@ -26,21 +26,21 @@ namespace Backend.API.src.API.Controllers
     public class TestController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        private readonly IValidator<CreateAccountRequest> _validator;
-        private readonly IAuthService _authService;
+        //private readonly IValidator<CreateAccountRequest> _validator;
+        //private readonly IAuthService _authService;
         private readonly IValidator<LoginRequest> _loginValidator;
 
         // Injection of UserRepository, the validator, and AuthService
         public TestController(
             IUserRepository userRepository,
-            IValidator<CreateAccountRequest> validator,
-            IAuthService authService,
+            //IValidator<CreateAccountRequest> validator,
+            //IAuthService authService,
             IValidator<LoginRequest> loginValidator)
         {
 
             _userRepository = userRepository;
-            _validator = validator;
-            _authService = authService;
+            //_validator = validator;
+            //_authService = authService;
             _loginValidator = loginValidator;
         }
 
@@ -49,104 +49,104 @@ namespace Backend.API.src.API.Controllers
         // *****VALIDATED ACCOUNT CREATION******
         // -------------------------------------
 
-        [HttpPost("create-account")]
-        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
-        {
-            AppLogger.DebugState("TestController", $"Account creation request initiated for: {request.Email}");
+        //[HttpPost("create-account")]
+        //public async Task<IActionResult> CreateAccount([FromBody] CreateAccountRequest request)
+        //{
+        //    AppLogger.DebugState("TestController", $"Account creation request initiated for: {request.Email}");
 
-            try
-            {
-                // 1. Validate the incoming data (DTO envelope)
-                var validationResult = await _validator.ValidateAsync(request);
+        //    try
+        //    {
+        //        // 1. Validate the incoming data (DTO envelope)
+        //        var validationResult = await _validator.ValidateAsync(request);
 
-                if (!validationResult.IsValid)
-                {
-                    var errorMessages = string.Join(" | ", validationResult.Errors.Select(equals => equals.ErrorMessage));
-                    AppLogger.DebugState("TestController", $"Validation failed for {request.Email}, Reasons: {errorMessages}");
+        //        if (!validationResult.IsValid)
+        //        {
+        //            var errorMessages = string.Join(" | ", validationResult.Errors.Select(equals => equals.ErrorMessage));
+        //            AppLogger.DebugState("TestController", $"Validation failed for {request.Email}, Reasons: {errorMessages}");
 
-                    return BadRequest(validationResult.Errors);
+        //            return BadRequest(validationResult.Errors);
 
-                }
+        //        }
 
 
-                // 2. Delegating the creation and validation of dulicates to the AuthService
-                var authResult = await _authService.CheckAndRegisterUserAsync(request.Username, request.Email, request.Password);
+        //        // 2. Delegating the creation and validation of dulicates to the AuthService
+        //        var authResult = await _authService.CheckAndRegisterUserAsync(request.Username, request.Email, request.Password);
 
-                // 3. We verify if there was a conflict (e.g. if user already exists)
-                if (!authResult.IsSuccess)
-                {
-                    AppLogger.DebugState("TestController", $"Business validation failed: {authResult.ErrorMessage}");
-                    // We return error 409 conflict with the message
-                    return Conflict(new { Message = authResult.ErrorMessage });
-                }
+        //        // 3. We verify if there was a conflict (e.g. if user already exists)
+        //        if (!authResult.IsSuccess)
+        //        {
+        //            AppLogger.DebugState("TestController", $"Business validation failed: {authResult.ErrorMessage}");
+        //            // We return error 409 conflict with the message
+        //            return Conflict(new { Message = authResult.ErrorMessage });
+        //        }
 
-                // 4. Success
-                AppLogger.UserAction(authResult.CreatedUser!.Id.ToString(), "The account was created after being validated securely.");
-                return Ok(new { Message = "Welcome!. The account was created successfully.", UserId = authResult.CreatedUser.Id });
+        //        // 4. Success
+        //        AppLogger.UserAction(authResult.CreatedUser!.Id.ToString(), "The account was created after being validated securely.");
+        //        return Ok(new { Message = "Welcome!. The account was created successfully.", UserId = authResult.CreatedUser.Id });
 
-            }
-            catch (Exception ex)
-            {
-                AppLogger.ShieldFailure("testController", ex);
-                return StatusCode(500, $"Internal Error: {ex.Message}");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppLogger.ShieldFailure("testController", ex);
+        //        return StatusCode(500, $"Internal Error: {ex.Message}");
 
-            }
+        //    }
 
-        }
+        //}
 
 
         // -------------------------------------
         // *********** USER LOGIN **************
         // -------------------------------------
 
-        [HttpPost("login")]
-        // We use the class LoginRequest
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
-        {
+        //[HttpPost("login")]
+        //// We use the class LoginRequest
+        //public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        //{
 
-            // We check if the request is empty or invalid before even touching the data
-            var validationResult = await _loginValidator.ValidateAsync(request);
+        //    // We check if the request is empty or invalid before even touching the data
+        //    var validationResult = await _loginValidator.ValidateAsync(request);
 
-            if (!validationResult.IsValid)
-            {
-                AppLogger.DebugState("testController", "Login blocked: Empty or invalid fields provided.");
-                return BadRequest(validationResult.Errors);
-            }
+        //    if (!validationResult.IsValid)
+        //    {
+        //        AppLogger.DebugState("testController", "Login blocked: Empty or invalid fields provided.");
+        //        return BadRequest(validationResult.Errors);
+        //    }
 
-            AppLogger.DebugState("TestController", $"Login attempt initiated for user: {request.Username}");
+        //    AppLogger.DebugState("TestController", $"Login attempt initiated for user: {request.Username}");
 
-            try
-            {
-                // 1. Passing the data from the LoginRequest to the AuthService
-                // the AuthService class will communicate with teh database
-                var authResult = await _authService.ValidateLoginAsync(request.Username, request.Password);
+        //    try
+        //    {
+        //        // 1. Passing the data from the LoginRequest to the AuthService
+        //        // the AuthService class will communicate with teh database
+        //        var authResult = await _authService.ValidateLoginAsync(request.Username, request.Password);
 
-                // 2. We Check if all was successful
-                if (!authResult.IsSuccess)
-                {
-                    AppLogger.DebugState("testController", $"Login rejected: {authResult.ErrorMessage}");
-                    return Unauthorized(new { Message = authResult.ErrorMessage });
-                }
+        //        // 2. We Check if all was successful
+        //        if (!authResult.IsSuccess)
+        //        {
+        //            AppLogger.DebugState("testController", $"Login rejected: {authResult.ErrorMessage}");
+        //            return Unauthorized(new { Message = authResult.ErrorMessage });
+        //        }
 
-                // 3. If everything is successful we return a success message
-                AppLogger.UserAction(authResult.CreatedUser!.Id.ToString(), "User logged in successfully.");
+        //        // 3. If everything is successful we return a success message
+        //        AppLogger.UserAction(authResult.CreatedUser!.Id.ToString(), "User logged in successfully.");
 
 
-                return Ok(new
-                {
-                    Message = "Login successful! Welcome back.",
-                    UserId = authResult.CreatedUser.Id
-                }
-                );
+        //        return Ok(new
+        //        {
+        //            Message = "Login successful! Welcome back.",
+        //            UserId = authResult.CreatedUser.Id
+        //        }
+        //        );
 
-            }
-            catch (Exception ex)
-            {
-                AppLogger.ShieldFailure("TestController", ex);
-                return StatusCode(500, $"Internal Error: {ex.Message}");
-            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        AppLogger.ShieldFailure("TestController", ex);
+        //        return StatusCode(500, $"Internal Error: {ex.Message}");
+        //    }
 
-        }
+        //}
 
 
 

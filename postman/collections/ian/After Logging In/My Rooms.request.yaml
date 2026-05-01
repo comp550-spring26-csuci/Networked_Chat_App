@@ -1,6 +1,5 @@
 $kind: http-request
-name: Get My Rooms
-url: https://localhost:7081/api/chathistory/user/mine/rooms
+url: https://{{tunnel-id}}-{{port}}.{{cluster-id}}.{{domain}}/api/chathistory/user/mine/rooms
 method: GET
 auth:
   type: bearer
@@ -9,10 +8,8 @@ auth:
 scripts:
   - type: afterResponse
     code: |-
-      const responseData = pm.response.json();
-
-      Object.entries(responseData).forEach(([key, value]) => {
+      Object.entries(pm.response.json()).forEach(([key, value]) => {
           pm.collectionVariables.set(value, key);
       });
     language: text/javascript
-order: 870
+order: 1000

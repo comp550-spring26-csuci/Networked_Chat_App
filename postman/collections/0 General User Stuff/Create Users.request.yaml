@@ -1,0 +1,4 @@
+$kind: http-request
+url: https://{{tunnel-id}}-{{port}}.{{cluster-id}}.{{domain}}/api/testdm/seed-create-users
+method: POST
+order: 1000

@@ -13,10 +13,10 @@ content: "{
 
   \    \"invocationId\":\"0\",
 
-  \    \"target\":\"LeaveChatRoom\",
+  \    \"target\":\"JoinChatRoom\",
 
   \    \"type\":1
 
   }\x1e"
 contentType: json
-order: 4324522237317607
+order: 2000

@@ -1,7 +1,0 @@
-$kind: websocket-request
-name: ChatHub
-url: wss://localhost:7081/chathub?access_token={{access_token}}
-queryParams:
-  access_token: "{{access_token}}"
-messages: .resources/ChatHub.resources/messages
-order: 1000
