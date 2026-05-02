@@ -1,5 +1,5 @@
 $kind: http-request
-url: https://{{tunnel-id}}-{{port}}.{{cluster-id}}.{{domain}}/api/testdm/seed-user?UserName={{username}}&OverWrite=false
+url: https://{{URL.host}}/api/testdm/seed-user?UserName={{username}}&OverWrite=false
 method: POST
 queryParams:
   UserName: "{{username}}"

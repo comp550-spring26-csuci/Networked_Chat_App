@@ -1,4 +1,4 @@
 $kind: http-request
-url: https://{{tunnel-id}}-{{port}}.{{cluster-id}}.{{domain}}/api/chathistory/room/{{target_chatroom_id}}/messages
+url: https://{{URL.host}}/api/chathistory/room/{{target_chatroom_id}}/messages
 method: GET
 order: 4000

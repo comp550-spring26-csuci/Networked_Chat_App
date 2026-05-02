@@ -1,14 +1,8 @@
 name: Globals
 values:
-  - key: tunnel-id
-    value: sslk8rt0
-    enabled: true
-  - key: port
-    value: '7081'
-    enabled: true
-  - key: cluster-id
-    value: usw3
-    enabled: true
-  - key: domain
-    value: devtunnels.ms
+  - key: URL.host
+    value: 'localhost:7081'
+    enabled: false
+  - key: URL.host
+    value: ''
     enabled: true

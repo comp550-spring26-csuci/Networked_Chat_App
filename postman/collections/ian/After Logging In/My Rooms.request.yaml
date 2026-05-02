@@ -1,5 +1,5 @@
 $kind: http-request
-url: https://{{tunnel-id}}-{{port}}.{{cluster-id}}.{{domain}}/api/chathistory/user/mine/rooms
+url: https://{{URL.host}}/api/chathistory/user/mine/rooms
 method: GET
 auth:
   type: bearer
