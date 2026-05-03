@@ -11,7 +11,7 @@ namespace Backend.API.src.Application.DTOs
     {
         private Guid _senderId;
         private Guid _chatRoomId;
-        
+
         public required Guid SenderId
         {
             get => _senderId;

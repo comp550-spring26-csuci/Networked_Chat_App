@@ -1,0 +1,10 @@
+2026-03-10 03:22:49.202 -07:00 [DBG] [DEBUG][Database] AppDbContext initialized | Data: null
+2026-03-10 03:22:49.221 -07:00 [DBG] [DEBUG][TestController] Seed attempt started | Data: null
+2026-03-10 03:22:49.223 -07:00 [DBG] [DEBUG][UserRepository] Creating User | Data: null
+2026-03-10 03:22:49.223 -07:00 [DBG] [DEBUG][UserRepository] Adding new user: testAdmi8 | Data: null
+2026-03-10 03:22:49.355 -07:00 [DBG] [DEBUG][Database] Configuring Model Constraints (Indexes)) | Data: null
+2026-03-10 03:22:49.514 -07:00 [DBG] [DEBUG][UserRepository] Saving Changes | Data: null
+2026-03-10 03:22:49.752 -07:00 [INF] [DATA][Commit] Collection: PostgreSQL | Success: true
+2026-03-10 03:22:49.753 -07:00 [INF] [USER][fea51786-9720-40d8-882d-2beff4cbd617] performed: Created via Test Seed
+2026-03-10 03:22:58.312 -07:00 [DBG] [DEBUG][Database] AppDbContext initialized | Data: null
+2026-03-10 03:22:58.313 -07:00 [DBG] [DEBUG][UserRepository] Find all the users | Data: null

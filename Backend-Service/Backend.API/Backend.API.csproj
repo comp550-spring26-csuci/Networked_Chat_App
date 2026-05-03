@@ -7,7 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,8 +22,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="src\Application\Validators\" />
-	  <Folder Include="src\Application\Services\" />
+		<Folder Include="src\Application\Validators\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="tests\PostmanCollection\Messaging\.resources\ChatHub.resources\messages\JoinChatRoom.message.yaml" />
+	  <None Include="tests\PostmanCollection\Messaging\.resources\ChatHub.resources\messages\LeaveChatRoom.message.yaml" />
+	  <None Include="tests\PostmanCollection\Messaging\.resources\ChatHub.resources\messages\Protocol.message.yaml" />
+	  <None Include="tests\PostmanCollection\Messaging\.resources\ChatHub.resources\messages\SendMessageToChatRoom.message.yaml" />
+	  <None Include="tests\PostmanCollection\Messaging\.resources\definition.yaml" />
 	</ItemGroup>
 
 </Project>

@@ -1,8 +1,11 @@
+using Backend.API.src.Application.Validators;
 using Backend.API.src.API.Hubs;
+using Backend.API.src.Application.Services;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Infrastructure.Persistence;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,63 +21,71 @@ namespace Backend.API
     {
         public static void Main(string[] args)
         {
-            // Initiating the Serilog
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug() // allowing debug level
-                .WriteTo.Console() //logging to terminal
-                .WriteTo.File("logs/network-chat-log.txt", rollingInterval: RollingInterval.Day) // log to file
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/network-chat-log.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
+                builder.Host.UseSerilog();
 
-
-                // Fetching the map from appsettings.json
+                // --- 2. DATABASE CONFIGURATION ---
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-                Console.WriteLine($"---> DATABASE CONNECTION STRING: '{connectionString}'");
-
-                // Directions to use PostgreSQL and your AppDbContext
                 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-                builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
+                var mongoDbSettings = builder.Configuration.GetSection("MongoDB");
+                builder.Services.Configure<MongoDbSettings>(mongoDbSettings);
                 builder.Services.AddSingleton<MongoDbContext>();
-
                 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
-                // Adding the IUserRepository and UserRepository
+
+                // --- 3. DEPENDENCY INJECTION ---
+
+                // --- User Services
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
+                builder.Services.AddScoped<IAuthService, AuthService>();
+                builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
 
+                // Messaging Services 
                 builder.Services.AddScoped<MessageRepository>();
-
                 builder.Services.AddScoped<ChatEventRepository>();
+                builder.Services.AddScoped<TestChatRoomRepository>();
 
-                builder.Services.AddSingleton<TestChatRoomRepository>();
+                // --- COMPATIBILITY FIX ---
+                var jwtSection = builder.Configuration.GetSection("JwtSettings");
+                var issuer = jwtSection["Issuer"] ?? "ChatApp";
+                var audience = jwtSection["Audience"] ?? "ChatAppUsers";
+                var jwtKeyString = jwtSection["Key"] ?? "SecretDevelopmentKey1234567890";
 
-                // Add services to the container.
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKeyString));
+                var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+
+                builder.Services.AddSingleton(signingCredentials);
+                builder.Services.AddSingleton(issuer);
+                builder.Services.AddSingleton(audience);
+
+                builder.Services.AddTransient<JwtTokenService>(provider => new JwtTokenService(signingCredentials, issuer, audience));
+                // --- ---
+
                 builder.Services.AddControllers();
-                builder.Services.AddSignalR(options =>
-                {
-                    options.EnableDetailedErrors = true;
-                });
+                builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; });
+                builder.Services.AddOpenApi();
 
                 builder.Services.AddCors(options =>
                 {
-                    options.AddPolicy("ElectronClient", policy =>
+                    options.AddPolicy("AllowEverything", policy =>
                     {
-                        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod()
-                            .AllowCredentials();
+                        policy.SetIsOriginAllowed(_ => true)
+                               .AllowAnyHeader()
+                               .AllowAnyMethod()
+                               .AllowCredentials();
                     });
                 });
 
-                // JWT Auth Setup
-
-                // JWT Auth Setup
-                var jwtKey = builder.Configuration.GetSection("JwtSettings:SecretKey").Value ?? "SecretDevelopmentKeyWithPlentyOfBits1234567890";
-                var key = Encoding.UTF8.GetBytes(jwtKey!);
-
+                // --- 5. JWT SECURITY DEFINITION ---
                 builder.Services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -88,23 +99,19 @@ namespace Backend.API
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration.GetSection("JwtSettings:Issuer").Value,
-                        ValidAudience = builder.Configuration.GetSection("JwtSettings:Audience").Value,
-                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                        ValidIssuer = issuer,
+                        ValidAudience = audience,
+                        IssuerSigningKey = securityKey
                     };
 
-                    // For SignalR authentication
                     options.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
                         {
                             var accessToken = context.Request.Query["access_token"];
-
-                            // If the request is for our hub...
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
                             {
-                                // Read the token out of the query string
                                 context.Token = accessToken;
                             }
                             return Task.CompletedTask;
@@ -112,54 +119,26 @@ namespace Backend.API
                     };
                 });
 
-                // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-                // Prepares the map
-                builder.Services.AddOpenApi();
-
                 var app = builder.Build();
 
-                using (var scope = app.Services.CreateScope())
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    dbContext.Database.Migrate();
-                }
-
-                // Configure the HTTP request pipeline.
-                if (app.Environment.IsDevelopment())
-                {
-                    // Creates the JSON file
-                    app.MapOpenApi();
-
-                }
+                if (app.Environment.IsDevelopment()) { app.MapOpenApi(); }
 
                 app.UseHttpsRedirection();
+                app.UseCors("AllowEverything");
 
-                app.UseCors("ElectronClient");
-
-                app.UseAuthorization();
-
-                // Added route to connect to a hub
-                app.MapHub<ChatHub>("/chathub");
+                app.UseWhen(context => context.Request.Path.StartsWithSegments("/chathub"), appBuilder =>
+                {
+                    appBuilder.UseAuthentication();
+                    appBuilder.UseAuthorization();
+                });
 
                 app.MapControllers();
-
+                app.MapHub<ChatHub>("/chathub");
 
                 app.Run();
             }
-
-            catch (Exception ex)
-            {
-
-                Log.Fatal(ex, "There was an issue starting the application");
-
-            }
-
-            finally
-            {
-                // all logs will be written before the app closes
-                Log.CloseAndFlush();
-
-            }
+            catch (Exception ex) { Log.Fatal(ex, "App failed to start"); }
+            finally { Log.CloseAndFlush(); }
         }
     }
 }

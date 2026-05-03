@@ -27,10 +27,10 @@ namespace Backend.API.src.Core.Entities
             set => _id = value;
         }
 
-        public Guid SenderId 
-        { 
-            get => _senderId; 
-            set => _senderId = value; 
+        public Guid SenderId
+        {
+            get => _senderId;
+            set => _senderId = value;
         }
 
         public Guid ChatRoomId

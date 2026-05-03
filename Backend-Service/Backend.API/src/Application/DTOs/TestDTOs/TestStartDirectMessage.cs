@@ -4,7 +4,7 @@
     {
         private StartDirectMessage _startDirectMessage = null!;
         private string? _targetUsername = null!;
-        
+
         public StartDirectMessage StartDirectMessage
         {
             get => _startDirectMessage;
