@@ -5,6 +5,7 @@
         private Guid _chatRoomId;
         private string? _senderUsername;
         private string _content = default;
+        private DateTime _timestamp = DateTime.UtcNow;
 
         public Guid ChatRoomId
         {
@@ -22,6 +23,12 @@
         {
             get => _content;
             set => _content = value;
+        }
+
+        public DateTime Timestamp
+        {
+            get => _timestamp;
+            set => _timestamp = value;
         }
     }
 }

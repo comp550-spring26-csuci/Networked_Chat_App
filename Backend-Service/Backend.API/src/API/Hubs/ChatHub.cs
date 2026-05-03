@@ -50,19 +50,19 @@ namespace Backend.API.src.API.Hubs
         // ***MESSAGE SENDING HELPER METHODS****
         // -------------------------------------
 
-        private async Task SendMessageToGroupAsync(TestMessage testMessage, MessagePreview messagePreview)
+        private async Task SendMessageToGroupAsync(TestMessage testMessage, TestMessagePreview testMessagePreview)
         {
             string group = testMessage.Message.ChatRoomId.ToString();
             await Clients.Group(group).SendAsync("ReceiveMessage", testMessage);
-            await Clients.Group("global_" + group).SendAsync("ReceiveMessagePreview", messagePreview);
+            await Clients.Group("global_" + group).SendAsync("ReceiveMessagePreview", testMessagePreview);
         }
 
-        private TestMessage ConstructMessageDto(TestSendMessageToChatRoom testSendMessageToChatRoom)
+        private TestMessage ConstructMessageDto(SendMessageToChatRoom sendMessageToChatRoom)
         {
             var message = new Message
             {
-                ChatRoomId = testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId,
-                Content = testSendMessageToChatRoom.SendMessageToChatRoom.Content,
+                ChatRoomId = sendMessageToChatRoom.ChatRoomId,
+                Content = sendMessageToChatRoom.Content,
                 SenderId = GetUserId(),
                 SenderUsername = GetUsername()
             };
@@ -74,12 +74,10 @@ namespace Backend.API.src.API.Hubs
                 SenderUsername = GetUsername()
             };
 
-
-
             return testMessage;
         }
 
-        private MessagePreview ConstructPreviewDto(Message message)
+        private TestMessagePreview ConstructPreviewDto(Message message)
         {
             string preview = message.Content.Length > 50 ? message.Content.Substring(0, 50) + "..." : message.Content;
 
@@ -90,7 +88,14 @@ namespace Backend.API.src.API.Hubs
                 SenderUsername = message.SenderUsername
             };
 
-            return messagePreview;
+            var testMessagePreview = new TestMessagePreview
+            {
+                MessagePreview = messagePreview,
+                ChatRoomName = _testChatRoomRepository.GetChatRoomName(message.ChatRoomId) ?? "UnknownChatRoom",
+                SenderId = message.SenderId
+            };
+
+            return testMessagePreview;
         }
 
         // -------------------------------------
@@ -158,7 +163,7 @@ namespace Backend.API.src.API.Hubs
             AppLogger.ConnectionEvent(Context.ConnectionId, "Connected", GetUserId().ToString());
             try
             {
-                var testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, "Global");
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, "Global");
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
@@ -180,7 +185,7 @@ namespace Backend.API.src.API.Hubs
             AppLogger.ConnectionEvent(Context.ConnectionId, "Disconnected", GetUserId().ToString());
             try
             {
-                var testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, "Global");
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, "Global");
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
@@ -202,8 +207,8 @@ namespace Backend.API.src.API.Hubs
             AppLogger.DebugState("ChatHub.JoinChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to join Chat Room ID: {ChatRoom.ChatRoomId}");
             try
             {
-                var guid = ChatRoom.ChatRoomId;
-                var chatRoomName = _testChatRoomRepository.GetChatRoomName(guid) ?? "UnnamedChatRoom";
+                Guid guid = ChatRoom.ChatRoomId;
+                string chatRoomName = _testChatRoomRepository.GetChatRoomName(guid) ?? "UnnamedChatRoom";
 
                 if (guid == default || !_testChatRoomRepository.ChatRoomExists(guid))
                 {
@@ -211,7 +216,7 @@ namespace Backend.API.src.API.Hubs
                     return;
                 }
 
-                var testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, chatRoomName, guid);
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, chatRoomName, guid);
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
@@ -234,7 +239,8 @@ namespace Backend.API.src.API.Hubs
             AppLogger.DebugState("ChatHub.LeaveChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to leave Chat Room ID: {ChatRoom.ChatRoomId}");
             try
             {
-                var guid = ChatRoom.ChatRoomId;
+                Guid guid = ChatRoom.ChatRoomId;
+
                 string chatRoomName = _testChatRoomRepository.GetChatRoomName(guid) ?? "UnnamedChatRoom";
 
                 if (guid == default || !_testChatRoomRepository.ChatRoomExists(guid))
@@ -243,7 +249,7 @@ namespace Backend.API.src.API.Hubs
                     return;
                 }
 
-                var testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, chatRoomName, guid);
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, chatRoomName, guid);
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
@@ -267,15 +273,15 @@ namespace Backend.API.src.API.Hubs
             AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to send a message to Chat Room ID: {testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId}");
             try
             {
-                var testMessage = ConstructMessageDto(testSendMessageToChatRoom);
+                TestMessage testMessage = ConstructMessageDto(testSendMessageToChatRoom.SendMessageToChatRoom);
                 
-                var messagePreview = ConstructPreviewDto(testMessage.Message);
+                TestMessagePreview testMessagePreview = ConstructPreviewDto(testMessage.Message);
 
                 await _messageRepository.AddAsync(testMessage.Message);
 
-                await SendMessageToGroupAsync(testMessage, messagePreview);
+                await SendMessageToGroupAsync(testMessage, testMessagePreview);
 
-                AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"Message successfully sent to Chat Room ID: {testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId} and stored in database.");
+                AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"Message successfully sent to Chat Room ID: {testMessage.Message.ChatRoomId} and stored in database.");
             }
             catch (Exception ex)
             {
