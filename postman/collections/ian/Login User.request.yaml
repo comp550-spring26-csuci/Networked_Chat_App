@@ -1,0 +1,25 @@
+$kind: http-request
+url: https://localhost:7081/api/test/seed-user?UserName={{username}}&OverWrite=false
+method: POST
+queryParams:
+  UserName: "{{username}}"
+  OverWrite: "false"
+body:
+  type: json
+  content: ""
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+
+      pm.collectionVariables.set("access_token",responseJson.token)
+    language: text/javascript
+  - type: beforeRequest
+    code: |+
+      const collectionName = pm.execution.location[0];
+
+      pm.collectionVariables.set("username", collectionName)
+
+    language: text/javascript
+examples: .resources/Login User.resources/examples
+order: 547

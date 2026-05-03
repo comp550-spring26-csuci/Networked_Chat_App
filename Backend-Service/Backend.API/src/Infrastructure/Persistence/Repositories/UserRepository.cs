@@ -52,6 +52,13 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
         }
 
+        public async Task<User?> GetByUsernameAsync(string username)
+        {
+            AppLogger.DebugState("UserRepository", "Find User by username");
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
+        }
+
 
         // READ: Find by Username (used for login/auth)
         public async Task<User?> GetByUsernameAsync(string username) 

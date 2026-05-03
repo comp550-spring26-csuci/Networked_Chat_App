@@ -1,29 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { useState, useEffect } from 'react';
 import './App.css'
+import LoginPage from './components/LoginPage';
+import ChatLayout from './components/ChatLayout'
+import { startConnection } from './signalr/chatConnection';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  // will need login persistance so that reloading doesnt log you out
+  // will probably have to pass the username or other information as needed from the login to the ChatLayout for things like sender name on the messsages
+  
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     startConnection();
+  //   }
+  // }, [isLoggedIn]);
+
+  const handleLogin = async (name) => {
+    try {
+      console.log("Name:", name);
+      const res = await fetch(
+        `https://localhost:7081/api/test/seed-user?UserName=${name}&OverWrite=false`, {
+        method: 'POST'
+      });
+
+      const data = await res.json();
+
+      console.log("Login response:", data);
+
+      // 💾 store token
+      localStorage.setItem("access_token", data.token);
+
+      setUsername(data.username);
+      setIsLoggedIn(true);
+      startConnection();
+
+    } catch (err) {
+      console.error("Login failed:", err);
+    }
+  };
 
   return (
     <>
-      <div>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {isLoggedIn ? (
+        <ChatLayout username={username} />
+      ) : (
+        <LoginPage onLogin={handleLogin} />
+      )}
     </>
   )
 }
