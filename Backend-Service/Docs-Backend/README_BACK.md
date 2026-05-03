@@ -145,3 +145,131 @@ You should see a ```200 OK``` response with a success message.
 (After the first time you wil need to change the user info in the 
 ```TestController.cs```)
 * GET (All Users): Run this to fetch all teh current users in the database.
+
+
+
+
+
+# WebSocket Method Signatures Requiring Client-side Definitions:
+
+These are just the client methods that the server's hub class will try to invoke on one or more client connections.
+I'm showing the file paths and class definitions of the argument that the server passes, and then what the json
+structure looks like on the client side when the client handles the associated method call.
+
+client methods to implement:
+- ReceiveMessagePreview
+- ReceiveMessage
+- ReceiveEvent
+- ReceiveError
+
+## ReceiveMessagePreview()
+
+Notes:
+- This is for notifications and previews, invoked regardless of whether the client is actively viewing the given chat room.
+
+### Server side:
+
+<code>class [MessagePreview](/Backend-Service/Backend.API/src/Application/DTOs/MessagePreview.cs)</code>
+- Preview will fit no more than 50 characters
+
+<code>class [TestMessagePreview](/Backend-Service/Backend.API/src/Application/DTOs/TestDTOs/TestMessagePreview.cs)</code>
+- Verbose envelope for `MessagePreview`
+
+### Client side:
+
+```
+connection.on(
+    "ReceiveMessagePreview",
+    {
+        "messagePreview": {
+            "chatRoomId": "d5789a29-0000-0000-0000-000000000000",
+            "senderUsername": "ian"
+            "content": "Hi My name is Ian how are you. What is your name? ...",
+            "timestamp": "2026-05-03T06:02:55.7608972Z"
+        },
+        "chatRoomName": "ian_kenneth",
+        "senderId": "f280b38b-cda0-4465-80c0-2f4db187fe1d"
+    }
+)
+```
+
+## ReceiveMessage()
+
+Notes:
+- This is for messages that were sent by a client to be persisted in the server's `Messages` collection and then received by other clients
+
+### Server side:
+
+<code>class [Message](/Backend-Service/Backend.API/src/Core/Entities/Message.cs)</code>
+- Persisted in `Messages` collection
+
+<code>class [TestMessage](/Backend-Service/Backend.API/src/Application/DTOs/TestDTOs/TestMessage.cs)</code>
+- Verbose envelope for `Message`
+
+```
+connection.on(
+    "ReceiveMessage",
+    {
+        "message": {
+            "id": "69f6e50f9168a53903471c6f",
+            "senderId": "f280b38b-cda0-4465-80c0-2f4db187fe1d",
+            "senderUsername": "ian",
+            "chatRoomId": "d5789a29-0000-0000-0000-000000000000",
+            "content": "Hi My name is Ian how are you. What is your name? What is your favorite color?",
+            "timestamp": "2026-05-03T06:02:55.7602882Z"
+        },
+        "chatRoomName": "ian_kenneth",
+        "senderUsername": "ian"
+    }
+)
+```
+
+## ReceiveEvent()
+
+Notes:
+- This is for chat events recognizing server actions such as users connecting or chat rooms being created
+- The event is also stored in the `Events` collection
+
+### Server side:
+
+<code>class [ChatEvent](/Backend-Service/Backend.API/src/Core/Entities/ChatEvent.cs)</code>
+
+<code>class [TestChatEvent](/Backend-Service/Backend.API/src/Application/DTOs/TestDTOs/TestChatEvent.cs)</code>
+
+### Client side:
+
+```
+connection.on(
+    "ReceiveEvent",
+    {
+        "chatEvent": {
+            "id": "69f6e5179168a53903471c70",
+            "chatRoomId": "d5789a29-0000-0000-0000-000000000000",
+            "eventType": "UserLeft",
+            "details": "ChatRoom: ian_kenneth, Username: ian",
+            "timestamp": "2026-05-03T06:03:03.8497462Z"
+        },
+        "chatRoomName": "ian_kenneth"
+    }
+)
+```
+
+## ReceiveError()
+
+Notes:
+- This is for errors that are expected to be sent to the caller after they have invoked a server method that resulted in a server-side error.
+
+### Server side:
+
+```
+string errorMessage;
+```
+
+### Client side:
+
+```
+connection.on(
+  "ReceiveError",
+  "This is an unrealistic error message because I have not taken the time to demonstrate any errors to present"
+)
+```
