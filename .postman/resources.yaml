@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: b090418d-bd7b-4e1b-986c-3f029d32a59c
+
+localResources:
+  collections:
+    - ../Backend-Service/Backend.API/tests/PostmanCollection/MastersNetworkChatApp.postman_collection.json

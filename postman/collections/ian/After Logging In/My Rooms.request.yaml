@@ -1,0 +1,15 @@
+$kind: http-request
+url: https://{{URL.host}}/api/chathistory/user/mine/rooms
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      Object.entries(pm.response.json()).forEach(([key, value]) => {
+          pm.collectionVariables.set(value, key);
+      });
+    language: text/javascript
+order: 1000

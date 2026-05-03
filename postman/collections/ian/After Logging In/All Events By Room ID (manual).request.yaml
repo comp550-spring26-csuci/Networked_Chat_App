@@ -1,0 +1,4 @@
+$kind: http-request
+url: https://{{URL.host}}/api/chathistory/room/{{target_chatroom_id}}/events
+method: GET
+order: 3000

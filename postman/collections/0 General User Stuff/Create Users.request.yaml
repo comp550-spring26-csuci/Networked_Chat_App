@@ -1,0 +1,4 @@
+$kind: http-request
+url: https://{{URL.host}}/api/testdm/seed-create-users
+method: POST
+order: 1000

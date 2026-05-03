@@ -50,10 +50,11 @@ namespace Backend.API.src.API.Hubs
         // ***MESSAGE SENDING HELPER METHODS****
         // -------------------------------------
 
-        private async Task SendMessageToGroupAsync(TestMessage testMessage)
+        private async Task SendMessageToGroupAsync(TestMessage testMessage, MessagePreview messagePreview)
         {
             string group = testMessage.Message.ChatRoomId.ToString();
             await Clients.Group(group).SendAsync("ReceiveMessage", testMessage);
+            await Clients.Group("global_" + group).SendAsync("ReceiveMessagePreview", messagePreview);
         }
 
         private TestMessage ConstructMessageDto(TestSendMessageToChatRoom testSendMessageToChatRoom)
@@ -62,7 +63,8 @@ namespace Backend.API.src.API.Hubs
             {
                 ChatRoomId = testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId,
                 Content = testSendMessageToChatRoom.SendMessageToChatRoom.Content,
-                SenderId = GetUserId()
+                SenderId = GetUserId(),
+                SenderUsername = GetUsername()
             };
 
             var testMessage = new TestMessage
@@ -72,7 +74,23 @@ namespace Backend.API.src.API.Hubs
                 SenderUsername = GetUsername()
             };
 
+
+
             return testMessage;
+        }
+
+        private MessagePreview ConstructPreviewDto(Message message)
+        {
+            string preview = message.Content.Length > 50 ? message.Content.Substring(0, 50) + "..." : message.Content;
+
+            var messagePreview = new MessagePreview
+            {
+                ChatRoomId = message.ChatRoomId,
+                Content = preview,
+                SenderUsername = message.SenderUsername
+            };
+
+            return messagePreview;
         }
 
         // -------------------------------------
@@ -198,6 +216,7 @@ namespace Backend.API.src.API.Hubs
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
                 await Groups.AddToGroupAsync(Context.ConnectionId, guid.ToString());
+                await Groups.AddToGroupAsync(Context.ConnectionId, "global_" + guid.ToString());
 
                 await SendEventToGroupAsync(testChatEvent);
 
@@ -249,10 +268,12 @@ namespace Backend.API.src.API.Hubs
             try
             {
                 var testMessage = ConstructMessageDto(testSendMessageToChatRoom);
+                
+                var messagePreview = ConstructPreviewDto(testMessage.Message);
 
                 await _messageRepository.AddAsync(testMessage.Message);
 
-                await SendMessageToGroupAsync(testMessage);
+                await SendMessageToGroupAsync(testMessage, messagePreview);
 
                 AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"Message successfully sent to Chat Room ID: {testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId} and stored in database.");
             }

@@ -1,0 +1,4 @@
+$kind: http-request
+url: https://{{URL.host}}/api/chathistory/room/{{target_chatroom_id}}/messages
+method: GET
+order: 4000

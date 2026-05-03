@@ -15,6 +15,7 @@ namespace Backend.API.src.Core.Entities
     {
         private string? _id;
         private Guid _senderId = default!;
+        private string? _senderUsername;
         private Guid _chatRoomId = default!;
         private string _content = default!;
         private DateTime _timestamp = DateTime.UtcNow;
@@ -31,6 +32,12 @@ namespace Backend.API.src.Core.Entities
         {
             get => _senderId;
             set => _senderId = value;
+        }
+
+        public string? SenderUsername
+        {
+            get => _senderUsername;
+            set => _senderUsername = value;
         }
 
         public Guid ChatRoomId

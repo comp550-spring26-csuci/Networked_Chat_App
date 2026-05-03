@@ -14,6 +14,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using Serilog;
 using System.Text;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Backend.API
 {
@@ -118,6 +119,19 @@ namespace Backend.API
                         }
                     };
                 });
+
+                var devTunnelUrl = Environment.GetEnvironmentVariable("VS_TUNNEL_URL");
+
+                if (!string.IsNullOrEmpty(devTunnelUrl))
+                {
+                    builder.WebHost.ConfigureKestrel(options =>
+                    {
+                        options.ConfigureEndpointDefaults(listenOptions =>
+                        {
+                            listenOptions.Protocols = HttpProtocols.Http1;
+                        });
+                    });
+                }
 
                 var app = builder.Build();
 

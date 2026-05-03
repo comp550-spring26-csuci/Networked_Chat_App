@@ -1,0 +1,8 @@
+name: Globals
+values:
+  - key: URL.host
+    value: 'localhost:7081'
+    enabled: false
+  - key: URL.host
+    value: ''
+    enabled: true
