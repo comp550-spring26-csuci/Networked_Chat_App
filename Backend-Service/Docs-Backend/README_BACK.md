@@ -153,7 +153,7 @@ You should see a ```200 OK``` response with a success message.
 # WebSocket Method Signatures Requiring Client-side Definitions:
 
 These are just the client methods that the server's hub class will try to invoke on one or more client connections.
-I'm showing the file paths and class definitions of the argument that the server passes, and then what the json
+I'm linking to the class definitions of the arguments that the server passes to these methods, and then what the json
 structure looks like on the client side when the client handles the associated method call.
 
 client methods to implement:
