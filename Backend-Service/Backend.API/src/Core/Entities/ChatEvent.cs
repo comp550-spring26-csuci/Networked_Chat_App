@@ -9,13 +9,18 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using System.Text.Json.Serialization;
+using Backend.API.src.Application.DTOs;
 
 namespace Backend.API.src.Core.Entities
 {
     public enum ChatEventType
     {
         UserJoined,
-        UserLeft
+        UserLeft,
+        MembershipAdded,
+        MembershipRemoved,
+        FriendRequestReceived,
+        FriendRequestAccepted
     }
 
     public class ChatEvent
@@ -25,7 +30,8 @@ namespace Backend.API.src.Core.Entities
         private ChatEventType _eventType;
         private string _details = default!;
         private DateTime _timestamp = DateTime.UtcNow;
-
+        private EventChatRoom? _room;
+        private EventFriendRequest? _request;
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -60,6 +66,18 @@ namespace Backend.API.src.Core.Entities
         {
             get => _timestamp;
             set => _timestamp = value;
+        }
+
+        public EventChatRoom? Room
+        {
+            get => _room;
+            set => _room = value;
+        }
+
+        public EventFriendRequest? Request
+        {
+            get => _request;
+            set => _request = value;
         }
     }
 }

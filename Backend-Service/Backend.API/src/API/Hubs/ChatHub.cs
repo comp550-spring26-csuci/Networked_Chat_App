@@ -57,7 +57,7 @@ namespace Backend.API.src.API.Hubs
             await Clients.Group("global_" + group).SendAsync("ReceiveMessagePreview", testMessagePreview);
         }
 
-        private TestMessage ConstructMessageDto(SendMessageToChatRoom sendMessageToChatRoom)
+        private TestMessage ConstructMessageDto(SendMessageToChatRoom sendMessageToChatRoom, string? chatRoomName)
         {
             var message = new Message
             {
@@ -70,42 +70,35 @@ namespace Backend.API.src.API.Hubs
             var testMessage = new TestMessage
             {
                 Message = message,
-                ChatRoomName = _testChatRoomRepository.GetChatRoomName(message.ChatRoomId) ?? "UnknownChatRoom",
+                ChatRoomName = chatRoomName ?? "UnknownChatRoom",
                 SenderUsername = GetUsername()
             };
 
             return testMessage;
         }
 
-        private TestMessagePreview ConstructPreviewDto(Message message)
+        private TestMessagePreview ConstructPreviewDto(Message message, string? chatRoomName)
         {
             string preview = message.Content.Length > 50 ? message.Content.Substring(0, 50) + "..." : message.Content;
 
             var messagePreview = new MessagePreview
             {
+                MessageId = message.Id,
                 ChatRoomId = message.ChatRoomId,
                 Content = preview,
-                SenderUsername = message.SenderUsername
+                SenderUsername = message.SenderUsername,
+                Timestamp = message.Timestamp
             };
 
             var testMessagePreview = new TestMessagePreview
             {
                 MessagePreview = messagePreview,
-                ChatRoomName = _testChatRoomRepository.GetChatRoomName(message.ChatRoomId) ?? "UnknownChatRoom",
+                ChatRoomName = chatRoomName ?? "UnknownChatRoom",
                 SenderId = message.SenderId
             };
 
             return testMessagePreview;
         }
-
-        // -------------------------------------
-        // ****DIRECT MESSAGE HELPER METHODS****
-        // -------------------------------------
-
-        //private async Task SendMessageToUserAsync(Guid userId, TestAcknowledgeDirectMessage testAcknowledgeDirectMessage)
-        //{
-        //    await Clients.User(userId.ToString()).SendAsync("AcknowledgeDirectMessage", testAcknowledgeDirectMessage);
-        //}
 
         // -------------------------------------
         // ****ERROR SENDING HELPER METHODS*****
@@ -136,19 +129,19 @@ namespace Backend.API.src.API.Hubs
             await Clients.User(GetUserId().ToString()).SendAsync("ReceiveEvent", testChatEvent);
         }
 
-        private TestChatEvent ConstructChatEventDto(ChatEventType eventType, string chatRoomName, Guid chatRoomId = default)
+        private TestChatEvent ConstructChatEventDto(ChatEventType eventType, Guid chatRoomId = default)
         {
             var chatEvent = new ChatEvent
             {
                 EventType = eventType,
                 ChatRoomId = chatRoomId,
-                Details = $"ChatRoom: {chatRoomName}, Username: {GetUsername()}"
+                Details = $"Username: {GetUsername()}"
             };
 
             var testChatEvent = new TestChatEvent
             {
                 ChatEvent = chatEvent,
-                ChatRoomName = chatRoomName
+                ChatRoomName = "N/A"
             };
 
             return testChatEvent;
@@ -163,11 +156,20 @@ namespace Backend.API.src.API.Hubs
             AppLogger.ConnectionEvent(Context.ConnectionId, "Connected", GetUserId().ToString());
             try
             {
-                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, "Global");
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined);
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
                 await SendEventToAllAsync(testChatEvent);
+
+                // Chat rooms are supposed to be accessible by user ID, but since my implementation is based on username,
+                // I have to get the chat rooms by username instead. This is a temporary workaround until we implement proper
+                // user-based chat room access.
+                var myChatRooms = _testChatRoomRepository.GetMyChatRoomIds(GetUsername()); 
+                foreach (var chatRoomId in myChatRooms)
+                {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, "global_" + chatRoomId.ToString());
+                }
 
                 await base.OnConnectedAsync();
 
@@ -185,7 +187,7 @@ namespace Backend.API.src.API.Hubs
             AppLogger.ConnectionEvent(Context.ConnectionId, "Disconnected", GetUserId().ToString());
             try
             {
-                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, "Global");
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft);
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
@@ -216,7 +218,7 @@ namespace Backend.API.src.API.Hubs
                     return;
                 }
 
-                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, chatRoomName, guid);
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, guid);
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
@@ -241,15 +243,7 @@ namespace Backend.API.src.API.Hubs
             {
                 Guid guid = ChatRoom.ChatRoomId;
 
-                string chatRoomName = _testChatRoomRepository.GetChatRoomName(guid) ?? "UnnamedChatRoom";
-
-                if (guid == default || !_testChatRoomRepository.ChatRoomExists(guid))
-                {
-                    await SendErrorToClientAsync("Chat room does not exist.");
-                    return;
-                }
-
-                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, chatRoomName, guid);
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, guid);
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
@@ -268,16 +262,39 @@ namespace Backend.API.src.API.Hubs
             }
         }
 
+        public async Task UnsubscribeFromChatRoom(ChatRoom ChatRoom)
+        {
+            AppLogger.DebugState("ChatHub.UnsubscribeFromChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to unsubscribe from Chat Room ID: {ChatRoom.ChatRoomId}");
+            try
+            {
+                Guid guid = ChatRoom.ChatRoomId;
+
+                TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.MembershipRemoved, guid);
+
+                await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
+
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, "global_" + guid.ToString());
+
+                await SendEventToCallerUserAsync(testChatEvent);
+                AppLogger.DebugState("ChatHub.UnsubscribeFromChatRoom", $"User successfully unsubscribed from Chat Room ID: {ChatRoom.ChatRoomId}. Event sent to caller.");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.ShieldFailure("ChatHub.UnsubscribeFromChatRoom", ex);
+                await SendErrorToClientAsync($"Internal Error: {ex.Message}");
+            }
+        }
+
         public async Task SendMessageToChatRoom(TestSendMessageToChatRoom testSendMessageToChatRoom)
         {
             AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to send a message to Chat Room ID: {testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId}");
             try
             {
-                TestMessage testMessage = ConstructMessageDto(testSendMessageToChatRoom.SendMessageToChatRoom);
-                
-                TestMessagePreview testMessagePreview = ConstructPreviewDto(testMessage.Message);
+                TestMessage testMessage = ConstructMessageDto(testSendMessageToChatRoom.SendMessageToChatRoom, testSendMessageToChatRoom.ChatRoomName);
 
                 await _messageRepository.AddAsync(testMessage.Message);
+
+                TestMessagePreview testMessagePreview = ConstructPreviewDto(testMessage.Message, testSendMessageToChatRoom.ChatRoomName);
 
                 await SendMessageToGroupAsync(testMessage, testMessagePreview);
 

@@ -42,6 +42,13 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
             AppLogger.DataStore("Delete", "Messages", true);
         }
 
+        public async Task DeleteMessagesByRoomIdAsync(Guid roomId)
+        {
+            AppLogger.DebugState("MessageRepository", $"Removing all messages for Room ID {roomId}");
+            await _context.Messages.DeleteManyAsync(m => m.ChatRoomId == roomId);
+            AppLogger.DataStore("Delete", "Messages", true);
+        }
+
         public async Task<List<Message>> GetAllMessagesAsync()
         {
             AppLogger.DebugState("MessageRepository", "Retrieving all messages");

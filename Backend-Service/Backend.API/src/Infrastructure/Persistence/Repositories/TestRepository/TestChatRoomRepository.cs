@@ -60,11 +60,6 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository
             return _context.ChatRooms.ContainsKey(roomId);
         }
 
-        //public void ClearChatRooms()
-        //{
-        //    _context.ChatRooms.Clear();
-        //}
-
         public int GetChatRoomCount()
         {
             return _context.ChatRooms.Count;
@@ -78,6 +73,11 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository
         public List<Guid> GetChatRoomIds()
         {
             return _context.ChatRooms.Keys.ToList();
+        }
+
+        public List<Guid> GetMyChatRoomIds(string username)
+        {
+            return [.. _context.ChatRooms.Where(r => r.Value.Contains(username)).Select(r => r.Key)];
         }
 
         // This method is a bit more complex and is based on the assumption that the room names contain the usernames of the participants.
