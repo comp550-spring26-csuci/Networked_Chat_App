@@ -5,6 +5,7 @@
 //  Description: This service is responsible for handling events that occur within the chat application, such as users
 //  joining rooms or sending friend requests. It interacts with the ChatHub to send real-time notifications to clients
 //  and uses the ChatEventRepository to persist event data.
+// --------------------------------------------
 
 using Backend.API.src.API.Hubs;
 using Backend.API.src.Application.DTOs;
@@ -40,6 +41,32 @@ namespace Backend.API.src.Application.Services
             await _eventRepository.AddAsync(chatEvent);
             
             await _hubContext.Clients.User(userId.ToString()).SendAsync("RoomJoined", chatEvent);
+        }
+
+        public async Task MembershipRemoveEventAsync(Guid userId, Guid roomId)
+        {
+            ChatEvent chatEvent = new ChatEvent
+            {
+                EventType = ChatEventType.MembershipRemoved,
+                ChatRoomId = roomId
+            };
+
+            await _eventRepository.AddAsync(chatEvent);
+            
+            await _hubContext.Clients.User(userId.ToString()).SendAsync("RoomLeft", chatEvent);
+        }
+
+        public async Task RoomDeleteEventAsync(Guid roomId) 
+        {
+            ChatEvent chatEvent = new ChatEvent
+            {
+                EventType = ChatEventType.RoomDeleted,
+                ChatRoomId = roomId
+            };
+
+            await _eventRepository.AddAsync(chatEvent);
+
+            await _hubContext.Clients.Group(SignalRGroupService.GetGlobalGroupId(roomId)).SendAsync("RoomDeleted", chatEvent);
         }
 
         public async Task FriendRequestEventAsync(Guid addresseeId, Guid requesterId, string requesterUsername)

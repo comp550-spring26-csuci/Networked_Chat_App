@@ -14,6 +14,7 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
     {
         private SendMessageToChatRoom _sendMessageToChatRoom = null!;
         private string? _chatRoomName;
+        private Guid? _senderUserId;
         private string? _senderUsername;
 
         public SendMessageToChatRoom SendMessageToChatRoom
@@ -26,6 +27,12 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
         {
             get => _chatRoomName;
             set => _chatRoomName = value;
+        }
+
+        public Guid? SenderUserId
+        {
+            get => _senderUserId;
+            set => _senderUserId = value;
         }
 
         public string? SenderUsername

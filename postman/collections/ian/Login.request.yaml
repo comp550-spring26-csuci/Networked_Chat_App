@@ -10,9 +10,13 @@ body:
 scripts:
   - type: afterResponse
     code: |-
+      pm.collectionVariables.set("optional_user_id", pm.response.json().userId)
+
       pm.collectionVariables.set("access_token", pm.response.json().token);
 
       pm.collectionVariables.set("target_chatroom_id", "");
+
+      pm.collectionVariables.set("optional_room_name", "")
 
       pm.collectionVariables.set("message", "");
     language: text/javascript

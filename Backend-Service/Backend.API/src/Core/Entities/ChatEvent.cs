@@ -19,6 +19,7 @@ namespace Backend.API.src.Core.Entities
         UserLeft,
         MembershipAdded,
         MembershipRemoved,
+        RoomDeleted,
         FriendRequestReceived,
         FriendRequestAccepted
     }

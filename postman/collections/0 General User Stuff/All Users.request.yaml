@@ -1,0 +1,4 @@
+$kind: http-request
+url: https://{{URL.host}}/api/test/all-users
+method: GET
+order: 2000

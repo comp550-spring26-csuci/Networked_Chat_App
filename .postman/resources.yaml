@@ -1,11 +1,11 @@
-# Use this workspace to collaborate
 workspace:
   id: b090418d-bd7b-4e1b-986c-3f029d32a59c
-
 localResources:
   collections:
     - ../Backend-Service/Backend.API/tests/PostmanCollection/MastersNetworkChatApp.postman_collection.json
-
+    - ../postman/collections/ian
+    - ../postman/collections/0 General User Stuff
 cloudResources:
   collections:
     ../postman/collections/ian: 69f372db6ab8dac06c21e112
+    ../postman/collections/0 General User Stuff: 53057896-7c97af9e-9523-4340-a326-a710587bac39

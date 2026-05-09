@@ -6,6 +6,7 @@
 // -------------------------------------------------------------------
 
 using Backend.API.src.Core.Entities;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
@@ -13,15 +14,15 @@ namespace Backend.API.src.Application.Services
 {
     public class JwtTokenService
     {
+        private readonly JwtSettings _settings;
         private readonly SigningCredentials _signingCredentials;
-        private readonly string _issuer;
-        private readonly string _audience;
 
-        public JwtTokenService(SigningCredentials signingCredentials, string issuer, string audience)
+        public JwtTokenService(IOptions<JwtSettings> options)
         {
-            _signingCredentials = signingCredentials;
-            _issuer = issuer;
-            _audience = audience;
+            _settings = options.Value;
+            _signingCredentials = new(
+                new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Key)),
+                SecurityAlgorithms.HmacSha256);
         }
 
         public string GenerateToken(User user, TimeSpan expiration)
@@ -32,17 +33,16 @@ namespace Backend.API.src.Application.Services
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email)
             };
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.Add(expiration),
-                Issuer = _issuer,
-                Audience = _audience,
-                SigningCredentials = _signingCredentials
-            };
-            var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+
+            var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
+                issuer: _settings.Issuer,
+                audience: _settings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.Add(expiration),
+                signingCredentials: _signingCredentials
+            );
+
+            return new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

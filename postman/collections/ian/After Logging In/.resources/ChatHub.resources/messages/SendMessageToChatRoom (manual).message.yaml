@@ -13,6 +13,10 @@ content: "{
 
   \            },
 
+  \            \"ChatRoomName\": \"{{optional_room_name}}\",
+
+  \            \"SenderUserId\": \"{{optional_user_id}}\",
+
   \            \"SenderUsername\": \"{{username}}\"
 
   \        }

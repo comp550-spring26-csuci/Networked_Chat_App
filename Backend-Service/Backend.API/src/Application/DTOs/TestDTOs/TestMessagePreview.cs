@@ -13,7 +13,7 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
     {
         private MessagePreview _messagePreview = null!;
         private string? _chatRoomName;
-        private Guid _senderId = default!;
+        private Guid? _senderId;
 
         public MessagePreview MessagePreview
         {
@@ -27,7 +27,7 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
             set => _chatRoomName = value;
         }
 
-        public Guid SenderId
+        public Guid? SenderId
         {
             get => _senderId;
             set => _senderId = value;

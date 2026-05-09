@@ -13,8 +13,8 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using Serilog;
-using System.Text;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Options;
 
 namespace Backend.API
 {
@@ -54,21 +54,15 @@ namespace Backend.API
                 builder.Services.AddScoped<MessageRepository>();
                 builder.Services.AddScoped<ChatEventRepository>();
                 builder.Services.AddScoped<TestChatRoomRepository>();
+                builder.Services.AddSingleton<ClientPresenceService>();
+                builder.Services.AddScoped<SignalRGroupService>();
 
                 // --- COMPATIBILITY FIX ---
-                var jwtSection = builder.Configuration.GetSection("JwtSettings");
-                var issuer = jwtSection["Issuer"] ?? "ChatApp";
-                var audience = jwtSection["Audience"] ?? "ChatAppUsers";
-                var jwtKeyString = jwtSection["Key"] ?? "SecretDevelopmentKey1234567890";
+                var jwtSettings = builder.Configuration.GetSection(key: "JwtSettings").Get<JwtSettings>() ?? new JwtSettings();
+                builder.Services.AddSingleton(Options.Create(jwtSettings));
+                
+                builder.Services.AddTransient<JwtTokenService>();
 
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKeyString));
-                var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
-
-                builder.Services.AddSingleton(signingCredentials);
-                builder.Services.AddSingleton(issuer);
-                builder.Services.AddSingleton(audience);
-
-                builder.Services.AddTransient<JwtTokenService>(provider => new JwtTokenService(signingCredentials, issuer, audience));
                 // --- ---
 
                 builder.Services.AddControllers();
@@ -100,9 +94,9 @@ namespace Backend.API
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = issuer,
-                        ValidAudience = audience,
-                        IssuerSigningKey = securityKey
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtSettings.Key))
                     };
 
                     options.Events = new JwtBearerEvents
@@ -120,6 +114,7 @@ namespace Backend.API
                     };
                 });
 
+                // --- 6. DEV TUNNEL CONFIGURATION ---
                 var devTunnelUrl = Environment.GetEnvironmentVariable("VS_TUNNEL_URL");
 
                 if (!string.IsNullOrEmpty(devTunnelUrl))
