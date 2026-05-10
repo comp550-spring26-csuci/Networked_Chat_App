@@ -7,13 +7,15 @@
 
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Backend.API.src.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ChatHistoryController : ControllerBase
     {
         private readonly ChatEventRepository _chatEventRepository;

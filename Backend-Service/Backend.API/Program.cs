@@ -33,12 +33,23 @@ namespace Backend.API
                 var builder = WebApplication.CreateBuilder(args);
                 builder.Host.UseSerilog();
 
+                // --- 1. DEVELOPMENT TUNNEL CONFIGURATION ---
+                if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("VS_TUNNEL_URL")))
+                {
+                    builder.WebHost.ConfigureKestrel(options =>
+                    {
+                        options.ConfigureEndpointDefaults(listenOptions =>
+                        {
+                            listenOptions.Protocols = HttpProtocols.Http1;
+                        });
+                    });
+                }
+
                 // --- 2. DATABASE CONFIGURATION ---
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
                 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-                var mongoDbSettings = builder.Configuration.GetSection("MongoDB");
-                builder.Services.Configure<MongoDbSettings>(mongoDbSettings);
+                builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
                 builder.Services.AddSingleton<MongoDbContext>();
                 BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 
@@ -66,7 +77,11 @@ namespace Backend.API
                 // --- ---
 
                 builder.Services.AddControllers();
-                builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; });
+                builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
+                    .AddJsonProtocol(options => 
+                    { 
+                        options.PayloadSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase; 
+                    });
                 builder.Services.AddOpenApi();
 
                 builder.Services.AddCors(options =>
@@ -113,20 +128,7 @@ namespace Backend.API
                         }
                     };
                 });
-
-                // --- 6. DEV TUNNEL CONFIGURATION ---
-                var devTunnelUrl = Environment.GetEnvironmentVariable("VS_TUNNEL_URL");
-
-                if (!string.IsNullOrEmpty(devTunnelUrl))
-                {
-                    builder.WebHost.ConfigureKestrel(options =>
-                    {
-                        options.ConfigureEndpointDefaults(listenOptions =>
-                        {
-                            listenOptions.Protocols = HttpProtocols.Http1;
-                        });
-                    });
-                }
+                builder.Services.AddAuthorization();
 
                 var app = builder.Build();
 

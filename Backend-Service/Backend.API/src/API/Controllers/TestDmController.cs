@@ -10,6 +10,7 @@ using Backend.API.src.Application.Services;
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.API.src.API.Controllers
