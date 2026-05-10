@@ -166,6 +166,8 @@ client methods to implement:
 
 Notes:
 - This is for notifications and previews, invoked regardless of whether the client is actively viewing the given chat room.
+- Currently, these message previews are not persisted in the server.
+- The essential purpose of this is to let the client count every unread message starting from when they last connected to the server.
 
 ### Server side:
 
@@ -182,13 +184,14 @@ connection.on(
     "ReceiveMessagePreview",
     {
         "messagePreview": {
-            "chatRoomId": "d5789a29-0000-0000-0000-000000000000",
-            "senderUsername": "ian"
-            "content": "Hi My name is Ian how are you. What is your name? ...",
-            "timestamp": "2026-05-03T06:02:55.7608972Z"
+            "messageId": "6a00aef04b1d081d1f72cf56",
+            "chatRoomId": "00000001-0000-0000-0000-000000000000",
+            "senderUsername": "ian",
+            "content": "Never gonna give you up. Never gonna let you down....",
+            "timestamp": "2026-05-10T16:14:40.5030686Z"
         },
         "chatRoomName": "ian_kenneth",
-        "senderId": "f280b38b-cda0-4465-80c0-2f4db187fe1d"
+        "senderId": "24a749d5-4b9a-40c6-86b8-16678d5a1ec6"
     }
 )
 ```
@@ -211,12 +214,12 @@ connection.on(
     "ReceiveMessage",
     {
         "message": {
-            "id": "69f6e50f9168a53903471c6f",
-            "senderId": "f280b38b-cda0-4465-80c0-2f4db187fe1d",
+            "id": "6a00aef04b1d081d1f72cf56",
+            "senderId": "24a749d5-4b9a-40c6-86b8-16678d5a1ec6",
             "senderUsername": "ian",
-            "chatRoomId": "d5789a29-0000-0000-0000-000000000000",
-            "content": "Hi My name is Ian how are you. What is your name? What is your favorite color?",
-            "timestamp": "2026-05-03T06:02:55.7602882Z"
+            "chatRoomId": "00000001-0000-0000-0000-000000000000",
+            "content": "Never gonna give you up. Never gonna let you down. Never gonna run around and desert you. Never gonna make you cry. Never gonna say goodbye. Never gonna tell a lie and hurt you.",
+            "timestamp": "2026-05-10T16:14:40.5030686Z"
         },
         "chatRoomName": "ian_kenneth",
         "senderUsername": "ian"
@@ -243,11 +246,13 @@ connection.on(
     "ReceiveEvent",
     {
         "chatEvent": {
-            "id": "69f6e5179168a53903471c70",
-            "chatRoomId": "d5789a29-0000-0000-0000-000000000000",
+            "id": "6a00af054b1d081d1f72cf58",
+            "chatRoomId": "00000001-0000-0000-0000-000000000000",
             "eventType": "UserLeft",
-            "details": "ChatRoom: ian_kenneth, Username: ian",
-            "timestamp": "2026-05-03T06:03:03.8497462Z"
+            "details": "Username: ian",
+            "timestamp": "2026-05-10T16:15:01.9586281Z",
+            "room": null,
+            "request": null
         },
         "chatRoomName": "ian_kenneth"
     }
@@ -270,6 +275,6 @@ string errorMessage;
 ```
 connection.on(
   "ReceiveError",
-  "This is an unrealistic error message because I have not taken the time to demonstrate any errors to present"
+  "Chat room id \"00000022-0000-0000-0000-000000000000\" does not exist. Please provide a valid ChatRoomId."
 )
 ```
