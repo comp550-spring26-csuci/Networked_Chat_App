@@ -15,8 +15,9 @@ using System.Collections.ObjectModel;
 
 namespace Backend.API.src.Infrastructure.Persistence
 {
-    public enum ChatRoomId
+    public enum ChatRoomEnum
     {
+        none,
         ian_kenneth,
         ian_brielle,
         ian_ivana,
@@ -32,24 +33,21 @@ namespace Backend.API.src.Infrastructure.Persistence
 
         // public Dictionary<Guid, string> ChatRooms = new Dictionary<Guid, string>();
 
-        public static Guid ToGuid(ChatRoomId chatRoomId)
+        public static Guid ToGuid(ChatRoomEnum chatRoomEnum)
         {
-            // Convert the enum value to a string and then to a GUID
-            string name = chatRoomId.ToString();
             byte[] bytes = new byte[16];
-            int hash = name.GetHashCode();
-            BitConverter.GetBytes(hash).CopyTo(bytes, 0);
+            BitConverter.GetBytes((int) chatRoomEnum).CopyTo(bytes, 0);
             return new Guid(bytes);
         }
 
-        private Dictionary<Guid, string> _chatRooms = new Dictionary<Guid, string>()
+        private readonly Dictionary<Guid, string> _chatRooms = new()
         {
-            { ToGuid(ChatRoomId.ian_kenneth),     "ian_kenneth" },
-            { ToGuid(ChatRoomId.ian_brielle),     "ian_brielle" },
-            { ToGuid(ChatRoomId.ian_ivana),       "ian_ivana" },
-            { ToGuid(ChatRoomId.kenneth_brielle), "kenneth_brielle" },
-            { ToGuid(ChatRoomId.kenneth_ivana),   "kenneth_ivana" },
-            { ToGuid(ChatRoomId.brielle_ivana),   "brielle_ivana" }
+            { ToGuid(ChatRoomEnum.ian_kenneth),     "ian_kenneth" },
+            { ToGuid(ChatRoomEnum.ian_brielle),     "ian_brielle" },
+            { ToGuid(ChatRoomEnum.ian_ivana),       "ian_ivana" },
+            { ToGuid(ChatRoomEnum.kenneth_brielle), "kenneth_brielle" },
+            { ToGuid(ChatRoomEnum.kenneth_ivana),   "kenneth_ivana" },
+            { ToGuid(ChatRoomEnum.brielle_ivana),   "brielle_ivana" }
         };
 
         public readonly ReadOnlyDictionary<Guid, string> ChatRooms;

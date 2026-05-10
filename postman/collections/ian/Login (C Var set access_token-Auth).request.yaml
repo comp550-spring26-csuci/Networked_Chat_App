@@ -1,4 +1,5 @@
 $kind: http-request
+name: Login (C Var set access_token/Auth)
 url: https://{{URL.host}}/api/testdm/seed-user?UserName={{username}}&OverWrite=false
 method: POST
 queryParams:
@@ -7,6 +8,8 @@ queryParams:
 body:
   type: json
   content: ""
+auth:
+  type: noauth
 scripts:
   - type: afterResponse
     code: |-

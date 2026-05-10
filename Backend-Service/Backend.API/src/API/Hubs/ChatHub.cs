@@ -228,7 +228,7 @@ namespace Backend.API.src.API.Hubs
 
                 if (roomId == default || !_testChatRoomRepository.ChatRoomExists(roomId))
                 {
-                    await SendErrorToClientAsync("Chat room does not exist. Please provide a valid ChatRoomId.");
+                    await SendErrorToClientAsync($"Chat room id \"{roomId}\" does not exist. Please provide a valid ChatRoomId.");
                     return;
                 }
 

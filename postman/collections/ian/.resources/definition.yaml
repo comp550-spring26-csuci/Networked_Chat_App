@@ -1,2 +1,7 @@
 $kind: collection
-name: ian
+auth:
+  - id: 4e5d71ee-fe2b-4cee-bc3e-47761c03a931
+    type: bearer
+    name: Bearer Token
+    credentials:
+      token: "{{access_token}}"

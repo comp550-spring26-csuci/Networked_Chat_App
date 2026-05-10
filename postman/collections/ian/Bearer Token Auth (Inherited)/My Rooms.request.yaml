@@ -1,10 +1,6 @@
 $kind: http-request
 url: https://{{URL.host}}/api/chathistory/user/mine/rooms
 method: GET
-auth:
-  type: bearer
-  credentials:
-    token: "{{access_token}}"
 scripts:
   - type: afterResponse
     code: |-
@@ -12,4 +8,4 @@ scripts:
           pm.collectionVariables.set(value, key);
       });
     language: text/javascript
-order: 1000
+order: 2000
