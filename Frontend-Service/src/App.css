@@ -1,124 +1,42 @@
-/* */
-html, body, #root {
-  font-family: "Roboto", system-ui, sans-serif;
-  font-weight: 400;
-  height: 100%;
-  margin: 0;
-}
-
-.chat-container {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-}
-
-/* Left column */
-.dm-list-header {
-  border-bottom: 1px solid #555;
-  padding: 10px;
-  text-align: left;
-}
-
-.dm-list {
-  width: 250px;
-  background-color: #131415;
-  border: 1px solid #555;
-  color: white;
-  overflow-y: auto;
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
   text-align: center;
 }
 
-/* Right column */
-.chat-window {
-  flex: 1;
-  background-color: #131415;
-  color: white;
-  display: flex;
-  flex-direction: column;
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-/* DM item */
-.dm-item {
-  padding: 10px 12px;
-  margin: 6px 8px;
-  border-radius: 12px;
-  cursor: pointer;
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.dm-item:hover {
-  background-color: #3a3c42;
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
 }
 
-.dm-item.active {
-  background-color: #404249;
+.card {
+  padding: 2em;
 }
 
-.recipient-name {
-  padding: 10px;
-  margin-top: 0;
-  border: 1px solid #555;
-  border-left: none;
-}
-
-/* Messages area */
-.messages {
-  flex: 1;
-  padding-left: 40px;
-  padding-top: 15px;
-  overflow-y: auto;
-}
-
-.message {
-  margin-top: 15px;
-}
-
-.message.grouped {
-  margin-top: 0;
-}
-
-.message-text {
-  margin: 0;
-  padding: 0;
-  white-space: pre-wrap;
-}
-
-.message-header {
-  display: flex;
-  gap: 8px; /* space between sender and time */
-  align-items: baseline;
-}
-
-.message-header .time {
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-/* Chat input area */
-.text-box {
-  min-height: 55px;
-  max-height: 250px;
-  margin: 10px;
-  padding: 17px 40px;
-  box-sizing: border-box;
-  overflow-y: auto;
-
-  border-radius: 8px;
-  border: 1px solid #555;
-  outline: none;
-
-  background-color: #383a40;
-  color: white;
-  
-  font-size: 14px;
-  line-height: 20px;
-
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* placeholder (Discord-style) */
-.text-box:empty:before {
-  content: attr(data-placeholder);
-  color: #9ca3af;
-  pointer-events: none;
+.read-the-docs {
+  color: #888;
 }

@@ -1,0 +1,167 @@
+/* Container & Layout */
+.fl-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #131415; /* Matches chat window */
+  color: white;
+  height: 100%;
+  width: 100%;
+}
+
+.fl-header {
+  border-bottom: 1px solid #555;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.fl-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.fl-back-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+
+.fl-back-btn:hover {
+  color: white;
+}
+
+/* Add Friend Form */
+.fl-add-form {
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  border-bottom: 1px solid #555;
+}
+
+.fl-add-form .text-box {
+  flex: 1;
+  min-height: auto; 
+  margin: 0;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  outline: none;
+  background-color: #383a40;
+  color: white;
+  font-size: 14px;
+}
+
+.fl-add-form .text-box::placeholder {
+  color: #9ca3af;
+}
+
+.fl-add-btn {
+  background-color: #404249;
+  color: white;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 0 15px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.fl-add-btn:hover {
+  background-color: #555;
+}
+
+.fl-message {
+  padding: 0 20px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* Friends List */
+.fl-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 20px;
+}
+
+.fl-empty {
+  color: #9ca3af;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.fl-section {
+  margin-bottom: 20px;
+}
+
+.fl-section-title {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 15px 0 5px 10px;
+}
+
+/* Individual Friend Item */
+.fl-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  margin-bottom: 2px;
+  border-radius: 12px; /* Matches .dm-item */
+  cursor: pointer;
+}
+
+.fl-item:hover {
+  background-color: #3a3c42; /* Matches .dm-item:hover */
+}
+
+.fl-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fl-username {
+  font-weight: 500;
+}
+
+/* Status Indicators */
+.fl-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.fl-status-dot.online {
+  background-color: #23a559; /* Green */
+}
+
+.fl-status-dot.offline {
+  background-color: #80848e; /* Gray */
+}
+
+/* Remove Button */
+.fl-remove-btn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.fl-item:hover .fl-remove-btn {
+  opacity: 1; /* Appears only when hovering over the friend */
+}
+
+.fl-remove-btn:hover {
+  color: #ed4245; /* Red on hover */
+}

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import '../login.css'
+import './login.css'
 
-const BASE_URL = "http://vg3jzw0g-5148.usw3.devtunnels.ms";
+const BASE_URL = "https://pl4nx3gd-5148.usw3.devtunnels.ms";
  
 const EyeIcon = ({ open }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -138,20 +138,39 @@ export default function LoginPage({ onLogin }) {
   const handleSubmit = async () => {
     if (mode === "login") {
       if (!username.trim()) { setLoginError("Username is required."); return; }
-	  else { onLogin(username); console.log(username); } // FOR TESTING ONLY
+      
+      // Commented out the premature test bypass so the password check runs
+      // else { onLogin(username); console.log(username); } // FOR TESTING ONLY
+      
       if (!password) { setLoginError("Password is required."); return; }
+      
       setLoading(true);
       setLoginError("");
+
+      // --- HARDCODED USERS  ---
+      setTimeout(() => {
+        if (
+          (username === "user1" && password === "pass1") || 
+          (username === "user2" && password === "pass2")
+        ) {
+          onLogin({ username, token: "mock-token-123", userId: "mock-id-456" });
+        } else {
+          setLoginError("Invalid username or password.");
+        }
+        setLoading(false);
+      }, 600);
+
+      /* --- ORIGINAL FETCH CODE COMMENTED OUT ---
       try {
-        const res = await fetch(`${BASE_URL}/api/test/login`, { //update endpoint when ready
+        const res = await fetch(`${BASE_URL}/api/user/login`, { //update endpoint when ready
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
         });
         const data = await res.json();
         if (res.ok) {
-          alert(`Welcome back, ${username}!`);
-		  onLogin();
+          onLogin({ username, token: data.token, userId: data.userId }); //userID and token
+      //onLogin();
         } else {
           setLoginError(data.message || "Invalid username or password.");
         }
@@ -160,6 +179,8 @@ export default function LoginPage({ onLogin }) {
       } finally {
         setLoading(false);
       }
+      ----------------------------------------- */
+      
     } else {
       // Validate all fields filled
       if (!suUsername.trim()) { setSignupError("Username is required."); return; }
@@ -182,7 +203,7 @@ export default function LoginPage({ onLogin }) {
       setLoading(true);
       setSignupError("");
       try {
-        const res = await fetch(`${BASE_URL}/api/test/create-account`, {
+        const res = await fetch(`${BASE_URL}/api/user/create-account`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
