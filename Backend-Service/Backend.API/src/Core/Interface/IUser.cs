@@ -22,7 +22,7 @@ namespace Backend.API.src.Core.Interface
         Guid Id { get; set; }
         // VARCHAR
         string Username { get; set; }
-        // TIMESTAMP
+        // VARCHAR
         string Email { get; set; }
         // TEXT (allows NULL)
         string PasswordHash { get; set; }
@@ -36,11 +36,6 @@ namespace Backend.API.src.Core.Interface
         // Options will be "Online", "Offline", "DoNotDIsturbe"
         string PresenceStatus { get; set; }
         string? CustomStatusText { get; set; }
-
-        //-----Connections
-        // We just store the IDs or links to other classses
-        ICollection<Guid> JoinedServerIds { get; set; }
-        ICollection<Guid> FriendIds { get; set; }
 
     }
 }

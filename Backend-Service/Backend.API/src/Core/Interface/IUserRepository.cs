@@ -56,6 +56,10 @@ namespace Backend.API.src.Core.Interface
         Task<bool> SaveChangesAsync();
 
 
+        // Delete all entries of the database BE CAREFUL WHEN USING THIS METHOD!
+        Task ClearAllUsersAsync();
+
+
     }
 
 }

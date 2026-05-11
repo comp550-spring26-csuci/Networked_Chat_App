@@ -40,12 +40,6 @@ namespace Backend.API.src.Core.Entities
         private string _presenceStatus = "Offline";
         private string? _customStatusText;
 
-        //-----Connections
-        // We just store the IDs or links to other classses
-        // They are initialized as empy lists
-        private ICollection<Guid> _joinedServerIds = new List<Guid>();
-        private ICollection<Guid> _friendIds = new List<Guid>();
-
 
         //----------------------------------
         //------  Getters and Setters ------
@@ -139,23 +133,6 @@ namespace Backend.API.src.Core.Entities
 
 
 
-        //-----Connections
-        public ICollection<Guid> JoinedServerIds 
-        { 
-            get { return _joinedServerIds; } 
-
-            // '??' if someone tries to set this to null, using an empy list instead
-            set { _joinedServerIds = value ?? new List<Guid>(); } 
-        } 
-        public ICollection<Guid> FriendIds 
-        { 
-            get { return _friendIds;  }
-
-            set { _friendIds = value ?? new List<Guid>(); }
-
-        }
-
-
 
         //----------------------------------
         //--------  Constructors -----------
@@ -205,63 +182,6 @@ namespace Backend.API.src.Core.Entities
             // Logging the state change
             AppLogger.DebugState("UserEntity", $"Status changed for {Username}: {oldStatus} -> {newStatus}");
         
-        }
-
-
-        /// <summary>
-        /// Adding  a friend, avoiding adding the same person twice
-        /// </summary>
-        /// <param name="newFriendId"></param>
-        public void AddFriend(Guid newFriendId) 
-        {
-            if (!_friendIds.Contains(newFriendId))
-            { 
-                _friendIds.Add(newFriendId);
-                AppLogger.UserAction(Id.ToString(), $"Added friend {newFriendId}");
-            }
-        }
-
-
-        /// <summary>
-        /// Removing a friend
-        /// </summary>
-        /// <param name="friendId"></param>
-        public void RemoveFriend(Guid friendId)
-        {
-            if (_friendIds.Contains(friendId))
-            {
-                _friendIds.Remove(friendId);
-                AppLogger.UserAction(Id.ToString(), $"Removed friend {friendId}");
-            }
-        }
-
-
-        /// <summary>
-        /// Adds a server ID
-        /// </summary>
-        /// <param name="serverId"></param>
-        public void JoinServer(Guid serverId)
-        { 
-            if (!_joinedServerIds.Contains(serverId))
-            {
-                _joinedServerIds.Add(serverId);
-                AppLogger.UserAction(Id.ToString(), $"Joined server {serverId}");
-            }
-        }
-
-
-        /// <summary>
-        /// Drops the Server ID from the list
-        /// The user will be disconnected 
-        /// </summary>
-        /// <param name="serverId"></param>
-        public void LeaveServer(Guid serverId)
-        {
-            if (_joinedServerIds.Contains(serverId))
-            {
-                _joinedServerIds.Remove(serverId);
-                AppLogger.UserAction(Id.ToString(), $"Leaved server {serverId}");
-            }
         }
 
 

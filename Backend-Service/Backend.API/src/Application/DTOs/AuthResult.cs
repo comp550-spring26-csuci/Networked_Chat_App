@@ -27,6 +27,7 @@ namespace Backend.API.src.Application.DTOs
         private bool _isSuccess;
         private string _errorMessage = string.Empty;
         private User? _createdUser;
+        private string? _token { get; set; }
 
         //----------------------------------
         //------  Getters and Setters ------
@@ -53,6 +54,15 @@ namespace Backend.API.src.Application.DTOs
             // No setter to protect the integrity of the response
         }
 
+        public string? Token
+        {
+            get { return _token; }
+            private set
+            { 
+                _token = value;
+            }
+        }
+
         //----------------------------------
         //---------  Constructors ----------
         //----------------------------------
@@ -66,6 +76,7 @@ namespace Backend.API.src.Application.DTOs
             _isSuccess = false;
             _errorMessage = errorMessage;
             _createdUser = null;
+            _token = null;
 
         }
 
@@ -73,11 +84,12 @@ namespace Backend.API.src.Application.DTOs
         /// Public constructor for a successful authentication or registration attempt
         /// </summary>
         /// <param name="user"></param>
-        public AuthResult(User user) 
+        public AuthResult(User user, string token) 
         {
             _isSuccess = true;
             _errorMessage = String.Empty;
             _createdUser = user;
+            _token = token;
         }
     }
 }

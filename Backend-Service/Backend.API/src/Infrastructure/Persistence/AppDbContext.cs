@@ -36,7 +36,13 @@ namespace Backend.API.src.Infrastructure.Persistence
 
 
         /// <summary>
-        /// IOt saves the changes
+        /// table for managing user relationship
+        /// </summary>
+        public DbSet<Friendship> Friendships { get; set; }
+
+
+        /// <summary>
+        /// It saves the changes
         /// </summary>
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -50,23 +56,23 @@ namespace Backend.API.src.Infrastructure.Persistence
             catch (Exception ex)
             {
                 AppLogger.ShieldFailure("DatabaseSave", ex);
-                throw; // rethrowing so that the repo knowsn it failed
+                throw; // rethrowing so that the repo knows it failed
 
             }
         }
 
         /// <summary>
-        /// 
+        /// Configuring the relationships and constrains between tables
         /// </summary>
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             // Logging the state change
-            AppLogger.DebugState("Database", "Configuring Model Constraints (Indexes))");
+            AppLogger.DebugState("Database", "Configuring Model Constraints (Indexes)");
 
-
-            // We enforce tha the Usernames and emails must be  in the database
+            // --- User Table Constraints ---
+            // We enforce that the Usernames and emails must be  in the database
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
@@ -75,6 +81,34 @@ namespace Backend.API.src.Infrastructure.Persistence
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+
+            // --- Friendship Table Configuration ---
+            // We enforce tha the Usernames and emails must be  in the database
+            modelBuilder.Entity<Friendship>(entity =>
+            {
+                // Defining the Primary Key
+                entity.HasKey(f => f.Id);
+
+                // Relationship: Configuring the 'UserId' (The Sender)
+                entity.HasOne(f => f.User)
+                .WithMany() // A user can have many friendship records
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // Delete friendship if user is deleted
+
+                // Relationship: Configuring the 'FriendId' (The Receiver)
+                entity.HasOne(f => f.Friend)
+                .WithMany() 
+                .HasForeignKey(f => f.FriendId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+                // Business Rule: Ensure User A cannot add User B more than once
+                entity.HasIndex(f => new {  f.UserId, f.FriendId})
+                .IsUnique();
+
+
+
+            });
 
         }
 

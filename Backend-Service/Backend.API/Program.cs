@@ -5,6 +5,8 @@ using Backend.API.src.Core.Interface;
 using Backend.API.src.Infrastructure.Persistence;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
+using Backend.API.src.Infrastructure.Security;
+
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -46,8 +48,12 @@ namespace Backend.API
 
                 // --- User Services
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
+                builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
                 builder.Services.AddScoped<IAuthService, AuthService>();
                 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
+
+                // --- Friendship Services
+                builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
 
                 // Messaging Services 
                 builder.Services.AddScoped<MessageRepository>();
@@ -123,7 +129,7 @@ namespace Backend.API
 
                 if (app.Environment.IsDevelopment()) { app.MapOpenApi(); }
 
-                app.UseHttpsRedirection();
+                //app.UseHttpsRedirection();
                 app.UseCors("AllowEverything");
 
                 app.UseWhen(context => context.Request.Path.StartsWithSegments("/chathub"), appBuilder =>
