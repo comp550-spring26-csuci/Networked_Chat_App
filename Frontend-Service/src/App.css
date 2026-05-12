@@ -134,17 +134,19 @@ html, body, #root {
 }
 
 .sidebar {
-  width: 100px;
+  width: 60px;
   background: #080808;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 20px;
   gap: 10px;
+  align-items: center;
 }
 
 .sidebar button {
   padding: 10px;
-  background: #40444b;
+  margin-bottom: 10px;
+  background: #0C0C0C;
   color: white;
   border: none;
   cursor: pointer;
@@ -152,11 +154,10 @@ html, body, #root {
 }
 
 .sidebar-icon {
-  width: 48px;
-  height: 48px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
   border: none;
-  background: #40444b;
   color: white;
   font-size: 20px;
 
@@ -170,12 +171,15 @@ html, body, #root {
 
 .sidebar-icon.active {
   background: #5865f2;
-  border-radius: 16px;
 }
 
 .sidebar-icon:hover {
-  border-radius: 16px; /* Discord hover effect */
   background: #5865f2;
+}
+
+.sidebar-icon:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 /* container for content to the right of the sidebar */
