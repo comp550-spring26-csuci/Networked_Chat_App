@@ -176,11 +176,12 @@ namespace Backend.API.src.API.Controllers
                 return Ok(new
                 {
                     Message = "Login successful! Welcome back.",
-                    UserId = authResult.CreatedUser.Id,
+                    UserId = authResult.CreatedUser!.Id,
                     Token = authResult.Token, // The front end can see the token
+
                     // We return thr "Pair": the number for logic, and the string for display
-                    CurrentStatus = (int)user.PresenceStatus,
-                    StatusName = user.PresenceStatus.ToString()
+                    CurrentStatus = (int)user!.PresenceStatus,
+                    StatusName = user!.PresenceStatus.ToString()
                 });
 
             }

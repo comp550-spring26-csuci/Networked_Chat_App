@@ -40,6 +40,18 @@ namespace Backend.API.src.Infrastructure.Persistence
         /// </summary>
         public DbSet<Friendship> Friendships { get; set; }
 
+        // ---- Chat Group Tables
+
+        /// <summary>
+        /// Defines the persistent ChatGroup entity.
+        /// </summary>
+        public DbSet<ChatGroup> ChatGroups { get; set; }
+
+        /// <summary>
+        /// Defines the ChatGroupMember member
+        /// </summary>
+        public DbSet<ChatGroupMember> ChatGroupMembers { get; set; }
+
 
         /// <summary>
         /// It saves the changes
@@ -107,7 +119,26 @@ namespace Backend.API.src.Infrastructure.Persistence
                 entity.HasIndex(f => new {  f.UserId, f.FriendId})
                 .IsUnique();
 
+            });
 
+
+            // --- ChatGroupMember Configuration ---
+            modelBuilder.Entity<ChatGroupMember>(entity =>
+            {
+                // 1. Composite Primary Key (A user can only join a specific group once)
+                entity.HasKey(cgm => new { cgm.ChatGroupId, cgm.UserId });
+
+                // 2. Relationship to ChatGroup
+                entity.HasOne(cgm => cgm.ChatGroup)
+                .WithMany(cg => cg.Members)
+                .HasForeignKey(cgm => cgm.ChatGroupId)
+                .OnDelete(DeleteBehavior.Cascade); // If group is deleted, delete all members
+
+                // 3. Relationship to User
+                entity.HasOne(cgm => cgm.User)
+                .WithMany()
+                .HasForeignKey(cgm => cgm.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // If user is deleted, remove them from all groups
 
             });
 

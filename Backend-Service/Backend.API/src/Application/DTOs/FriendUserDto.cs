@@ -18,7 +18,7 @@ namespace Backend.API.src.Application.DTOs
         //----------------------------------
 
         private Guid _id;
-        private string _username;
+        private string _username = string.Empty;
 
         //----------------------------------
         //------  Getters and Setters ------

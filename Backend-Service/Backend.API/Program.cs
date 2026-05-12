@@ -55,10 +55,13 @@ namespace Backend.API
                 // --- Friendship Services
                 builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
 
-                // Messaging Services 
+                // --- Messaging Services 
                 builder.Services.AddScoped<MessageRepository>();
                 builder.Services.AddScoped<ChatEventRepository>();
                 builder.Services.AddScoped<TestChatRoomRepository>();
+
+                // --- Chat Groups Repository
+                builder.Services.AddScoped<IChatGroupRepository, ChatGroupRepository>();
 
                 // --- COMPATIBILITY FIX ---
                 var jwtSection = builder.Configuration.GetSection("JwtSettings");
