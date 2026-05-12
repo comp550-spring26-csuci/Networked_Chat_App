@@ -142,24 +142,24 @@ export default function LoginPage() {
 
   const onLoginSuccess = async () => {
     try {
-      // console.log("Name:", name);
-      // const seedRes = await fetch(
-      //   `https://sslk8rt0-7081.usw3.devtunnels.ms/api/testdm/seed-user?UserName=${name}&OverWrite=false`, {
-      //   method: 'POST'
-      // });
+      console.log("Name:", username);
+      const seedRes = await fetch(
+        `https://sslk8rt0-7081.usw3.devtunnels.ms/api/testdm/seed-user?UserName=${username}&OverWrite=false`, {
+        method: 'POST'
+      });
 
-      // const data = await seedRes.json();
-      // console.log("SignalR login response:", data);
+      const data = await seedRes.json();
+      console.log("SignalR login response:", data);
 
-      // // Store SignalR token
-      // localStorage.setItem("access_token", data.token);
+      // Store SignalR token
+      localStorage.setItem("access_token", data.token);
 
-      // if(!seedRes.ok) {
-      //   setLoginError("Failed to initialize chat user for SignalR");
-      //   return;
-      // }
+      if(!seedRes.ok) {
+        setLoginError("Failed to initialize chat user for SignalR");
+        return;
+      }
 
-      // await startSignalRConnection();
+      await startSignalRConnection();
 
       // Redirect to chat
       navigate("/chat");
@@ -189,6 +189,7 @@ export default function LoginPage() {
 
           // 2. Store the username
           localStorage.setItem("username", data.username);
+          // Can store tokens here or status information
           // 3. Start SignalR process after login works
           onLoginSuccess();
 		      

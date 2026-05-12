@@ -34,7 +34,7 @@ export default function ChatLayout() {
 					setSelectedDM(roomsArray[0]);
 				}
 
-				const resp = await fetch("https://sslk8rt0-7081.usw3.devtunnels.ms/api/testdm/all-users", {
+				const resp = await fetch("https://sslk8rt0-7081.usw3.devtunnels.ms/api/test/all-users", {
 					method: 'GET'
 				});
 
@@ -46,7 +46,7 @@ export default function ChatLayout() {
 				console.error("Failed to fetch rooms:", err);
 			}
 		}
-		//fetchDMRooms();
+		fetchDMRooms();
 	}, []);
 
 	// track previous DM

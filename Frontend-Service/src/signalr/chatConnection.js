@@ -10,18 +10,20 @@ export function getConnection() {
 }
 
 export function startSignalRConnection() {
-  const token = localStorage.getItem("access_token");
+//   const token = localStorage.getItem("access_token");
 
-  connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://sslk8rt0-7081.usw3.devtunnels.ms/chathub", {
-      accessTokenFactory: () => token
-    })
-    .withAutomaticReconnect()
-    .build();
+//   console.log(`TOKEN in startSignalRConnection: ${token}`);
 
-  connection.start()
-    .then(() => console.log("SignalR connected"))
-    .catch(err => console.error("SignalR error:", err));
+//   connection = new signalR.HubConnectionBuilder()
+//     .withUrl("https://sslk8rt0-7081.usw3.devtunnels.ms/chathub", {
+//       accessTokenFactory: () => token
+//     })
+//     .withAutomaticReconnect()
+//     .build();
+
+//   connection.start()
+//     .then(() => console.log("SignalR connected"))
+//     .catch(err => console.error("SignalR error:", err));
 }
 
 export function joinChatRoom(chatRoomId) {
