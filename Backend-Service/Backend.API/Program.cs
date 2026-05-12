@@ -137,13 +137,11 @@ namespace Backend.API
                 if (app.Environment.IsDevelopment()) { app.MapOpenApi(); }
 
                 app.UseHttpsRedirection();
+                app.UseRouting();
                 app.UseCors("AllowEverything");
 
-                app.UseWhen(context => context.Request.Path.StartsWithSegments("/chathub"), appBuilder =>
-                {
-                    appBuilder.UseAuthentication();
-                    appBuilder.UseAuthorization();
-                });
+                app.UseAuthentication();
+                app.UseAuthorization();
 
                 app.MapControllers();
                 app.MapHub<ChatHub>("/chathub");
