@@ -34,8 +34,10 @@ namespace Backend.API
                 builder.Host.UseSerilog();
 
                 // --- 1. DEVELOPMENT TUNNEL CONFIGURATION ---
-                if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("VS_TUNNEL_URL")))
+                var tunnelUrl = Environment.GetEnvironmentVariable("VS_TUNNEL_URL");
+                if (!string.IsNullOrEmpty(tunnelUrl))
                 {
+                    Log.Information("Dev Tunnel Detected: {TunnelUrl}", tunnelUrl);
                     builder.WebHost.ConfigureKestrel(options =>
                     {
                         options.ConfigureEndpointDefaults(listenOptions =>

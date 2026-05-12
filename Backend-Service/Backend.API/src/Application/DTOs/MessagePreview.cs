@@ -14,7 +14,7 @@ namespace Backend.API.src.Application.DTOs
         private string? messageId;
         private Guid _chatRoomId;
         private string? _senderUsername;
-        private string _content = default;
+        private string _content = default!;
         private DateTime _timestamp = DateTime.UtcNow;
 
         public string? MessageId
