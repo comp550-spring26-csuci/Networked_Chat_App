@@ -7,8 +7,10 @@
 // --------------------------------------------
 
 
+using System;
 using System.Data;
 using System.Collections.Generic;
+using Backend.API.src.Core.Enums;
 
 namespace Backend.API.src.Core.Interface
 {
@@ -34,8 +36,17 @@ namespace Backend.API.src.Core.Interface
 
         ///-----State of the User
         // Options will be "Online", "Offline", "DoNotDIsturbe"
-        string PresenceStatus { get; set; }
+        UserStateType PresenceStatus { get; set; }
         string? CustomStatusText { get; set; }
+
+
+        //----------------------------------
+        //-----------  Methods -------------
+        //----------------------------------
+
+
+        void UpdatePresence(UserStateType newStatus, string? customText = null);
+        void MarkAsActive();
 
     }
 }

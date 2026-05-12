@@ -55,7 +55,9 @@ if you are setting this up for the first time or after moving files:
 ## Database Migration
 To sync the database schema with the C# models:
 
-1. Apply existing migratione:
+**Important** Check the appsettings.json first!
+
+1. Apply existing migration:
 	```
 	dotnet ef database update
 	```
@@ -65,7 +67,13 @@ To sync the database schema with the C# models:
 	dotnet ef migrations add <MigrationName>
 	```
 
+### Notes
+Just add a quick note telling them to run 
+```
+dotnet tool install --global dotnet-ef 
+```
 
+if the terminal complains that ```ef``` isn't recognized.
 
 ## Automation & Scripts
 This project has a modular PowerShell script folder with files that can be used for setting up 

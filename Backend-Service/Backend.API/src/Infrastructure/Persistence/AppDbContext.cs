@@ -83,6 +83,7 @@ namespace Backend.API.src.Infrastructure.Persistence
                 .IsUnique();
 
 
+
             // --- Friendship Table Configuration ---
             // We enforce tha the Usernames and emails must be  in the database
             modelBuilder.Entity<Friendship>(entity =>

@@ -188,8 +188,14 @@ namespace Backend.API.src.API.Controllers
         }
 
 
+        /// <summary>
+        /// CheckFriendshipByUsername
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="friendUsername"></param>
+        /// <returns></returns>
         [HttpGet("check-friendship-by-username/{userId}/{friendUsername}")]
-        public async Task<IActionResult> GCheckFriendshipByUsername(Guid userId, String friendUsername)
+        public async Task<IActionResult> CheckFriendshipByUsername(Guid userId, String friendUsername)
         {
             // 1. Find the friend by username
             var friendUser = await _userRepo.GetByUsernameAsync(friendUsername);

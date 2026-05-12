@@ -16,6 +16,8 @@ using Backend.API.src.Application.DTOs;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Backend.API.src.Core.Enums;
+using Backend.API.src.Application;
 
 
 namespace Backend.API.src.API.Controllers
@@ -59,7 +61,7 @@ namespace Backend.API.src.API.Controllers
         [HttpPost("create-account")]
         public async Task<IActionResult> CreateAccount([FromBody]CreateAccountRequest request)
         {
-            AppLogger.DebugState("TestController", $"Account creation request initiated for: {request.Email}");
+            AppLogger.DebugState("UsersController", $"Account creation request initiated for: {request.Email}");
 
             try
             {
@@ -69,7 +71,7 @@ namespace Backend.API.src.API.Controllers
                 if (!validationResult.IsValid)
                 {
                     var errorMessages = string.Join(" | ", validationResult.Errors.Select(equals => equals.ErrorMessage));
-                    AppLogger.DebugState("TestController", $"Validation failed for {request.Email}, Reasons: {errorMessages}");
+                    AppLogger.DebugState("UsersController", $"Validation failed for {request.Email}, Reasons: {errorMessages}");
 
                     return BadRequest(validationResult.Errors);
             
@@ -82,7 +84,7 @@ namespace Backend.API.src.API.Controllers
                 // 3. We verify if there was a conflict (e.g. if user already exists)
                 if (!authResult.IsSuccess)
                 {
-                    AppLogger.DebugState("TestController", $"Business validation failed: {authResult.ErrorMessage}");
+                    AppLogger.DebugState("UsersController", $"Business validation failed: {authResult.ErrorMessage}");
                     // We return error 409 conflict with the message
                     return Conflict(new { Message = authResult.ErrorMessage });
                 }
@@ -99,7 +101,7 @@ namespace Backend.API.src.API.Controllers
             } 
             catch (Exception ex)
             {
-                AppLogger.ShieldFailure("testController", ex);
+                AppLogger.ShieldFailure("UsersController", ex);
                 return StatusCode(500, $"Internal Error: {ex.Message}");
 
             }
@@ -126,11 +128,11 @@ namespace Backend.API.src.API.Controllers
 
             if (!validationResult.IsValid)
             {
-                AppLogger.DebugState("testController", "Login blocked: Empty or invalid fields provided.");
+                AppLogger.DebugState("UsersController", "Login blocked: Empty or invalid fields provided.");
                 return BadRequest(validationResult.Errors);
             }
 
-            AppLogger.DebugState("TestController", $"Login attempt initiated for user: {request.Username}");
+            AppLogger.DebugState("UsersController", $"Login attempt initiated for user: {request.Username}");
 
             try
             {
@@ -141,11 +143,33 @@ namespace Backend.API.src.API.Controllers
                 // 2. We Check if all was successful
                 if (!authResult.IsSuccess)
                 {
-                    AppLogger.DebugState("testController", $"Login rejected: {authResult.ErrorMessage}");
+                    AppLogger.DebugState("UsersController", $"Login rejected: {authResult.ErrorMessage}");
                     return Unauthorized(new { Message = authResult.ErrorMessage });
                 }
 
-                // 3. If everything is successful we return a success message
+                // 3. Update Status
+
+                IUser? user = authResult.CreatedUser;
+
+                if (user != null)
+                {
+
+                    // Wake up: Inactive (0) -> Active (1) 
+                    // If the user was Custom (2) the  we leave them as they were
+                    if (user.PresenceStatus == UserStateType.Inactive)
+                    {
+
+                        user.UpdatePresence(UserStateType.Active);
+                    
+                    }
+
+                    user.LastActive = DateTime.UtcNow;
+                    await _userRepository.SaveChangesAsync();
+
+                }
+
+
+                // 4. If everything is successful we return a success message
                 AppLogger.UserAction(authResult.CreatedUser!.Id.ToString(), "User logged in successfully.");
 
 
@@ -153,7 +177,10 @@ namespace Backend.API.src.API.Controllers
                 {
                     Message = "Login successful! Welcome back.",
                     UserId = authResult.CreatedUser.Id,
-                    Token = authResult.Token // The front end can see the token
+                    Token = authResult.Token, // The front end can see the token
+                    // We return thr "Pair": the number for logic, and the string for display
+                    CurrentStatus = (int)user.PresenceStatus,
+                    StatusName = user.PresenceStatus.ToString()
                 });
 
             }
@@ -166,6 +193,72 @@ namespace Backend.API.src.API.Controllers
         }
 
 
+
+        // -------------------------------------
+        // *********** USER LOGOUT *************
+        // -------------------------------------
+
+        /// <summary>
+        /// User logout and possible change of status in database
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
+        {
+
+            AppLogger.DebugState("UsersController", $"Logout requested for UserId: {request.UserId}");
+
+            try
+            {
+
+                IUser? user = await _userRepository.GetByIdAsync(request.UserId);
+
+                if (user == null)
+                {
+
+                    return NotFound(new { Message = "User not found." });
+
+                }
+
+                // If they are Active (1), set them to Inactive(0)
+                // If they are Custom (2), do nothing. Let the custom message stay.
+                if (user.PresenceStatus == UserStateType.Active)
+                {
+                    user.UpdatePresence(UserStateType.Inactive);
+                    AppLogger.DebugState("UsersController", $"User {user.Username} logging out, moved from Active to Inactive.");
+
+                }
+                else
+                {
+                    AppLogger.DebugState("UsersController", $"User {user.Username} logging out, maintaining Custom status.");
+
+                }
+
+                await _userRepository.SaveChangesAsync();
+
+                return Ok(new
+                {
+
+                    Message = "Logged out successfully.",
+                    CurrentStatus = (int)user.PresenceStatus,
+                    StatusName = user.PresenceStatus.ToString(),
+                    CustomText = user.CustomStatusText
+                });
+
+
+            }
+            catch (Exception ex)
+            {
+
+                AppLogger.ShieldFailure("UsersController_Logout", ex);
+                return StatusCode(500, "Internal error during logout.");
+            
+            }
+
+        }
+
+
         /// <summary>
         /// Find a user's ID by their username
         /// URL: GET api/users/search/Alegria5
@@ -173,8 +266,12 @@ namespace Backend.API.src.API.Controllers
         [HttpGet("search/{username}")]
         public async Task<IActionResult> SearchByUsername(string username)
         {
+
+            AppLogger.DebugState("UsersController", $"Searching for {username}");
+
             // 1. Call your existing repository method
             var user = await _userRepo.GetByUsernameAsync(username);
+
 
             // 2. If the user doesn't exist, return a 404
             if (user == null)
@@ -204,7 +301,7 @@ namespace Backend.API.src.API.Controllers
         [HttpPost("seed-user")]
         public async Task<IActionResult> SeedUser()
         {
-            AppLogger.DebugState("TestController", "Seed attempt started");
+            AppLogger.DebugState("usersController", "Seed attempt started");
 
             try
             {
@@ -229,7 +326,7 @@ namespace Backend.API.src.API.Controllers
             }
             catch (Exception ex)
             {
-                AppLogger.ShieldFailure("TestCOntroller", ex);
+                AppLogger.ShieldFailure("UsersController", ex);
                 return StatusCode(500, $"Interal Error: {ex.Message}");
 
             }
@@ -247,13 +344,13 @@ namespace Backend.API.src.API.Controllers
         {
             try
             {
-                //Asking the dabase for all the users
+                //Asking the database for all the users
                 var users = await _userRepository.GetAllAsync();
 
                 // If it is empty we will let the user know
                 if (users == null || !users.Any())
                 {
-                    return Ok(new { Message = "The Library is currently empty}" });
+                    return Ok(new { Message = "The Library is currently empty" });
                 }
                 return Ok(users);
             }
@@ -275,7 +372,7 @@ namespace Backend.API.src.API.Controllers
         [HttpDelete("purge-all-users")]
         public async Task<IActionResult> PurgeUsers()
         {
-            AppLogger.DebugState("TestController", "Deletion of Users table received.");
+            AppLogger.DebugState("UsersController", "Deletion of Users table received.");
 
             try
             {
@@ -284,7 +381,7 @@ namespace Backend.API.src.API.Controllers
             }
             catch (Exception ex)
             {
-                AppLogger.ShieldFailure("testController", ex);
+                AppLogger.ShieldFailure("UsersController", ex);
                 return StatusCode(500, $"UInternal error during Users table deletion: {ex.Message}");
 
             }
