@@ -3,7 +3,9 @@ import DMList from "./DMList";
 import ChatWindow from "./ChatWindow";
 import { joinChatRoom, leaveChatRoom } from "../signalr/chatConnection";
 
-export default function ChatLayout({ username }) {
+export default function ChatLayout() {
+	const username = localStorage.getItem("username");
+
 	const [dms, setDms] = useState([]);
 	// may have to change the start useState to null and then fetch DMs with api
 	const [selectedDM, setSelectedDM] = useState(null);
@@ -13,7 +15,7 @@ export default function ChatLayout({ username }) {
 		async function fetchDMRooms() {
 			try {
 				const token = localStorage.getItem("access_token");
-				const res = await fetch("https://localhost:7081/api/chathistory/user/mine/rooms", {
+				const res = await fetch("https://sslk8rt0-7081.usw3.devtunnels.ms/api/chathistory/user/mine/rooms", {
 					method: 'GET',
 					headers: {
 						'Authorization': `Bearer ${token}`,
@@ -32,7 +34,7 @@ export default function ChatLayout({ username }) {
 					setSelectedDM(roomsArray[0]);
 				}
 
-				const resp = await fetch("https://localhost:7081/api/test/all-users", {
+				const resp = await fetch("https://sslk8rt0-7081.usw3.devtunnels.ms/api/testdm/all-users", {
 					method: 'GET'
 				});
 
@@ -44,7 +46,7 @@ export default function ChatLayout({ username }) {
 				console.error("Failed to fetch rooms:", err);
 			}
 		}
-		fetchDMRooms();
+		//fetchDMRooms();
 	}, []);
 
 	// track previous DM
@@ -79,7 +81,7 @@ export default function ChatLayout({ username }) {
         		selectedDM={selectedDM}
         		onSelect={setSelectedDM}
       		/>
-      		<ChatWindow
+			<ChatWindow
 				idToNameRef={idToNameRef}
 				selectedDM={selectedDM} 
 				sender={username} 

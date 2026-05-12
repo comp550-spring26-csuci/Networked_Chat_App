@@ -1,6 +1,9 @@
 import { useState } from "react";
 import '../login.css'
 
+import { useNavigate } from "react-router-dom";
+import { startSignalRConnection } from "../signalr/chatConnection";
+
 const BASE_URL = "http://vg3jzw0g-5148.usw3.devtunnels.ms";
  
 const EyeIcon = ({ open }) => (
@@ -94,7 +97,9 @@ function calculateAge(month, day, year) {
   return age;
 }
  
-export default function LoginPage({ onLogin }) {
+export default function LoginPage() {
+  const navigate = useNavigate();
+
   const [mode, setMode] = useState("login");
  
   // Login fields
@@ -134,16 +139,46 @@ export default function LoginPage({ onLogin }) {
     setSignupError("");
     setDobError("");
   };
+
+  const onLoginSuccess = async () => {
+    try {
+      // console.log("Name:", name);
+      // const seedRes = await fetch(
+      //   `https://sslk8rt0-7081.usw3.devtunnels.ms/api/testdm/seed-user?UserName=${name}&OverWrite=false`, {
+      //   method: 'POST'
+      // });
+
+      // const data = await seedRes.json();
+      // console.log("SignalR login response:", data);
+
+      // // Store SignalR token
+      // localStorage.setItem("access_token", data.token);
+
+      // if(!seedRes.ok) {
+      //   setLoginError("Failed to initialize chat user for SignalR");
+      //   return;
+      // }
+
+      // await startSignalRConnection();
+
+      // Redirect to chat
+      navigate("/chat");
+
+    } catch(err) {
+      setLoginError("Could not reach the SignalR server");
+    }
+  };
  
   const handleSubmit = async () => {
     if (mode === "login") {
       if (!username.trim()) { setLoginError("Username is required."); return; }
-	  else { onLogin(username); console.log(username); } // FOR TESTING ONLY
+	    else { onLoginSuccess(); console.log(`TESTING USER: ${username}`); localStorage.setItem("username", username); } // FOR FRONTEND TESTING ONLY
       if (!password) { setLoginError("Password is required."); return; }
       setLoading(true);
       setLoginError("");
       try {
-        const res = await fetch(`${BASE_URL}/api/test/login`, { //update endpoint when ready
+        // 1. Login Request
+        const res = await fetch(`${BASE_URL}/api/test/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
@@ -151,7 +186,12 @@ export default function LoginPage({ onLogin }) {
         const data = await res.json();
         if (res.ok) {
           alert(`Welcome back, ${username}!`);
-		  onLogin();
+
+          // 2. Store the username
+          localStorage.setItem("username", data.username);
+          // 3. Start SignalR process after login works
+          onLoginSuccess();
+		      
         } else {
           setLoginError(data.message || "Invalid username or password.");
         }
