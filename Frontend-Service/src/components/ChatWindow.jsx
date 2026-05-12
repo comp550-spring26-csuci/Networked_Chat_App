@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
-import { connection } from "../signalr/chatConnection";
+import { getConnection } from "../signalr/chatConnection";
 
 export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	// Focuses input box when swapping DMs
@@ -14,7 +14,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	useEffect(() => {
 		if(!selectedDM) return;
 		async function fetchHistory() {
-			const res = await fetch(`https://localhost:7081/api/chathistory/room/${selectedDM.id}/messages`, {
+			const res = await fetch(`https://sslk8rt0-7081.usw3.devtunnels.ms/api/chathistory/room/${selectedDM.id}/messages`, {
 				method: 'GET',
 			});
 
@@ -33,26 +33,28 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 			}));
 		}
 
-		fetchHistory();
+		//fetchHistory();
 		inputRef.current?.focus();
 	}, [selectedDM]);
 
-	useEffect(() => {
-		function handleReceiveMessage(paylode) {
-			const DMId = paylode.message.chatRoomId;
+	// useEffect(() => {
+	// 	function handleReceiveMessage(paylode) {
+	// 		const DMId = paylode.message.chatRoomId;
 
-			setMessages((prev) => ({
-				...prev,
-				[DMId]: [...(prev[DMId] || []), paylode]
-			}));
-		}
+	// 		setMessages((prev) => ({
+	// 			...prev,
+	// 			[DMId]: [...(prev[DMId] || []), paylode]
+	// 		}));
+	// 	}
 
-		connection.on("ReceiveMessage", handleReceiveMessage);
+	// 	const connection = getConnection();
 
-		return () => {
-			connection.off("ReceiveMessage", handleReceiveMessage);
-		};
-	}, [selectedDM]);
+	// 	connection.on("ReceiveMessage", handleReceiveMessage);
+
+	// 	return () => {
+	// 		connection.off("ReceiveMessage", handleReceiveMessage);
+	// 	};
+	// }, [selectedDM]);
 
 	const handleSend = async (text) => {
 		const DMId = selectedDM.id;
@@ -72,7 +74,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
   	return (
     	<div className="chat-window">
     		<div className="recipient-name">
-				{selectedDM?.name}
+				{selectedDM?.name || `Welcome ${sender}`}
 			</div>
 			<MessageList 
 				messages={currentMessages} 

@@ -1,14 +1,19 @@
 import * as signalR from "@microsoft/signalr";
 
 const accessToken = "YOUR_JWT_TOKEN";
+const SIGNALR_URL = "https://sslk8rt0-7081.usw3.devtunnels.ms/";
 
-export let connection;
+let connection;
 
-export function startConnection() {
+export function getConnection() {
+    return connection;
+}
+
+export function startSignalRConnection() {
   const token = localStorage.getItem("access_token");
 
   connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:7081/chathub", {
+    .withUrl("https://sslk8rt0-7081.usw3.devtunnels.ms/chathub", {
       accessTokenFactory: () => token
     })
     .withAutomaticReconnect()
