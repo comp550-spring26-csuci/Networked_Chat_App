@@ -3,26 +3,30 @@ html, body, #root {
   font-family: "Roboto", system-ui, sans-serif;
   font-weight: 400;
   height: 100%;
+  width: 100%;
   margin: 0;
+  overflow-x: hidden;
 }
+
+/* Chat styles */
 
 .chat-container {
   display: flex;
   height: 100vh;
-  width: 100vw;
+  width: 100%;
 }
 
 /* Left column */
 .dm-list-header {
-  border-bottom: 1px solid #555;
+  border-bottom: 1px solid #222;
   padding: 10px;
   text-align: left;
 }
 
 .dm-list {
   width: 250px;
-  background-color: #131415;
-  border: 1px solid #555;
+  background-color: #080808;
+  border: 1px solid #222;
   color: white;
   overflow-y: auto;
   text-align: center;
@@ -31,13 +35,13 @@ html, body, #root {
 /* Right column */
 .chat-window {
   flex: 1;
-  background-color: #131415;
+  background-color: #0C0C0C;
   color: white;
   display: flex;
   flex-direction: column;
 }
 
-/* DM item */
+/* Direct message item */
 .dm-item {
   padding: 10px 12px;
   margin: 6px 8px;
@@ -46,7 +50,7 @@ html, body, #root {
 }
 
 .dm-item:hover {
-  background-color: #3a3c42;
+  background-color: #0C0C0C;
 }
 
 .dm-item.active {
@@ -56,11 +60,11 @@ html, body, #root {
 .recipient-name {
   padding: 10px;
   margin-top: 0;
-  border: 1px solid #555;
+  border: 1px solid #222;
   border-left: none;
 }
 
-/* Messages area */
+/* Messages */
 .messages {
   flex: 1;
   padding-left: 40px;
@@ -121,4 +125,60 @@ html, body, #root {
   content: attr(data-placeholder);
   color: #9ca3af;
   pointer-events: none;
+}
+
+/* sidebar styles */
+.app-shell {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 100px;
+  background: #080808;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+}
+
+.sidebar button {
+  padding: 10px;
+  background: #40444b;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.sidebar-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #40444b;
+  color: white;
+  font-size: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.sidebar-icon.active {
+  background: #5865f2;
+  border-radius: 16px;
+}
+
+.sidebar-icon:hover {
+  border-radius: 16px; /* Discord hover effect */
+  background: #5865f2;
+}
+
+/* container for content to the right of the sidebar */
+.main-view {
+  flex: 1;
 }
