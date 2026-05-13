@@ -118,12 +118,6 @@ or (create and use a new tunnel that may be accessed later using the above comma
 docker run --rm -v "$HOME/.devtunnels:/DevTunnels" -e DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 matrix-tunnel-image /usr/local/bin/devtunnel show <tunnel-id>
 ```
 
-### Command: devtunnel delete \<tunnel-id\>
-
-```
-docker run --rm -v "$HOME/.devtunnels:/DevTunnels" -e DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 matrix-tunnel-image /usr/local/bin/devtunnel delete <tunnel-id>
-```
-
 example output (removed some rows):
 ```
 Tunnel ID             : puzzled-field-h34lflk.usw3
@@ -133,6 +127,12 @@ Access control        : {+Anonymous [connect]}
 Ports                 : 1
   7081  https  https://sslk8rt0-7081.usw3.devtunnels.ms/  0 client connections  (Host:unchanged)
 Tunnel Expiration     : 30 days
+```
+
+### Command: devtunnel delete \<tunnel-id\>
+
+```
+docker run --rm -v "$HOME/.devtunnels:/DevTunnels" -e DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 matrix-tunnel-image /usr/local/bin/devtunnel delete <tunnel-id>
 ```
 
 ## Database Migration
