@@ -38,6 +38,9 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	}, [selectedDM]);
 
 	useEffect(() => {
+		// ADD THIS SAFETY CHECK: If connection doesn't exist yet, do nothing.
+		if (!connection) return; 
+
 		function handleReceiveMessage(paylode) {
 			const DMId = paylode.message.chatRoomId;
 
@@ -50,7 +53,10 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 		connection.on("ReceiveMessage", handleReceiveMessage);
 
 		return () => {
-			connection.off("ReceiveMessage", handleReceiveMessage);
+			// ALSO ADD SAFETY CHECK HERE before trying to turn it off
+			if (connection) {
+				connection.off("ReceiveMessage", handleReceiveMessage);
+			}
 		};
 	}, [selectedDM]);
 

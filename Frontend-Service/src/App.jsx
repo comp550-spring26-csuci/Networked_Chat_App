@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
-import FriendsList from "./components/FriendsList";
+import ChatLayout from "./components/ChatLayout"; 
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -9,22 +9,23 @@ export default function App() {
 
   return (
     <Routes>
-      {/* If a user exists, redirect them away from the login page to /friends */}
+      {/* If a user exists, redirect them away from the login page to /chat */}
       <Route 
         path="/login" 
-        element={user ? <Navigate to="/friends" replace /> : <LoginPage onLogin={setUser} />} 
+        element={user ? <Navigate to="/chat" replace /> : <LoginPage onLogin={setUser} />} 
       />
       
-      {/* if no user exists, redirect back to /login */}
+      {/* Protect the chat route: loads the main layout which contains the friends drawer */}
+      {/* Pass the entire 'user' object as 'currentUser' instead of just the username */}
       <Route 
-        path="/friends" 
-        element={user ? <FriendsList currentUser={user} /> : <Navigate to="/login" replace />} 
+        path="/chat" 
+        element={user ? <ChatLayout currentUser={user} /> : <Navigate to="/login" replace />} 
       />
       
-      {/* sends to friends if logged in, otherwise to login */}
+      {/* Catch-all route: sends to chat if logged in, otherwise to login */}
       <Route 
         path="*" 
-        element={<Navigate to={user ? "/friends" : "/login"} replace />} 
+        element={<Navigate to={user ? "/chat" : "/login"} replace />} 
       />
     </Routes>
   );

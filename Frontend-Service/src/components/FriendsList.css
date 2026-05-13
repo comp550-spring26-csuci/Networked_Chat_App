@@ -1,19 +1,68 @@
-/* Container & Layout */
-.fl-container {
-  display: flex;
-  flex-direction: column;
-  background-color: #131415; /* Matches chat window */
+/* Hamburger Button */
+.fl-hamburger {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
   color: white;
-  height: 100%;
-  width: 100%;
+  cursor: pointer;
+  z-index: 10;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
 }
 
+.fl-hamburger:hover {
+  background-color: #3a3c42;
+}
+
+/* Dimmed Overlay */
+.fl-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.fl-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Slide-out Drawer Container */
+.fl-drawer {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px; /* Width of the sidebar */
+  height: 100vh;
+  background-color: #131415;
+  color: white;
+  z-index: 100;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  
+  /* Animation logic */
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.fl-drawer.open {
+  transform: translateX(0);
+}
+
+/* Header */
 .fl-header {
   border-bottom: 1px solid #555;
   padding: 15px 20px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 15px;
 }
 
 .fl-header h2 {
@@ -22,16 +71,16 @@
   font-weight: 500;
 }
 
-.fl-back-btn {
+.fl-close-btn {
   background: none;
   border: none;
   color: #9ca3af;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   padding: 0;
 }
 
-.fl-back-btn:hover {
+.fl-close-btn:hover {
   color: white;
 }
 
@@ -75,11 +124,20 @@
   background-color: #555;
 }
 
+/* (Error/Success) */
 .fl-message {
   padding: 0 20px;
   margin-top: 10px;
-  font-size: 0.9rem;
-  color: #9ca3af;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.fl-message.error {
+  color: #ed4245; 
+}
+
+.fl-message.success {
+  color: #23a559; 
 }
 
 /* Friends List */
@@ -114,12 +172,12 @@
   align-items: center;
   padding: 10px 12px;
   margin-bottom: 2px;
-  border-radius: 12px; /* Matches .dm-item */
+  border-radius: 12px;
   cursor: pointer;
 }
 
 .fl-item:hover {
-  background-color: #3a3c42; /* Matches .dm-item:hover */
+  background-color: #3a3c42;
 }
 
 .fl-info {
@@ -140,11 +198,16 @@
 }
 
 .fl-status-dot.online {
-  background-color: #23a559; /* Green */
+  background-color: #23a559;
+}
+
+/* Custom status purple dot */
+.fl-status-dot.custom {
+  background-color: #a855f7; 
 }
 
 .fl-status-dot.offline {
-  background-color: #80848e; /* Gray */
+  background-color: #80848e;
 }
 
 /* Remove Button */
@@ -154,14 +217,110 @@
   color: #9ca3af;
   cursor: pointer;
   font-size: 1rem;
-  opacity: 0; /* Hidden by default */
+  opacity: 0;
   transition: opacity 0.2s, color 0.2s;
 }
 
 .fl-item:hover .fl-remove-btn {
-  opacity: 1; /* Appears only when hovering over the friend */
+  opacity: 1;
 }
 
 .fl-remove-btn:hover {
-  color: #ed4245; /* Red on hover */
+  color: #ed4245;
+}
+
+/* --- Current User Profile Section --- */
+
+.fl-header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.fl-logout-btn {
+  background-color: #ed4245;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.fl-logout-btn:hover {
+  background-color: #c03537;
+}
+
+.fl-profile-section {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #333;
+  margin-bottom: 1rem;
+}
+
+.fl-active-profile {
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed #444;
+}
+
+.fl-profile-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.fl-profile-username {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.fl-status-text {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+.fl-status-label {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.fl-status-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.fl-status-select, .fl-status-input {
+  width: 100%;
+  padding: 8px;
+  min-height: auto;
+  box-sizing: border-box;
+}
+
+.fl-status-select {
+  cursor: pointer;
+}
+
+.fl-update-status-btn {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 0;
+}
+
+.fl-status-feedback {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.fl-status-feedback.success {
+  color: #23a559;
+}
+
+.fl-status-feedback.error {
+  color: #ed4245;
 }

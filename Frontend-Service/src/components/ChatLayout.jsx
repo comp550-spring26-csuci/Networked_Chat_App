@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import DMList from "./DMList";
 import ChatWindow from "./ChatWindow";
+import FriendsList from "./FriendsList"; 
 import { joinChatRoom, leaveChatRoom } from "../signalr/chatConnection";
 
-export default function ChatLayout({ username }) {
+// --- CHANGED: Accept currentUser instead of just username ---
+export default function ChatLayout({ currentUser }) {
 	const [dms, setDms] = useState([]);
-	// may have to change the start useState to null and then fetch DMs with api
 	const [selectedDM, setSelectedDM] = useState(null);
 	const idToNameRef = useRef({});
 
@@ -47,7 +48,6 @@ export default function ChatLayout({ username }) {
 		fetchDMRooms();
 	}, []);
 
-	// track previous DM
 	const prevDMRef = useRef(null);
 
 	useEffect(() => {
@@ -72,8 +72,46 @@ export default function ChatLayout({ username }) {
 		switchDM();
 	}, [selectedDM]);
 
+	const handleStartChat = async (friend) => {
+		const existingRoom = dms.find(dm => dm.name.includes(friend.username));
+		
+		if (existingRoom) {
+			setSelectedDM(existingRoom);
+		} else {
+			try {
+				const token = localStorage.getItem("access_token");
+				const res = await fetch("https://localhost:7081/api/chat/room/create", { 
+					method: 'POST',
+					headers: {
+						'Authorization': `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ targetUsername: friend.username })
+				});
+
+				if (res.ok) {
+					const newRoomData = await res.json();
+					const newRoom = { id: newRoomData.id, name: newRoomData.name };
+					
+					setDms(prev => [...prev, newRoom]);
+					setSelectedDM(newRoom);
+				} else {
+					console.error("Failed to create new DM room");
+				}
+			} catch (err) {
+				console.error("Error creating DM:", err);
+			}
+		}
+	};
+
   	return (
 		<div className="chat-container">
+			{/* --- CHANGED: Pass the entire currentUser object --- */}
+			<FriendsList 
+				currentUser={currentUser} 
+				onStartChat={handleStartChat} 
+			/>
+			
       		<DMList 
         		dms={dms} 
         		selectedDM={selectedDM}
@@ -82,7 +120,8 @@ export default function ChatLayout({ username }) {
       		<ChatWindow
 				idToNameRef={idToNameRef}
 				selectedDM={selectedDM} 
-				sender={username} 
+				/* --- CHANGED: Use currentUser.username for the sender --- */
+				sender={currentUser?.username} 
 			/>
     	</div>
   	);
