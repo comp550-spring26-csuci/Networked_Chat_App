@@ -90,27 +90,24 @@ fancy-hill-jj1qwr4.usw3
 puzzled-field-h34lflk.usw3          VisualStudioCreatedT...   NetworkedChatApp
 ```
 
-### Start dev tunnel and server:
+### Commands (to start dev tunnel and server):
 
-Navigate to the root folder `Networked_Chat_App/` where ```start-tunnel.sh``` is located,... 
+Navigate to the root folder `Networked_Chat_App/` where ```start-tunnel.sh``` is located, 
 
-enter (To create a tunnel that will be deleted from your account when you are finished):
+- enter (To create a tunnel that will be deleted from your account when you are finished):
+  ```
+  ./start-tunnel-macos.sh
+  ```
 
-```
-./start-tunnel-macos.sh
-```
+- or (select by "name", which is what you get from the saved tunnel's `Description`):
+  ```
+  ./start-tunnel-macos.sh --name=NetworkedChatApp
+  ```
 
-or (select by "name", which is what you get from the saved tunnel's `Description`):
-
-```
-./start-tunnel-macos.sh --name=NetworkedChatApp
-```
-
-or (create and use a new tunnel that may be accessed later using the above command)
-
-```
-./start-tunnel-macos.sh --create=ExampleTunnelName
-```
+- or (create and use a new tunnel that may be accessed later using the above command):
+  ```
+  ./start-tunnel-macos.sh --create=ExampleTunnelName
+  ```
 
 ### Command: devtunnel show \<tunnel-id\>
 
@@ -157,46 +154,3 @@ Location: ```Backend.API/scripts/```
 ### Script Architecture
 * ```init-paths.ps1```: It calculates the needed paths needed by the other scripts
 * ```setup-env.ps1```: it imports the paths and spins up the Docker containers and builds the .NET project
-
-
-### How to Run
-To synchronize the environment from the project root (```Networked_Chat_App```)
-1. Open PowerShell as Administrator
-2. Set the Execution Policy (at least for the first time)
-```
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-3. Run the Setup Script
-```
-.\Backend-Service\backend.API\scripts\setup-env.ps1
-```
-
-## To kill a running process
-If you have several running processes and you need to kill them enter:
-```
-taskkill /IM Backend.API.exe /F
-```
-
-## Testing the API
-To verify that the backend is fucntioning properly and communicating with the Database we can use Postman.
-Please follow this steps:
-
-1.  Launch the server
-* Make sure that Dockern is open and that your Networked chat container is running
-* In Visual Studio select the Backend.API from the startup projects dropdown
-* Pressn the **Green Play button**
-* Confirm the console window appears and says it is listening to http://localhost:5000
-
-2. Import the Postman Collection
-* Open Postman
-* Click the Import button in the top left
-* Drag and drop the ```MastersNetworkChatApp.postman_collection.json``` that is located under the
-```tests\PostmanCollection``` folder
-
-3. Execute the Requests
-* POST (Seed User): Run this first to create a new user in the PostgreSQL database. 
-You should see a ```200 OK``` response with a success message.
-(After the first time you wil need to change the user info in the 
-```TestController.cs```)
-* GET (All Users): Run this to fetch all the current users in the database.
