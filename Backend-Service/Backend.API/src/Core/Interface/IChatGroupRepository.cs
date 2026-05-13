@@ -36,6 +36,9 @@ namespace Backend.API.src.Core.Interface
         // COMMMIT
         Task<bool> SaveChangesAsync();
 
+        // GET  -  Retrieves all members of a specific chat group
+        Task<IEnumerable<ChatGroupMember>> GetGroupMembersAsync(Guid groupId);
+
 
     }
 }

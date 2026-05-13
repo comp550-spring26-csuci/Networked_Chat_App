@@ -23,6 +23,10 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
 
         private readonly AppDbContext _context;
 
+        /// <summary>
+        /// ChatGroupRepository
+        /// </summary>
+        /// <param name="context"></param>
         public ChatGroupRepository(AppDbContext context)
         { 
         
@@ -30,6 +34,11 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
         
         }
 
+        /// <summary>
+        /// CreateGroupAsyn
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
         public async Task<ChatGroup> CreateGroupAsync(ChatGroup group) 
         {
 
@@ -38,7 +47,11 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
         
         }
 
-
+        /// <summary>
+        /// AddMemberAsync
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
         public async Task AddMemberAsync(ChatGroupMember member)
         { 
         
@@ -47,6 +60,11 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
         }
 
 
+        /// <summary>
+        /// GetGroupByIdAsync
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
         public async Task<ChatGroup?> GetGroupByIdAsync(Guid groupId) 
         { 
         
@@ -58,6 +76,27 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
         }
 
 
+        /// <summary>
+        /// GetGroupMembersAsync
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<ChatGroupMember>> GetGroupMembersAsync(Guid groupId)
+        {
+            // We use .Include(cgm => cgm.User) so EF Core automatically joins the User table.
+            // The frontend will get the actual Usernames, 
+            // not just a list of random Guid strings.
+            return await _context.ChatGroupMembers
+                .Include(cgm => cgm.User)
+                .Where(cgm => cgm.ChatGroupId == groupId)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// GetGroupsForUserAsync
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<ChatGroup>> GetGroupsForUserAsync(Guid userId)
         { 
         
@@ -69,6 +108,13 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
                 .ToListAsync();        
         }
 
+
+        /// <summary>
+        /// IsUserInGroupAsync(
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<bool> IsUserInGroupAsync(Guid groupId, Guid userId)
         {
 
@@ -78,6 +124,12 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
         
         }
 
+        /// <summary>
+        /// RemoveMemberAsync(
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task RemoveMemberAsync(Guid groupId, Guid userId)
         {
             var member = await _context.ChatGroupMembers
@@ -89,6 +141,13 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
             }
         }
 
+
+
+        /// <summary>
+        /// DeleteGroupAsync
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
         public async Task DeleteGroupAsync(ChatGroup group)
         {
 
@@ -98,6 +157,11 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
         
         }
 
+
+        /// <summary>
+        /// SaveChangesAsync
+        /// </summary>
+        /// <returns></returns>
         public async Task<bool> SaveChangesAsync()
         {
 
@@ -106,6 +170,9 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
 
         
         }
+
+
+
 
 
 

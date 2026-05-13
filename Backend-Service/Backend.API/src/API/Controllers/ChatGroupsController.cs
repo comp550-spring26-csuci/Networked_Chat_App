@@ -69,7 +69,10 @@ namespace Backend.API.src.API.Controllers
             }
         }
 
+
+        // ====================================================================
         // POST api/ChatGroups/add-member
+        // ====================================================================
         [HttpPost("add-member")]
         public async Task<IActionResult> AddMember([FromBody] AddGroupMemberDto request)
         {
@@ -116,7 +119,9 @@ namespace Backend.API.src.API.Controllers
         }
 
 
+        // ====================================================================
         // GET api/ChatGroups/user/{userId}
+        // ====================================================================
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetMyGroups(Guid userId)
         {
@@ -149,6 +154,44 @@ namespace Backend.API.src.API.Controllers
 
         
         }
+
+
+        // ====================================================================
+        // GET api/ChatGroups/{groupId}/get-group-chat-members
+        // Retrieves all users within a specific chat group
+        // ====================================================================
+        [HttpGet("{groupId}/get-group-chat-members")]
+        public async Task<IActionResult> GetGroupMembers(Guid groupId)
+        {
+            try
+            {
+                var members = await _chatGroupRepository.GetGroupMembersAsync(groupId);
+
+                if (members == null || !members.Any())
+                {
+                    return NotFound(new { Message = "No members found or group does not exist." });
+                }
+
+                // Map to a clean response object to avoid circular JSON loops
+                var result = members.Select(m => new
+                {
+                    userId = m.UserId,
+                    username = m.User?.Username ?? "Unknown User",
+                    joinedAt = m.JoinedAt
+                });
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Assuming you have your logger injected or available statically!
+                AppLogger.ShieldFailure("ChatGroupsController_GetGroupMembers", ex);
+                return StatusCode(500, new { Message = "Internal error retrieving group members." });
+            }
+        }
+
+
+
 
         // ====================================================================
         // DELETE api/ChatGroups/leave-group/{groupId}/{userId}
