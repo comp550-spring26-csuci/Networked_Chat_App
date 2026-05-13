@@ -238,8 +238,8 @@
 }
 
 .fl-logout-btn {
-  background-color: #ed4245;
-  color: white;
+  background-color: #00e5ff;
+  color: rgb(0, 0, 0);
   border: none;
   padding: 6px 12px;
   border-radius: 4px;
@@ -250,7 +250,7 @@
 }
 
 .fl-logout-btn:hover {
-  background-color: #c03537;
+  background-color: #00b8cc;
 }
 
 .fl-profile-section {
