@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import DMList from "./DMList";
 import ChatWindow from "./ChatWindow";
-import { joinChatRoom, leaveChatRoom } from "../signalr/chatConnection";
+import { joinChatRoom, leaveChatRoom, TUNNEL_URL } from "../signalr/chatConnection";
 
 export default function ChatLayout() {
 	const username = localStorage.getItem("username");
@@ -14,11 +14,10 @@ export default function ChatLayout() {
 	useEffect(() => {
 		async function fetchDMRooms() {
 			try {
-				const token = localStorage.getItem("access_token");
-				const res = await fetch("https://sslk8rt0-7081.usw3.devtunnels.ms/api/chathistory/user/mine/rooms", {
+				const res = await fetch(`${TUNNEL_URL}/api/chathistory/user/mine/rooms`, {
 					method: 'GET',
 					headers: {
-						'Authorization': `Bearer ${token}`,
+						'Authorization': `Bearer ${localStorage.getItem("access_token")}`,
 						'Content-Type': 'application/json'
 					}
 				});
@@ -30,11 +29,8 @@ export default function ChatLayout() {
 				}));
 
 				setDms(roomsArray);
-				if(data.length > 0) {
-					setSelectedDM(roomsArray[0]);
-				}
 
-				const resp = await fetch("https://sslk8rt0-7081.usw3.devtunnels.ms/api/test/all-users", {
+				const resp = await fetch(`${TUNNEL_URL}/api/test/all-users`, {
 					method: 'GET'
 				});
 
@@ -42,6 +38,10 @@ export default function ChatLayout() {
 				idToNameRef.current = Object.fromEntries(
 					dataUsers.map(user => [user.id, user.username])
 				);
+				
+				if(roomsArray.length > 0) {
+					setSelectedDM(roomsArray[0]);
+				}
 			} catch(err) {
 				console.error("Failed to fetch rooms:", err);
 			}
@@ -72,6 +72,7 @@ export default function ChatLayout() {
       		}
 		}
 		switchDM();
+		console.log(`SELECTED DM ROOM NAME: ${selectedDM.name}`)
 	}, [selectedDM]);
 
   	return (

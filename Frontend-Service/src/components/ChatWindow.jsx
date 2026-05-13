@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
-import { getConnection } from "../signalr/chatConnection";
+import { getConnection, TUNNEL_URL } from "../signalr/chatConnection";
 
 export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	// Focuses input box when swapping DMs
@@ -14,8 +14,12 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	useEffect(() => {
 		if(!selectedDM) return;
 		async function fetchHistory() {
-			const res = await fetch(`https://sslk8rt0-7081.usw3.devtunnels.ms/api/chathistory/room/${selectedDM.id}/messages`, {
+			const token = localStorage.getItem("access_token");
+			const res = await fetch(`${TUNNEL_URL}/api/chathistory/room/${selectedDM.id}/messages`, {
 				method: 'GET',
+				headers : {
+					Authorization: `Bearer ${token}`
+				}
 			});
 
 			const data = await res.json();
@@ -26,6 +30,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 				senderUsername: idToNameRef.current[msg.senderId],
 				chatRoomName: selectedDM.name
 			}));
+			console.log(`CHAT NAME: ${selectedDM.name}`);
 
 			setMessages((prev) => ({
 				...prev,
@@ -33,32 +38,33 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 			}));
 		}
 
-		//fetchHistory();
+		fetchHistory();
 		inputRef.current?.focus();
 	}, [selectedDM]);
 
-	// useEffect(() => {
-	// 	function handleReceiveMessage(paylode) {
-	// 		const DMId = paylode.message.chatRoomId;
+	useEffect(() => {
+		function handleReceiveMessage(paylode) {
+			const DMId = paylode.message.chatRoomId;
 
-	// 		setMessages((prev) => ({
-	// 			...prev,
-	// 			[DMId]: [...(prev[DMId] || []), paylode]
-	// 		}));
-	// 	}
+			setMessages((prev) => ({
+				...prev,
+				[DMId]: [...(prev[DMId] || []), paylode]
+			}));
+		}
 
-	// 	const connection = getConnection();
+		const connection = getConnection();
 
-	// 	connection.on("ReceiveMessage", handleReceiveMessage);
+		connection.on("ReceiveMessage", handleReceiveMessage);
 
-	// 	return () => {
-	// 		connection.off("ReceiveMessage", handleReceiveMessage);
-	// 	};
-	// }, [selectedDM]);
+		return () => {
+			connection.off("ReceiveMessage", handleReceiveMessage);
+		};
+	}, [selectedDM]);
 
 	const handleSend = async (text) => {
 		const DMId = selectedDM.id;
 		try {
+			const connection = getConnection();
 			await connection.invoke("SendMessageToChatRoom", {
 				SendMessageToChatRoom: {
 					ChatRoomId: DMId,
