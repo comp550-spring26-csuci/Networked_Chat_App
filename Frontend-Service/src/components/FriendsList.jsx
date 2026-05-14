@@ -18,12 +18,16 @@ export default function FriendsList({ currentUser, onStartChat }) {
   const [activeStatus, setActiveStatus] = useState(currentUser?.status ?? 1);
   const [activeCustomText, setActiveCustomText] = useState(currentUser?.customText || currentUser?.customStatus || "");
 
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("userId");
+    window.location.reload();
+  };
+
   const fetchMyProfile = async () => {
     if (!currentUser?.userId) return;
 
     try {
-      console.log("Fetching my own profile status...");
-      
       const res = await fetch(`${BASE_URL}/api/Status/${currentUser.userId}`, {
         method: "GET",
         headers: {
@@ -33,27 +37,26 @@ export default function FriendsList({ currentUser, onStartChat }) {
       });
 
       if (res.ok) {
-        const data = await res.json();
-        console.log("Fetched my profile data:", data);
-        
-        if (data.presenceStatus !== undefined) {
-          setMyStatus(data.presenceStatus);
-          setActiveStatus(data.presenceStatus);
-        } else if (data.status !== undefined) {
-          setMyStatus(data.status);
-          setActiveStatus(data.status);
+        const rawText = await res.text();
+        if (rawText) {
+          const data = JSON.parse(rawText);
+          if (data.presenceStatus !== undefined) {
+            setMyStatus(data.presenceStatus);
+            setActiveStatus(data.presenceStatus);
+          } else if (data.status !== undefined) {
+            setMyStatus(data.status);
+            setActiveStatus(data.status);
+          }
+          
+          if (data.customStatusText !== undefined) {
+            setMyCustomText(data.customStatusText);
+            setActiveCustomText(data.customStatusText);
+          } else if (data.customText !== undefined || data.customStatus !== undefined) {
+            const text = data.customText || data.customStatus || "";
+            setMyCustomText(text);
+            setActiveCustomText(text);
+          }
         }
-        
-        if (data.customStatusText !== undefined) {
-          setMyCustomText(data.customStatusText);
-          setActiveCustomText(data.customStatusText);
-        } else if (data.customText !== undefined || data.customStatus !== undefined) {
-          const text = data.customText || data.customStatus || "";
-          setMyCustomText(text);
-          setActiveCustomText(text);
-        }
-      } else {
-        console.error("Failed to fetch my profile info (Check endpoint URL).");
       }
     } catch (err) {
       console.error("Network error fetching my profile:", err);
@@ -61,13 +64,9 @@ export default function FriendsList({ currentUser, onStartChat }) {
   };
 
   const refreshFriendsList = async () => {
-    if (!currentUser?.userId) {
-      console.log("No userId found, skipping friends fetch.");
-      return;
-    }
+    if (!currentUser?.userId) return;
 
     try {
-      console.log(`Fetching friends for userId: ${currentUser.userId}...`);
       const response = await fetch(`${BASE_URL}/api/friends/list/${currentUser.userId}`, {
         method: "GET",
         headers: {
@@ -93,14 +92,11 @@ export default function FriendsList({ currentUser, onStartChat }) {
         const formattedFriends = friendsArray.map(f => ({
           id: f.id,
           username: f.username || "Unknown",
-          // Map their presenceStatus and customStatusText if that's what the friends list returns too
           status: f.presenceStatus !== undefined ? f.presenceStatus : (f.status !== undefined ? f.status : "Offline"),
           customStatus: f.customStatusText || f.customStatus || f.customText || "" 
         }));
         
         setFriends(formattedFriends);
-      } else {
-        console.error("Could not fetch friends. Server returned an error.");
       }
     } catch (error) {
       console.error("Network error fetching friends:", error);
@@ -108,7 +104,6 @@ export default function FriendsList({ currentUser, onStartChat }) {
   };
 
   useEffect(() => {
-    console.log("Current Logged In User Data:", currentUser);
     if (currentUser?.userId) {
       fetchMyProfile();
       refreshFriendsList();
@@ -118,7 +113,6 @@ export default function FriendsList({ currentUser, onStartChat }) {
   const handleUpdateStatus = async () => {
     setStatusFeedback("");
     try {
-      console.log("Sending Status Update...");
       const res = await fetch(`${BASE_URL}/api/Status/update-status`, {
         method: "PUT",
         headers: { 
@@ -139,13 +133,10 @@ export default function FriendsList({ currentUser, onStartChat }) {
         setActiveCustomText(myStatus === 2 ? myCustomText : "");
         setTimeout(() => setStatusFeedback(""), 3000); 
       } else {
-        const text = await res.text();
-        console.error("Server rejected status update:", text);
         setStatusFeedback("Failed to update status.");
       }
     } catch (error) {
-      console.error("CRITICAL NETWORK ERROR during status update:", error);
-      setStatusFeedback("Could not reach the server. Check console.");
+      setStatusFeedback("Could not reach the server.");
     }
   };
 
@@ -175,6 +166,7 @@ export default function FriendsList({ currentUser, onStartChat }) {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${currentUser?.token}`,
           "X-Tunnel-Skip-AntiPhishing-Page": "true"
         },
         body: JSON.stringify(payload),
@@ -214,10 +206,11 @@ export default function FriendsList({ currentUser, onStartChat }) {
 
   const handleRemove = async (id, username) => {
     try {
-      const res = await fetch(`${BASE_URL}/api/friends/remove`, {
+      const res = await fetch(`${BASE_URL}/api/friends/remove-friend-by-username`, {
         method: "DELETE", 
         headers: { 
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${currentUser?.token}`,
           "X-Tunnel-Skip-AntiPhishing-Page": "true"
         },
         body: JSON.stringify({ 
@@ -236,12 +229,6 @@ export default function FriendsList({ currentUser, onStartChat }) {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    window.location.reload();
-  };
-
-  // --- UPDATED: Properly separates status 2 into "custom" instead of grouping it with "online" ---
   const getStatusClass = (status) => {
     if (status === 2) return "custom";
     if (status === 1 || status === "Online") return "online";
@@ -269,7 +256,7 @@ export default function FriendsList({ currentUser, onStartChat }) {
               <span className={`fl-status-dot ${getStatusClass(friend.status)}`}></span>
               <div className="fl-profile-col">
                 <span className="fl-username">{friend.username}</span>
-                {friend.status === 2 && friend.customStatus && (
+                {friend.customStatus && (
                   <span className="fl-status-text">
                     {friend.customStatus}
                   </span>

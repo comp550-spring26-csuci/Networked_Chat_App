@@ -201,13 +201,13 @@
   background-color: #23a559;
 }
 
-/* Custom status purple dot */
-.fl-status-dot.custom {
-  background-color: #a855f7; 
-}
-
 .fl-status-dot.offline {
   background-color: #80848e;
+}
+
+/* --- ADDED: Purple dot modifier class for custom status --- */
+.fl-status-dot.custom {
+  background-color: #a855f7; /* Bright purple */
 }
 
 /* Remove Button */
@@ -238,8 +238,8 @@
 }
 
 .fl-logout-btn {
-  background-color: #00e5ff;
-  color: rgb(0, 0, 0);
+  background-color: #ed4245;
+  color: white;
   border: none;
   padding: 6px 12px;
   border-radius: 4px;
@@ -250,7 +250,7 @@
 }
 
 .fl-logout-btn:hover {
-  background-color: #00b8cc;
+  background-color: #c03537;
 }
 
 .fl-profile-section {
@@ -281,6 +281,7 @@
   margin-top: 2px;
 }
 
+/* --- Ensure message text is NOT purple by default --- */
 .fl-status-label {
   font-size: 0.85rem;
   color: #aaa;

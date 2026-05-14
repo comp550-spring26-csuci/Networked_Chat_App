@@ -16,7 +16,7 @@ export default function App() {
       />
       
       {/* Protect the chat route: loads the main layout which contains the friends drawer */}
-      {/* Pass the entire 'user' object as 'currentUser' instead of just the username */}
+      {/* FIX: Pass the entire 'user' object as 'currentUser' instead of just the username */}
       <Route 
         path="/chat" 
         element={user ? <ChatLayout currentUser={user} /> : <Navigate to="/login" replace />} 
