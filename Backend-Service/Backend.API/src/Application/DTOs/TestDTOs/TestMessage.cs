@@ -15,7 +15,6 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
     {
         private Message _message = null!;
         private string? _chatRoomName;
-        private string? _senderUsername;
 
         public Message Message
         {
@@ -27,12 +26,6 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
         {
             get => _chatRoomName;
             set => _chatRoomName = value;
-        }
-
-        public string? SenderUsername
-        {
-            get => _senderUsername;
-            set => _senderUsername = value;
         }
     }
 }

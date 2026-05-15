@@ -8,23 +8,23 @@
 //  contain additional data that is not necessary for the event.
 // --------------------------------------------
 
-namespace Backend.API.src.Application.DTOs
-{
-    public class EventFriendRequest
-    {
-        private Guid _requesterId;
-        private string _requesterUsername = default!;
+//namespace Backend.API.src.Application.DTOs
+//{
+//    public class EventFriendRequest
+//    {
+//        private Guid _requesterId;
+//        private string _requesterUsername = default!;
 
-        public Guid Id
-        {
-            get => _requesterId;
-            set => _requesterId = value;
-        }
+//        public Guid Id
+//        {
+//            get => _requesterId;
+//            set => _requesterId = value;
+//        }
 
-        public string Username
-        {
-            get => _requesterUsername;
-            set => _requesterUsername = value;
-        }
-    }
-}
+//        public string Username
+//        {
+//            get => _requesterUsername;
+//            set => _requesterUsername = value;
+//        }
+//    }
+//}

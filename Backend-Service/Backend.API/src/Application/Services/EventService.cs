@@ -10,6 +10,7 @@
 using Backend.API.src.API.Hubs;
 using Backend.API.src.Application.DTOs;
 using Backend.API.src.Core.Entities;
+using Backend.API.src.Core.Interface;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.SignalR;
 
@@ -19,16 +20,18 @@ namespace Backend.API.src.Application.Services
     {
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly ChatEventRepository _eventRepository;
+        private readonly IServiceProvider _serviceProvider;
 
-        public EventService(IHubContext<ChatHub> hubContext, ChatEventRepository eventRepository)
+        public EventService(IHubContext<ChatHub> hubContext, ChatEventRepository eventRepository, IServiceProvider serviceProvider)
         {
             _hubContext = hubContext;
             _eventRepository = eventRepository;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task MembershipAddEventAsync(Guid userId, ChatRoom chatRoom)
         {
-            ChatEvent chatEvent = new ChatEvent
+            ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.MembershipAdded,
                 Room = new EventChatRoom
@@ -45,7 +48,7 @@ namespace Backend.API.src.Application.Services
 
         public async Task MembershipRemoveEventAsync(Guid userId, Guid roomId)
         {
-            ChatEvent chatEvent = new ChatEvent
+            ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.MembershipRemoved,
                 ChatRoomId = roomId
@@ -58,7 +61,7 @@ namespace Backend.API.src.Application.Services
 
         public async Task RoomDeleteEventAsync(Guid roomId) 
         {
-            ChatEvent chatEvent = new ChatEvent
+            ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.RoomDeleted,
                 ChatRoomId = roomId
@@ -69,38 +72,82 @@ namespace Backend.API.src.Application.Services
             await _hubContext.Clients.Group(SignalRGroupService.GetGlobalGroupId(roomId)).SendAsync("RoomDeleted", chatEvent);
         }
 
-        public async Task FriendRequestEventAsync(Guid addresseeId, Guid requesterId, string requesterUsername)
+        public async Task FriendshipAddEventAsync(Guid addresseeId, Guid requesterId)
         {
-            ChatEvent chatEvent = new ChatEvent
+            ChatEvent chatEvent = new()
             {
-                EventType = ChatEventType.FriendRequestReceived,
-                Request = new EventFriendRequest
+                EventType = ChatEventType.FriendshipAdded,
+                Friendship = new EventFriendship
                 {
-                    Id = requesterId,
-                    Username = requesterUsername
+                    UserId1 = addresseeId,
+                    UserId2 = requesterId,
+                    Username1 = (await _serviceProvider.GetRequiredService<IUserRepository>().GetByIdAsync(addresseeId))?.Username ?? "Unknown",
+                    Username2 = (await _serviceProvider.GetRequiredService<IUserRepository>().GetByIdAsync(requesterId))?.Username ?? "Unknown"
+                    // Add status information too
                 }
             };
 
             await _eventRepository.AddAsync(chatEvent);
 
-            await _hubContext.Clients.User(addresseeId.ToString()).SendAsync("FriendRequestReceived", chatEvent);
+            await _hubContext.Clients.User(addresseeId.ToString()).SendAsync("FriendAdded", chatEvent);
+            await _hubContext.Clients.User(requesterId.ToString()).SendAsync("FriendAdded", chatEvent);
         }
 
-        public async Task FriendAcceptEventAsync(Guid requesterId, Guid addresseeId, string addresseeUsername)
+        public async Task FriendshipRemoveEventAsync(Guid addresseeId, Guid requesterId)
         {
-            ChatEvent chatEvent = new ChatEvent
+            ChatEvent chatEvent = new()
             {
-                EventType = ChatEventType.FriendRequestAccepted,
-                Request = new EventFriendRequest
+                EventType = ChatEventType.FriendshipRemoved,
+                Friendship = new EventFriendship
                 {
-                    Id = addresseeId,
-                    Username = addresseeUsername
+                    UserId1 = addresseeId,
+                    UserId2 = requesterId,
+                    Username1 = (await _serviceProvider.GetRequiredService<IUserRepository>().GetByIdAsync(addresseeId))?.Username ?? "Unknown",
+                    Username2 = (await _serviceProvider.GetRequiredService<IUserRepository>().GetByIdAsync(requesterId))?.Username ?? "Unknown"
+                    // Add status information too
                 }
             };
 
             await _eventRepository.AddAsync(chatEvent);
 
-            await _hubContext.Clients.User(requesterId.ToString()).SendAsync("FriendRequestAccepted", chatEvent);
+            await _hubContext.Clients.User(addresseeId.ToString()).SendAsync("FriendRemoved", chatEvent);
+            await _hubContext.Clients.User(requesterId.ToString()).SendAsync("FriendRemoved", chatEvent);
         }
+
+
+
+        //public async Task FriendRequestEventAsync(Guid addresseeId, Guid requesterId, string requesterUsername)
+        //{
+        //    ChatEvent chatEvent = new()
+        //    {
+        //        EventType = ChatEventType.FriendRequestReceived,
+        //        Request = new EventFriendRequest
+        //        {
+        //            Id = requesterId,
+        //            Username = requesterUsername
+        //        }
+        //    };
+
+        //    await _eventRepository.AddAsync(chatEvent);
+
+        //    await _hubContext.Clients.User(addresseeId.ToString()).SendAsync("FriendRequestReceived", chatEvent);
+        //}
+
+        //public async Task FriendAcceptEventAsync(Guid requesterId, Guid addresseeId, string addresseeUsername)
+        //{
+        //    ChatEvent chatEvent = new()
+        //    {
+        //        EventType = ChatEventType.FriendRequestAccepted,
+        //        Request = new EventFriendRequest
+        //        {
+        //            Id = addresseeId,
+        //            Username = addresseeUsername
+        //        }
+        //    };
+
+        //    await _eventRepository.AddAsync(chatEvent);
+
+        //    await _hubContext.Clients.User(requesterId.ToString()).SendAsync("FriendRequestAccepted", chatEvent);
+        //}
     }
 }

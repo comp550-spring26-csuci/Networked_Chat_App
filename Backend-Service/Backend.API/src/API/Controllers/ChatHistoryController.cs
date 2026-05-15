@@ -101,19 +101,6 @@ namespace Backend.API.src.API.Controllers
         }
 
         [HttpGet]
-        [Route("user/mine/id")]
-        public IActionResult GetMyUserId()
-        {
-            var userId = GetCurrentUserId();
-            if (userId == Guid.Empty)
-            {
-                return Unauthorized();
-            }
-
-            return Ok(userId);
-        }
-
-        [HttpGet]
         [Route("messages")]
         public async Task<IActionResult> GetAllMessages()
         {

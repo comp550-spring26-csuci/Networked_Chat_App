@@ -12,14 +12,14 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
 {
     public class TestUserStatus
     {
-        private UserStatus _userStatus = null!; 
+        // private UserStatus _userStatus = null!;
         private string? _username;
 
-        public UserStatus UserStatus
-        {
-            get => _userStatus;
-            set => _userStatus = value;
-        }
+        //public UserStatus UserStatus
+        //{
+        //    get => _userStatus;
+        //    set => _userStatus = value;
+        //}
 
         public string? UserName
         {

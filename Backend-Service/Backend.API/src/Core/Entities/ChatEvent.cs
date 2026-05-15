@@ -20,8 +20,10 @@ namespace Backend.API.src.Core.Entities
         MembershipAdded,
         MembershipRemoved,
         RoomDeleted,
-        FriendRequestReceived,
-        FriendRequestAccepted
+        FriendshipAdded,
+        FriendshipRemoved
+        //FriendRequestReceived,
+        //FriendRequestAccepted
     }
 
     public class ChatEvent
@@ -32,7 +34,8 @@ namespace Backend.API.src.Core.Entities
         private string _details = default!;
         private DateTime _timestamp = DateTime.UtcNow;
         private EventChatRoom? _room;
-        private EventFriendRequest? _request;
+        //private EventFriendRequest? _friendRequest;
+        private EventFriendship? _friendship;
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -75,10 +78,16 @@ namespace Backend.API.src.Core.Entities
             set => _room = value;
         }
 
-        public EventFriendRequest? Request
+        //public EventFriendRequest? FriendRequest
+        //{
+        //    get => _friendRequest;
+        //    set => _friendRequest = value;
+        //}
+
+        public EventFriendship? Friendship
         {
-            get => _request;
-            set => _request = value;
+            get => _friendship;
+            set => _friendship = value;
         }
     }
 }

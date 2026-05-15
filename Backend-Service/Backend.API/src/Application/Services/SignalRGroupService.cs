@@ -42,7 +42,7 @@ namespace Backend.API.src.Application.Services
             await _hubContext.Groups.RemoveFromGroupAsync(connectionId, GetActiveGroupId(roomId));
         }
 
-        public async Task RemoveConnectionFromChatRoomAsync(Guid roomId, IEnumerable<Guid> userIds)
+        public async Task RemoveConnectionsFromChatRoomAsync(Guid roomId, IEnumerable<Guid> userIds)
         {
             string globalGroupId = GetGlobalGroupId(roomId);
             string activeGroupId = GetActiveGroupId(roomId);

@@ -11,6 +11,7 @@ using Backend.API.src.Application.DTOs;
 using Backend.API.src.Application.DTOs.TestDTOs;
 using Backend.API.src.Application.Services;
 using Backend.API.src.Core.Entities;
+using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
@@ -26,14 +27,16 @@ namespace Backend.API.src.API.Hubs
         private readonly TestChatRoomRepository _testChatRoomRepository;
         private readonly SignalRGroupService _signalRGroupService;
         private readonly ClientPresenceService _clientPresenceService;
+        private readonly IUserRepository _userRepository;
 
-        public ChatHub(MessageRepository messageRepositoy, ChatEventRepository chatEventRepository, TestChatRoomRepository testChatRoomRepository, SignalRGroupService signalRGroupService, ClientPresenceService clientPresenceService)
+        public ChatHub(MessageRepository messageRepositoy, ChatEventRepository chatEventRepository, TestChatRoomRepository testChatRoomRepository, SignalRGroupService signalRGroupService, ClientPresenceService clientPresenceService, IUserRepository userRepository)
         {
             _messageRepository = messageRepositoy;
             _chatEventRepository = chatEventRepository;
             _testChatRoomRepository = testChatRoomRepository;
             _signalRGroupService = signalRGroupService;
             _clientPresenceService = clientPresenceService;
+            _userRepository = userRepository;
         }
 
         // -------------------------------------
@@ -55,7 +58,7 @@ namespace Backend.API.src.API.Hubs
         // ***MESSAGE SENDING HELPER METHODS****
         // -------------------------------------
 
-        private TestMessage ConstructMessageDto(SendMessageToChatRoom sendMessageToChatRoom, string? chatRoomName, string? senderUsername)
+        private TestMessage ConstructMessageDto(SendMessageToChatRoom sendMessageToChatRoom, string? chatRoomName)
         {
             var message = new Message
             {
@@ -68,8 +71,7 @@ namespace Backend.API.src.API.Hubs
             var testMessage = new TestMessage
             {
                 Message = message,
-                ChatRoomName = chatRoomName,
-                SenderUsername = senderUsername
+                ChatRoomName = chatRoomName
             };
 
             return testMessage;
@@ -146,6 +148,46 @@ namespace Backend.API.src.API.Hubs
         }
 
         // -------------------------------------
+        // ***STATUS REPORTING HELPER METHODS***
+        // -------------------------------------
+
+        private async Task UpdateStatusOnline()
+        {
+            Guid userId = GetUserId();
+
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user != null /*&& user.PresenceStatus == UserStateType.Inactive*/)
+            {
+                //user.PresenceStatus = UserStateType.Active;
+                _userRepository.Update(user);
+                await _userRepository.SaveChangesAsync();
+                await SendStatusToFriends(user);
+            }
+        }
+
+        private async Task SendStatusToFriends(User user)
+        {
+            var testUserStatus = ConstructTestUserStatusDto(user);
+
+            // Notify all of the user's own client instances of their updated status (e.g., to update the UI to show them as online)
+            await Clients.User(user.Id.ToString()).SendAsync("ReceiveStatus", testUserStatus);
+
+            // Get friendships from friendship repository
+
+            // for loop to send the status update to each friend
+        }
+
+        private static TestUserStatus ConstructTestUserStatusDto(User user) 
+        {
+            return new TestUserStatus
+            {
+                // UserStatus = new UserStatus { UserId = user.Id, State = UserStateType.Active },
+                UserName = user.Username
+            };
+        }
+
+        // -------------------------------------
         // *************HUB METHODS*************
         // -------------------------------------
 
@@ -154,29 +196,24 @@ namespace Backend.API.src.API.Hubs
             AppLogger.ConnectionEvent(Context.ConnectionId, "Connected", GetUserId().ToString());
             try
             {
+                Guid userId = GetUserId();
+
+                await _clientPresenceService.UserSessionStarted(userId, Context.ConnectionId);
+
+                //////////////////// PENDING REWRITE /////////////////////////////////////////////
+                List<Guid> myChatRooms = _testChatRoomRepository.GetMyChatRoomIds(GetUsername());
+                //////////////////// PENDING REWRITE /////////////////////////////////////////////
+
+                await _signalRGroupService.SyncConnectionGroupsAsync(Context.ConnectionId, myChatRooms);
+
                 TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserJoined, null);
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
                 await SendEventToAllAsync(testChatEvent);
 
-                bool firstConnection = await _clientPresenceService.UserSessionStarted(GetUserId(), Context.ConnectionId);
-
-                // Chat rooms are supposed to be accessible by user ID, but since my implementation is based on username,
-                // I have to get the chat rooms by username instead. This is a temporary workaround until we implement proper
-                // user-based chat room access.
-                List<Guid> myChatRooms = _testChatRoomRepository.GetMyChatRoomIds(GetUsername()); 
-
-                await _signalRGroupService.SyncConnectionGroupsAsync(Context.ConnectionId, myChatRooms);
-
-                if (firstConnection)
-                {
-                    AppLogger.UserAction(GetUserId().ToString(), "User session started");
-                    // Update user's online status in the database to true
-                    // Let others (Friends/Everyone) know that the user is now
-                    // online (could be a UserStatusChanged event with a status of "Online")
-                }
-
+                await UpdateStatusOnline();
+               
                 await base.OnConnectedAsync();
 
                 AppLogger.DebugState("ChatHub", $"User connection initialization completed for Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()}");
@@ -193,20 +230,30 @@ namespace Backend.API.src.API.Hubs
             AppLogger.ConnectionEvent(Context.ConnectionId, "Disconnected", GetUserId().ToString());
             try
             {
+                Guid userId = GetUserId();
+
+                await _clientPresenceService.UserSessionEnded(userId, Context.ConnectionId);
+
+                User? user = await _userRepository.GetByIdAsync(userId);
+
+                if (user != null /* && user.PresenceStatus == UserStateType.Active */)
+                {
+                    // Logout/Disconnect from ANY 
+
+                    //user.PresenceStatus = UserStateType.Inactive;
+
+                    _userRepository.Update(user);
+
+                    await _userRepository.SaveChangesAsync();
+
+                    await SendStatusToFriends(user);
+                }
+
                 TestChatEvent testChatEvent = ConstructChatEventDto(ChatEventType.UserLeft, null);
 
                 await _chatEventRepository.AddAsync(testChatEvent.ChatEvent);
 
                 await SendEventToAllAsync(testChatEvent);
-
-                bool isLastConnection = await _clientPresenceService.UserSessionEnded(GetUserId(), Context.ConnectionId);
-
-                if (isLastConnection) 
-                {
-                    AppLogger.UserAction(GetUserId().ToString(), "User session ended");
-                    // Update user's online status in the database to false
-                    // Let others (Friends/Everyone) know that the user is now offline (could be a UserStatusChanged event with a status of "Offline")
-                }
 
                 await base.OnDisconnectedAsync(exception);
 
@@ -224,6 +271,8 @@ namespace Backend.API.src.API.Hubs
             AppLogger.DebugState("ChatHub.JoinChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to join Chat Room ID: {ChatRoom.ChatRoomId}");
             try
             {
+                await UpdateStatusOnline();
+
                 Guid roomId = ChatRoom.ChatRoomId;
 
                 if (roomId == default || !_testChatRoomRepository.ChatRoomExists(roomId))
@@ -277,7 +326,9 @@ namespace Backend.API.src.API.Hubs
             AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to send a message to Chat Room ID: {testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId}");
             try
             {
-                TestMessage testMessage = ConstructMessageDto(testSendMessageToChatRoom.SendMessageToChatRoom, testSendMessageToChatRoom.ChatRoomName, testSendMessageToChatRoom.SenderUsername);
+                await UpdateStatusOnline();
+
+                TestMessage testMessage = ConstructMessageDto(testSendMessageToChatRoom.SendMessageToChatRoom, testSendMessageToChatRoom.ChatRoomName);
 
                 await _messageRepository.AddAsync(testMessage.Message);
 
@@ -292,6 +343,31 @@ namespace Backend.API.src.API.Hubs
             catch (Exception ex)
             {
                 AppLogger.ShieldFailure("ChatHub.SendMessageToChatRoom", ex);
+                await SendErrorToClientAsync($"Internal Error: {ex.Message}");
+            }
+        }
+
+        public async Task MarkRoomAsRead(Guid chatRoomId)
+        {
+            AppLogger.DebugState("ChatHub.MarkRoomAsRead", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to mark Chat Room ID: {chatRoomId} as read");
+            try
+            {
+                await UpdateStatusOnline();
+                if (chatRoomId == default || !_testChatRoomRepository.ChatRoomExists(chatRoomId))
+                {
+                    await SendErrorToClientAsync($"Chat room id \"{chatRoomId}\" does not exist. Please provide a valid ChatRoomId.");
+                    return;
+                }
+
+                // Notify the user's client instances that the room has been marked as read (e.g., to update the UI to show that there are no unread messages in that room)
+                await Clients.User(GetUserId().ToString()).SendAsync("RoomMarkedAsRead", chatRoomId);
+
+                // Mark the room as read for the user in the database (e.g., update the last read timestamp for that user and chat room)
+                AppLogger.DebugState("ChatHub.MarkRoomAsRead", $"Chat Room ID: {chatRoomId} successfully marked as read for User ID: {GetUserId()}");
+            }
+            catch (Exception ex)
+            {
+                AppLogger.ShieldFailure("ChatHub.MarkRoomAsRead", ex);
                 await SendErrorToClientAsync($"Internal Error: {ex.Message}");
             }
         }

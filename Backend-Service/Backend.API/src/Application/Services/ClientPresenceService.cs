@@ -14,40 +14,27 @@ namespace Backend.API.src.Application.Services
     {
         private readonly ConcurrentDictionary<Guid, List<string>> _userSessions = new();
 
-        // Called when a user connects to the server. Returns true if this is the first connection for the user,
-        // indicating that a new session has started.
-        public Task<bool> UserSessionStarted(Guid userId, string connectionId)
+        // Called when a user connects to the server. 
+        public Task UserSessionStarted(Guid userId, string connectionId)
         {
-            bool sessionStart = false;
-
-            // Add or update the user's connections. If the user is new, create a new list with the connection ID and mark session start.
+            // Add or update the user's connections. If the user is new, create a new list with the connection ID.
             _userSessions.AddOrUpdate(userId,
-                key =>
-                {
-                    sessionStart = true;
-                    return new List<string> { connectionId };
-                },
+                key => [connectionId],
                 (key, connections) =>
                 {
                     lock (connections)
                     {
-                        if (connections.Count == 0) {
-                            sessionStart = true;
-                        }
                         connections.Add(connectionId);
                     }
                     return connections;
                 }); 
 
-            return Task.FromResult(sessionStart);
+            return Task.CompletedTask;
         }
 
-        // Called when a user disconnects from the server. Returns true if this was the last connection for the user,
-        // indicating that the session has ended.
-        public Task<bool> UserSessionEnded(Guid userId, string connectionId)
+        // Called when a user disconnects from the server. 
+        public Task UserSessionEnded(Guid userId, string connectionId)
         {
-            bool sessionEnd = false;
-
             // Try to get the user's connections. If found, remove the connection ID and check
             // if the list is empty to determine if the session has ended.
             if (_userSessions.TryGetValue(userId, out List<string>? connections))
@@ -57,11 +44,12 @@ namespace Backend.API.src.Application.Services
                     connections.Remove(connectionId);
                     if (connections.Count == 0)
                     {
-                        sessionEnd = true;
+                        _userSessions.TryRemove(userId, out _);
                     }
                 }
             }
-            return Task.FromResult(sessionEnd);
+
+            return Task.CompletedTask;
         }
 
         // Retrieves the list of active connection IDs for a given user. If the user has no active connections, returns an empty list.
@@ -76,7 +64,7 @@ namespace Backend.API.src.Application.Services
                     return Task.FromResult<IEnumerable<string>>(connections.ToList());
                 }
             }
-            return Task.FromResult<IEnumerable<string>>(Array.Empty<string>());
+            return Task.FromResult<IEnumerable<string>>([]);
         }
     }
 }
