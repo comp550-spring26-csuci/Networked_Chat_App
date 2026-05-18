@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
-import { connection } from "../signalr/chatConnection";
+import { getConnection, TUNNEL_URL } from "../signalr/chatConnection";
 
 export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	// Focuses input box when swapping DMs
@@ -14,8 +14,12 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	useEffect(() => {
 		if(!selectedDM) return;
 		async function fetchHistory() {
-			const res = await fetch(`https://localhost:7081/api/chathistory/room/${selectedDM.id}/messages`, {
+			const token = localStorage.getItem("access_token");
+			const res = await fetch(`${TUNNEL_URL}/api/chathistory/room/${selectedDM.id}/messages`, {
 				method: 'GET',
+				headers : {
+					Authorization: `Bearer ${token}`
+				}
 			});
 
 			const data = await res.json();
@@ -26,6 +30,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 				senderUsername: idToNameRef.current[msg.senderId],
 				chatRoomName: selectedDM.name
 			}));
+			console.log(`CHAT NAME: ${selectedDM.name}`);
 
 			setMessages((prev) => ({
 				...prev,
@@ -38,9 +43,6 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	}, [selectedDM]);
 
 	useEffect(() => {
-		// ADD THIS SAFETY CHECK: If connection doesn't exist yet, do nothing.
-		if (!connection) return; 
-
 		function handleReceiveMessage(paylode) {
 			const DMId = paylode.message.chatRoomId;
 
@@ -50,19 +52,19 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 			}));
 		}
 
+		const connection = getConnection();
+
 		connection.on("ReceiveMessage", handleReceiveMessage);
 
 		return () => {
-			// ALSO ADD SAFETY CHECK HERE before trying to turn it off
-			if (connection) {
-				connection.off("ReceiveMessage", handleReceiveMessage);
-			}
+			connection.off("ReceiveMessage", handleReceiveMessage);
 		};
 	}, [selectedDM]);
 
 	const handleSend = async (text) => {
 		const DMId = selectedDM.id;
 		try {
+			const connection = getConnection();
 			await connection.invoke("SendMessageToChatRoom", {
 				SendMessageToChatRoom: {
 					ChatRoomId: DMId,
@@ -78,7 +80,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
   	return (
     	<div className="chat-window">
     		<div className="recipient-name">
-				{selectedDM?.name}
+				{selectedDM?.name || `Welcome ${sender}`}
 			</div>
 			<MessageList 
 				messages={currentMessages} 

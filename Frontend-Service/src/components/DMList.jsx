@@ -1,18 +1,20 @@
 export default function DMList({ dms, selectedDM, onSelect }) {
-  return (
-    <div className="dm-list">
-		<div className="dm-list-header">
-			Direct Messages
-		</div>
-    	{dms.map(dm => (
-    		<div
-        		key={dm.id}
-          		className={`dm-item ${selectedDM?.id === dm.id ? "active" : ""}`}
-          		onClick={() => onSelect(dm)}
-        	>
-        		{dm.name}
-    		</div>
-    	))}
-    </div>
-  );
-}
+	return (
+	  <div className="dm-list">
+		  <div className="dm-list-header">
+			  Direct Messages
+		  </div>
+		  {dms.map(dm => (
+			  <div
+				  // TODO: Remove the user's name from the dm name so the name of the dm is the names of the other people in the chatroom
+				  // Example: For ian, make ian-kenneth -> kenneth, and ian-brielle-kenneth -> brielle, kenneth
+				  key={dm.id}
+					className={`dm-item ${selectedDM?.id === dm.id ? "active" : ""}`}
+					onClick={() => onSelect(dm)}
+			  >
+				  {dm.name}
+			  </div>
+		  ))}
+	  </div>
+	);
+  }
