@@ -10,6 +10,7 @@
 using Backend.API.src.API.Hubs;
 using Backend.API.src.Application.DTOs;
 using Backend.API.src.Core.Entities;
+using Backend.API.src.Core.Enums;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.SignalR;
@@ -18,136 +19,101 @@ namespace Backend.API.src.Application.Services
 {
     public class EventService
     {
-        private readonly IHubContext<ChatHub> _hubContext;
+        private readonly IHubContext<ChatHub, IChatClient> _hubContext;
         private readonly ChatEventRepository _eventRepository;
-        private readonly IServiceProvider _serviceProvider;
 
-        public EventService(IHubContext<ChatHub> hubContext, ChatEventRepository eventRepository, IServiceProvider serviceProvider)
+        public EventService(IHubContext<ChatHub, IChatClient> hubContext, ChatEventRepository eventRepository)
         {
             _hubContext = hubContext;
             _eventRepository = eventRepository;
-            _serviceProvider = serviceProvider;
         }
 
-        public async Task MembershipAddEventAsync(Guid userId, ChatRoom chatRoom)
+        public async Task MembershipAddEventAsync(Guid userId/*, ChatGroup chatGroup*/)
         {
             ChatEvent chatEvent = new()
             {
-                EventType = ChatEventType.MembershipAdded,
-                Room = new EventChatRoom
-                {
-                    ChatRoomId = chatRoom.ChatRoomId,
-                    ChatRoomName = chatRoom.ChatRoomName
-                }
+                EventType = ChatEventType.ChatGroupMembershipAdded,
+                //ChatGroup = ChatGroupDto.FromEntity(chatGroup)
             };
             
             await _eventRepository.AddAsync(chatEvent);
             
-            await _hubContext.Clients.User(userId.ToString()).SendAsync("RoomJoined", chatEvent);
+            await _hubContext.Clients.User(userId.ToString()).ChatGroupMembershipAdded(ChatEventDto.FromEntity(chatEvent));
         }
 
-        public async Task MembershipRemoveEventAsync(Guid userId, Guid roomId)
+        public async Task MembershipDeleteEventAsync(Guid userId, Guid roomId)
         {
             ChatEvent chatEvent = new()
             {
-                EventType = ChatEventType.MembershipRemoved,
+                EventType = ChatEventType.ChatGroupMembershipDeleted,
                 ChatRoomId = roomId
             };
 
             await _eventRepository.AddAsync(chatEvent);
             
-            await _hubContext.Clients.User(userId.ToString()).SendAsync("RoomLeft", chatEvent);
+            await _hubContext.Clients.User(userId.ToString()).ChatGroupMembershipDeleted(ChatEventDto.FromEntity(chatEvent));
         }
 
         public async Task RoomDeleteEventAsync(Guid roomId) 
         {
             ChatEvent chatEvent = new()
             {
-                EventType = ChatEventType.RoomDeleted,
+                EventType = ChatEventType.ChatGroupDeleted,
                 ChatRoomId = roomId
             };
 
             await _eventRepository.AddAsync(chatEvent);
 
-            await _hubContext.Clients.Group(SignalRGroupService.GetGlobalGroupId(roomId)).SendAsync("RoomDeleted", chatEvent);
+            await _hubContext.Clients.Group(SignalRGroupService.GetGlobalGroupId(roomId)).ChatGroupDeleted(ChatEventDto.FromEntity(chatEvent));
         }
 
-        public async Task FriendshipAddEventAsync(Guid addresseeId, Guid requesterId)
+        public async Task FriendshipAddEventAsync(User initiatingUser, User affectedUser)
         {
             ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.FriendshipAdded,
-                Friendship = new EventFriendship
-                {
-                    UserId1 = addresseeId,
-                    UserId2 = requesterId,
-                    Username1 = (await _serviceProvider.GetRequiredService<IUserRepository>().GetByIdAsync(addresseeId))?.Username ?? "Unknown",
-                    Username2 = (await _serviceProvider.GetRequiredService<IUserRepository>().GetByIdAsync(requesterId))?.Username ?? "Unknown"
-                    // Add status information too
-                }
+                Friendship = EventFriendship.FromUsers(initiatingUser, affectedUser)
             };
 
             await _eventRepository.AddAsync(chatEvent);
 
-            await _hubContext.Clients.User(addresseeId.ToString()).SendAsync("FriendAdded", chatEvent);
-            await _hubContext.Clients.User(requesterId.ToString()).SendAsync("FriendAdded", chatEvent);
+            var userIds = new[] { initiatingUser.Id, affectedUser.Id }.Select(id => id.ToString()).ToArray();
+
+            await _hubContext.Clients.Users(userIds).FriendshipAdded(ChatEventDto.FromEntity(chatEvent));
         }
 
-        public async Task FriendshipRemoveEventAsync(Guid addresseeId, Guid requesterId)
+        public async Task FriendshipDeleteEventAsync(Guid initiatingUser, Guid affectedUser)
         {
             ChatEvent chatEvent = new()
             {
-                EventType = ChatEventType.FriendshipRemoved,
-                Friendship = new EventFriendship
-                {
-                    UserId1 = addresseeId,
-                    UserId2 = requesterId,
-                    Username1 = (await _serviceProvider.GetRequiredService<IUserRepository>().GetByIdAsync(addresseeId))?.Username ?? "Unknown",
-                    Username2 = (await _serviceProvider.GetRequiredService<IUserRepository>().GetByIdAsync(requesterId))?.Username ?? "Unknown"
-                    // Add status information too
-                }
+                EventType = ChatEventType.FriendshipDeleted,
+                FriendshipRemoved = EventFriendshipDeleted.FromIds(initiatingUser, affectedUser)
             };
 
             await _eventRepository.AddAsync(chatEvent);
 
-            await _hubContext.Clients.User(addresseeId.ToString()).SendAsync("FriendRemoved", chatEvent);
-            await _hubContext.Clients.User(requesterId.ToString()).SendAsync("FriendRemoved", chatEvent);
+            var userIds = new[] { initiatingUser, affectedUser }.Select(id => id.ToString()).ToArray(); 
+            
+            await _hubContext.Clients.Users(userIds).FriendshipDeleted(ChatEventDto.FromEntity(chatEvent));
         }
 
+        public async Task UserStatusChangeEventAsync(User user, IEnumerable<Guid> friendIds)
+        {
+            ChatEvent chatEvent = new()
+            {
+                EventType = ChatEventType.UserStatusChanged,
+                //UserStatus = newStatus
+            };
 
+            await _eventRepository.AddAsync(chatEvent);
+            
+            await _hubContext.Clients.User(user.Id.ToString()).MyUserStatusChanged(ChatEventDto.FromEntity(chatEvent));
 
-        //public async Task FriendRequestEventAsync(Guid addresseeId, Guid requesterId, string requesterUsername)
-        //{
-        //    ChatEvent chatEvent = new()
-        //    {
-        //        EventType = ChatEventType.FriendRequestReceived,
-        //        Request = new EventFriendRequest
-        //        {
-        //            Id = requesterId,
-        //            Username = requesterUsername
-        //        }
-        //    };
-
-        //    await _eventRepository.AddAsync(chatEvent);
-
-        //    await _hubContext.Clients.User(addresseeId.ToString()).SendAsync("FriendRequestReceived", chatEvent);
-        //}
-
-        //public async Task FriendAcceptEventAsync(Guid requesterId, Guid addresseeId, string addresseeUsername)
-        //{
-        //    ChatEvent chatEvent = new()
-        //    {
-        //        EventType = ChatEventType.FriendRequestAccepted,
-        //        Request = new EventFriendRequest
-        //        {
-        //            Id = addresseeId,
-        //            Username = addresseeUsername
-        //        }
-        //    };
-
-        //    await _eventRepository.AddAsync(chatEvent);
-
-        //    await _hubContext.Clients.User(requesterId.ToString()).SendAsync("FriendRequestAccepted", chatEvent);
-        //}
+            var idStrings = friendIds.Select(id => id.ToString()).ToArray();
+            if (idStrings.Length != 0)
+            {
+                await _hubContext.Clients.Users(idStrings).FriendUserStatusChanged(ChatEventDto.FromEntity(chatEvent));
+            }
+        }
     }
 }

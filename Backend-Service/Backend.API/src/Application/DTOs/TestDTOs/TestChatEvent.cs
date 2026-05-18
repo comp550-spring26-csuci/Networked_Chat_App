@@ -7,16 +7,14 @@
 //  data is being sent from the client to the server when a chat event occurs.
 // --------------------------------------------
 
-using Backend.API.src.Core.Entities;
-
 namespace Backend.API.src.Application.DTOs.TestDTOs
 {
     public class TestChatEvent
     {
-        private ChatEvent _chatEvent = null!;
+        private ChatEventDto _chatEvent = default!;
         private string? _chatRoomName;
 
-        public ChatEvent ChatEvent
+        public ChatEventDto ChatEvent
         {
             get => _chatEvent;
             set => _chatEvent = value;

@@ -7,16 +7,14 @@
 //  from the client to the server when a message is sent.
 // --------------------------------------------
 
-using Backend.API.src.Core.Entities;
-
 namespace Backend.API.src.Application.DTOs.TestDTOs
 {
     public class TestMessage
     {
-        private Message _message = null!;
+        private MessageDto _message = default!;
         private string? _chatRoomName;
 
-        public Message Message
+        public MessageDto Message
         {
             get => _message;
             set => _message = value;

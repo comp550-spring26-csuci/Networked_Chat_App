@@ -13,38 +13,16 @@ namespace Backend.API.src.Application.DTOs
     {
         private string? messageId;
         private Guid _chatRoomId;
+        private Guid _senderId;
         private string? _senderUsername;
         private string _content = default!;
         private DateTime _timestamp = DateTime.UtcNow;
 
-        public string? MessageId
-        {
-            get => messageId;
-            set => messageId = value;
-        }
-
-        public Guid ChatRoomId
-        {
-            get => _chatRoomId;
-            set => _chatRoomId = value;
-        }
-
-        public string? SenderUsername
-        {
-            get => _senderUsername;
-            set => _senderUsername = value;
-        }
-
-        public string Content
-        {
-            get => _content;
-            set => _content = value;
-        }
-
-        public DateTime Timestamp
-        {
-            get => _timestamp;
-            set => _timestamp = value;
-        }
+        public string? MessageId { get => messageId; set => messageId = value; }
+        public Guid ChatRoomId { get => _chatRoomId; set => _chatRoomId = value; }
+        public Guid SenderId { get => _senderId; set => _senderId = value; }
+        public string? SenderUsername { get => _senderUsername; set => _senderUsername = value; }
+        public string Content { get => _content; set => _content = value; }
+        public DateTime Timestamp { get => _timestamp; set => _timestamp = value; }
     }
 }

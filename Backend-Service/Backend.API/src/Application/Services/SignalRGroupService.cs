@@ -12,8 +12,8 @@ namespace Backend.API.src.Application.Services
 {
     public class SignalRGroupService
     {
-        private IHubContext<ChatHub> _hubContext;
-        private ClientPresenceService _presenceService;
+        private readonly IHubContext<ChatHub> _hubContext;
+        private readonly ClientPresenceService _presenceService;
 
         public SignalRGroupService(IHubContext<ChatHub> hubContext, ClientPresenceService presenceService)
         {

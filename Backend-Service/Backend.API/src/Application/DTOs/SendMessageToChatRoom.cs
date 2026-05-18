@@ -12,15 +12,7 @@ namespace Backend.API.src.Application.DTOs
         private Guid _chatRoomId;
         private string _content = default!;
 
-        public Guid ChatRoomId
-        {
-            get => _chatRoomId;
-            set => _chatRoomId = value;
-        }
-        public required string Content
-        {
-            get => _content;
-            set => _content = value;
-        }
+        public Guid ChatRoomId { get => _chatRoomId; set => _chatRoomId = value; }
+        public required string Content { get => _content; set => _content = value; }
     }
 }

@@ -69,6 +69,9 @@ namespace Backend.API
                 builder.Services.AddScoped<TestChatRoomRepository>();
                 builder.Services.AddSingleton<ClientPresenceService>();
                 builder.Services.AddScoped<SignalRGroupService>();
+                builder.Services.AddScoped<EventService>();
+                builder.Services.AddScoped<ChatGroupEventPublisher>();
+                builder.Services.AddScoped<UserEventPublisher>();
 
                 // --- COMPATIBILITY FIX ---
                 var jwtSettings = builder.Configuration.GetSection(key: "JwtSettings").Get<JwtSettings>() ?? new JwtSettings();
