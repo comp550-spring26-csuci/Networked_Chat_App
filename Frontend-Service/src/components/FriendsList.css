@@ -1,14 +1,8 @@
-
-
 /* Dimmed Overlay */
 .fl-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 90;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+  .fl-overlay {
+    display: none !important;
+  }
 }
 
 .fl-overlay.open {

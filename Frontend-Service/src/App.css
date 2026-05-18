@@ -1,4 +1,8 @@
-/* */
+/* Universal Box-Sizing Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html, body, #root {
   font-family: "Roboto", system-ui, sans-serif;
   font-weight: 400;
@@ -12,7 +16,7 @@ html, body, #root {
 
 .chat-container {
   display: flex;
-  height: 100vh;
+  height: 100%; /* Changed to 100% to prevent double scrollbars */
   width: 100%;
 }
 
@@ -138,7 +142,7 @@ html, body, #root {
   background: #080808;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px 0; /* Updated padding to keep physical width at exactly 60px */
   gap: 10px;
   align-items: center;
 }
@@ -154,8 +158,8 @@ html, body, #root {
 }
 
 .sidebar-icon {
-  width: 55px;
-  height: 55px;
+  width: 45px; /* Shrunk slightly to fit inside 60px width without overlapping */
+  height: 45px;
   border-radius: 50%;
   border: none;
   color: white;
@@ -176,6 +180,7 @@ html, body, #root {
 
 .sidebar-icon:hover {
   background: #5865f2;
+  border-color: transparent !important; /* Forces overriding index.css hovers */
 }
 
 .sidebar-icon:focus {
@@ -186,8 +191,8 @@ html, body, #root {
 /* the red notification badge */
 .badge {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: -2px; /* Adjusted to fit the smaller 45px icon */
+  right: -2px;
 
   width: 18px;
   height: 18px;
@@ -207,7 +212,9 @@ html, body, #root {
   line-height: 1;
 }
 
-/* container for content to the right of the sidebar */
 .main-view {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; 
 }

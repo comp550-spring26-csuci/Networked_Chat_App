@@ -114,25 +114,27 @@ export default function ChatLayout({ currentUser }) {
 		}
 	};
 
-  	return (
-		<div className="chat-container">
-			<FriendsList 
-        		currentUser={currentUser} 
-       			onStartChat={handleStartChat} 
-        		isOpen={isFriendsOpen}         
-        		setIsOpen={setIsFriendsOpen}   
-      		/>
-			
-      		<DMList 
-        		dms={dms} 
-        		selectedDM={selectedDM}
-        		onSelect={setSelectedDM}
-      		/>
-      		<ChatWindow
-				idToNameRef={idToNameRef}
-				selectedDM={selectedDM} 
-				sender={currentUser?.username} 
-			/>
-    	</div>
-  	);
+return ( //changed some things here
+	<div className="chat-container">
+	  <FriendsList 
+		currentUser={currentUser} 
+		onStartChat={handleStartChat} 
+		isOpen={isFriendsOpen}         
+		setIsOpen={setIsFriendsOpen}   
+	  />
+	  
+	  <DMList 
+		dms={dms} 
+		selectedDM={selectedDM} 
+		onSelect={setSelectedDM}    
+		currentUser={currentUser}   
+	  />
+	  
+	  <ChatWindow 
+		idToNameRef={idToNameRef}
+		selectedDM={selectedDM}
+		sender={currentUser?.username}
+	  />
+	</div>
+  );
 }

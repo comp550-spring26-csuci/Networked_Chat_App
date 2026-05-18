@@ -25,11 +25,10 @@ a:hover {
 
 body {
   margin: 0;
-  place-items: center;
+  /* place-items: center; <- REMOVED to fix the chat centering bug */
   min-width: 320px;
   min-height: 100vh;
 }
-
 
 h1 {
   font-size: 3.2em;

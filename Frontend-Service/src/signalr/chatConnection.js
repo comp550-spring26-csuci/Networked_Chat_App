@@ -1,8 +1,7 @@
 import * as signalR from "@microsoft/signalr";
 
 const accessToken = "YOUR_JWT_TOKEN";
-// Synchronized with the correct active tunnel URL (changed to Ivana's)
-export const TUNNEL_URL = "https://vg3jzw0g-7081.usw3.devtunnels.ms";
+export const TUNNEL_URL = "https://sslk8rt0-7081.usw3.devtunnels.ms";
 
 let connection;
 
