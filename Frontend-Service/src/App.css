@@ -1,42 +1,213 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* */
+html, body, #root {
+  font-family: "Roboto", system-ui, sans-serif;
+  font-weight: 400;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Chat styles */
+
+.chat-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Left column */
+.dm-list-header {
+  border-bottom: 1px solid #222;
+  padding: 10px;
+  text-align: left;
+}
+
+.dm-list {
+  width: 250px;
+  background-color: #080808;
+  border: 1px solid #222;
+  color: white;
+  overflow-y: auto;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Right column */
+.chat-window {
+  flex: 1;
+  background-color: #0C0C0C;
+  color: white;
+  display: flex;
+  flex-direction: column;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Direct message item */
+.dm-item {
+  padding: 10px 12px;
+  margin: 6px 8px;
+  border-radius: 12px;
+  cursor: pointer;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.dm-item:hover {
+  background-color: #0C0C0C;
 }
 
-.card {
-  padding: 2em;
+.dm-item.active {
+  background-color: #404249;
 }
 
-.read-the-docs {
-  color: #888;
+.recipient-name {
+  padding: 10px;
+  margin-top: 0;
+  border: 1px solid #222;
+  border-left: none;
+}
+
+/* Messages */
+.messages {
+  flex: 1;
+  padding-left: 40px;
+  padding-top: 15px;
+  overflow-y: auto;
+}
+
+.message {
+  margin-top: 15px;
+}
+
+.message.grouped {
+  margin-top: 0;
+}
+
+.message-text {
+  margin: 0;
+  padding: 0;
+  white-space: pre-wrap;
+}
+
+.message-header {
+  display: flex;
+  gap: 8px; /* space between sender and time */
+  align-items: baseline;
+}
+
+.message-header .time {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+/* Chat input area */
+.text-box {
+  min-height: 55px;
+  max-height: 250px;
+  margin: 10px;
+  padding: 17px 40px;
+  box-sizing: border-box;
+  overflow-y: auto;
+
+  border-radius: 8px;
+  border: 1px solid #555;
+  outline: none;
+
+  background-color: #383a40;
+  color: white;
+  
+  font-size: 14px;
+  line-height: 20px;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* placeholder (Discord-style) */
+.text-box:empty:before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+/* sidebar styles */
+.app-shell {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 60px;
+  background: #080808;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 10px;
+  align-items: center;
+}
+
+.sidebar button {
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #0C0C0C;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.sidebar-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  font-size: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+  position: relative;
+}
+
+.sidebar-icon.active {
+  background: #5865f2;
+}
+
+.sidebar-icon:hover {
+  background: #5865f2;
+}
+
+.sidebar-icon:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* the red notification badge */
+.badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  width: 18px;
+  height: 18px;
+  padding: 0 5px;
+
+  background: #ff3b30;
+  color: white;
+
+  font-size: 11px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  line-height: 1;
+}
+
+/* container for content to the right of the sidebar */
+.main-view {
+  flex: 1;
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
 import ChatLayout from "./components/ChatLayout"; 
+import AppLayout from "./components/AppLayout"; 
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -15,12 +16,25 @@ export default function App() {
         element={user ? <Navigate to="/chat" replace /> : <LoginPage onLogin={setUser} />} 
       />
       
-      {/* Protect the chat route: loads the main layout which contains the friends drawer */}
-      {/* FIX: Pass the entire 'user' object as 'currentUser' instead of just the username */}
-      <Route 
-        path="/chat" 
-        element={user ? <ChatLayout currentUser={user} /> : <Navigate to="/login" replace />} 
-      />
+      {/* Protected Route Group: 
+        If the user is logged in, render AppLayout (the sidebar shell). 
+        The nested routes below will render inside AppLayout's <Outlet />!
+      */}
+      <Route element={user ? <AppLayout /> : <Navigate to="/login" replace />}>
+        
+        {/* Render ChatLayout when the URL is /chat */}
+        <Route 
+          path="/chat" 
+          element={<ChatLayout currentUser={user} />} 
+        />
+
+        {/* Temporary placeholder for the friends page to prevent blank screens */}
+        <Route 
+          path="/friends" 
+          element={<div style={{ padding: "20px", color: "white" }}>Friends page coming soon!</div>} 
+        />
+        
+      </Route>
       
       {/* Catch-all route: sends to chat if logged in, otherwise to login */}
       <Route 

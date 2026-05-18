@@ -3,9 +3,11 @@ import DMList from "./DMList";
 import ChatWindow from "./ChatWindow";
 import FriendsList from "./FriendsList"; 
 import { joinChatRoom, leaveChatRoom } from "../signalr/chatConnection";
+import { useOutletContext } from "react-router-dom";
 
 // --- CHANGED: Accept currentUser instead of just username ---
 export default function ChatLayout({ currentUser }) {
+	const { isFriendsOpen, setIsFriendsOpen } = useOutletContext();
 	const [dms, setDms] = useState([]);
 	const [selectedDM, setSelectedDM] = useState(null);
 	const idToNameRef = useRef({});
@@ -106,11 +108,13 @@ export default function ChatLayout({ currentUser }) {
 
   	return (
 		<div className="chat-container">
-			{/* --- CHANGED: Pass the entire currentUser object --- */}
+			{/* --- Pass the entire currentUser object --- */}
 			<FriendsList 
-				currentUser={currentUser} 
-				onStartChat={handleStartChat} 
-			/>
+        		currentUser={currentUser} 
+       			onStartChat={handleStartChat} 
+        		isOpen={isFriendsOpen}         //new
+        		setIsOpen={setIsFriendsOpen}   //new
+      		/>
 			
       		<DMList 
         		dms={dms} 

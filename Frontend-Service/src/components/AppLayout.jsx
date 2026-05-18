@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { MdEmail } from "react-icons/md";
 import { FaUserFriends } from "react-icons/fa";
@@ -5,29 +6,38 @@ import { FaUserFriends } from "react-icons/fa";
 export default function AppLayout() {
 	const navigate = useNavigate();
 	const location = useLocation();
+	
+	// 1. Create the state here in the parent shell
+	const [isFriendsOpen, setIsFriendsOpen] = useState(false);
 
 	return (
 		<div className="app-shell">
 			<div className="sidebar">
-				{/* currrently the friends route doesnt exist on this branch so this will redirect you to nothing */}
 				<button
-  					className={`sidebar-icon ${location.pathname === "/friends" ? "active" : ""}`}
-  					onClick={() => navigate("/friends")}
+					// Highlight the icon if the drawer is open
+					className={`sidebar-icon ${isFriendsOpen ? "active" : ""}`}
+					onClick={() => {
+						navigate("/chat"); // Ensure we are on the chat route
+						setIsFriendsOpen(!isFriendsOpen); // Toggle the drawer
+					}}
 				>
 					<FaUserFriends size={30}/>
 				</button>
 
 				<button 
-					className={`sidebar-icon ${location.pathname === "/chat" ? "active" : ""}`}
-					onClick={() => navigate("/chat")}
+					className={`sidebar-icon ${location.pathname === "/chat" && !isFriendsOpen ? "active" : ""}`}
+					onClick={() => {
+						setIsFriendsOpen(false); // Close drawer if they click messages
+						navigate("/chat");
+					}}
 				>
 					<MdEmail size={30}/>
 					<span className="badge">3</span>
 				</button>
 			</div>
-			{/* all the content to the sight of the sidebar is rendered in Outlet (Possible routes are nested in AppLayout in App.jsx */}
 			<div className="main-view">
-				<Outlet />
+				{/* 2. Pass the state down to any nested routes! */}
+				<Outlet context={{ isFriendsOpen, setIsFriendsOpen }} />
 			</div>
 		</div>
 	);

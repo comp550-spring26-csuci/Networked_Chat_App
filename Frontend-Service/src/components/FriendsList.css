@@ -1,21 +1,4 @@
-/* Hamburger Button */
-.fl-hamburger {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  z-index: 10;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-}
 
-.fl-hamburger:hover {
-  background-color: #3a3c42;
-}
 
 /* Dimmed Overlay */
 .fl-overlay {
