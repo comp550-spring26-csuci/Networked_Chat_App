@@ -146,7 +146,9 @@ export default function LoginPage({ onLogin }) {
       try {
         const res = await fetch(`${BASE_URL}/api/users/login`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", 
+            "X-Tunnel-Skip-AntiPhishing-Page": "true"
+          },
           body: JSON.stringify({ username, password }),
         });
         const data = await res.json();
@@ -197,7 +199,9 @@ export default function LoginPage({ onLogin }) {
       try {
         const res = await fetch(`${BASE_URL}/api/users/create-account`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json",
+            "X-Tunnel-Skip-AntiPhishing-Page": "true"
+           },
           body: JSON.stringify({
             username: suUsername,
             email: suEmail,

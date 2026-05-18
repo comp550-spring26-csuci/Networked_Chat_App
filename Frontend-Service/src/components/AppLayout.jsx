@@ -7,7 +7,7 @@ export default function AppLayout() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	
-	// 1. Create the state here in the parent shell
+	// create the state here in the parent shell
 	const [isFriendsOpen, setIsFriendsOpen] = useState(false);
 
 	return (
@@ -17,7 +17,7 @@ export default function AppLayout() {
 					// Highlight the icon if the drawer is open
 					className={`sidebar-icon ${isFriendsOpen ? "active" : ""}`}
 					onClick={() => {
-						navigate("/chat"); // Ensure we are on the chat route
+						navigate("/chat"); // Ensure we stay on the chat route
 						setIsFriendsOpen(!isFriendsOpen); // Toggle the drawer
 					}}
 				>
@@ -36,7 +36,7 @@ export default function AppLayout() {
 				</button>
 			</div>
 			<div className="main-view">
-				{/* 2. Pass the state down to any nested routes! */}
+				{/* pass the state down to the nested routes so ChatLayout doesn't crash! */}
 				<Outlet context={{ isFriendsOpen, setIsFriendsOpen }} />
 			</div>
 		</div>

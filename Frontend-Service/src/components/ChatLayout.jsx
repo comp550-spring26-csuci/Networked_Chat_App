@@ -2,10 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import DMList from "./DMList";
 import ChatWindow from "./ChatWindow";
 import FriendsList from "./FriendsList"; 
-import { joinChatRoom, leaveChatRoom } from "../signalr/chatConnection";
+import { joinChatRoom, leaveChatRoom, TUNNEL_URL } from "../signalr/chatConnection";
 import { useOutletContext } from "react-router-dom";
 
-// --- CHANGED: Accept currentUser instead of just username ---
 export default function ChatLayout({ currentUser }) {
 	const { isFriendsOpen, setIsFriendsOpen } = useOutletContext();
 	const [dms, setDms] = useState([]);
@@ -16,35 +15,45 @@ export default function ChatLayout({ currentUser }) {
 		async function fetchDMRooms() {
 			try {
 				const token = localStorage.getItem("access_token");
-				const res = await fetch("https://localhost:7081/api/chathistory/user/mine/rooms", {
+				const res = await fetch(`${TUNNEL_URL}/api/chathistory/user/mine/rooms`, {
 					method: 'GET',
 					headers: {
 						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'X-Tunnel-Skip-AntiPhishing-Page': 'true'
 					}
 				});
 
-				const data = await res.json();
-				const roomsArray = Object.entries(data).map(([id, name]) => ({
-					id,
-					name
-				}));
+				if (res.ok) {
+					const data = await res.json();
+					const safeData = data || {};
+					const roomsArray = Object.entries(safeData).map(([id, name]) => ({
+						id,
+						name
+					}));
 
-				setDms(roomsArray);
-				if(data.length > 0) {
-					setSelectedDM(roomsArray[0]);
+					setDms(roomsArray);
+					if (roomsArray.length > 0) {
+						setSelectedDM(roomsArray[0]);
+					}
 				}
 
-				const resp = await fetch("https://localhost:7081/api/test/all-users", {
-					method: 'GET'
+				const resp = await fetch(`${TUNNEL_URL}/api/test/all-users`, {
+					method: 'GET',
+					headers: {
+						'X-Tunnel-Skip-AntiPhishing-Page': 'true'
+					}
 				});
 
-				const dataUsers = await resp.json();
-				idToNameRef.current = Object.fromEntries(
-					dataUsers.map(user => [user.id, user.username])
-				);
+				if (resp.ok) {
+					const dataUsers = await resp.json();
+					const usersList = Array.isArray(dataUsers) ? dataUsers : (dataUsers?.$values || []);
+					idToNameRef.current = Object.fromEntries(
+						usersList.map(user => [user.id, user.username])
+					);
+				}
 			} catch(err) {
-				console.error("Failed to fetch rooms:", err);
+				console.error("Failed to fetch rooms safely:", err);
 			}
 		}
 		fetchDMRooms();
@@ -66,27 +75,28 @@ export default function ChatLayout({ currentUser }) {
 
 				await joinChatRoom(newDMId);
 				prevDMRef.current = newDMId;
-				console.log("Switched room:", newDMId);
 			} catch (err) {
-        		console.error("Room switch failed:", err);
+        		console.error("Room switch failed safely:", err);
       		}
 		}
 		switchDM();
 	}, [selectedDM]);
 
 	const handleStartChat = async (friend) => {
-		const existingRoom = dms.find(dm => dm.name.includes(friend.username));
+		if (!friend?.username) return;
+		const existingRoom = dms.find(dm => dm.name?.includes(friend.username));
 		
 		if (existingRoom) {
 			setSelectedDM(existingRoom);
 		} else {
 			try {
 				const token = localStorage.getItem("access_token");
-				const res = await fetch("https://localhost:7081/api/chat/room/create", { 
+				const res = await fetch(`${TUNNEL_URL}/api/chat/room/create`, { 
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${token}`,
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'X-Tunnel-Skip-AntiPhishing-Page': 'true'
 					},
 					body: JSON.stringify({ targetUsername: friend.username })
 				});
@@ -97,8 +107,6 @@ export default function ChatLayout({ currentUser }) {
 					
 					setDms(prev => [...prev, newRoom]);
 					setSelectedDM(newRoom);
-				} else {
-					console.error("Failed to create new DM room");
 				}
 			} catch (err) {
 				console.error("Error creating DM:", err);
@@ -108,12 +116,11 @@ export default function ChatLayout({ currentUser }) {
 
   	return (
 		<div className="chat-container">
-			{/* --- Pass the entire currentUser object --- */}
 			<FriendsList 
         		currentUser={currentUser} 
        			onStartChat={handleStartChat} 
-        		isOpen={isFriendsOpen}         //new
-        		setIsOpen={setIsFriendsOpen}   //new
+        		isOpen={isFriendsOpen}         
+        		setIsOpen={setIsFriendsOpen}   
       		/>
 			
       		<DMList 
@@ -124,7 +131,6 @@ export default function ChatLayout({ currentUser }) {
       		<ChatWindow
 				idToNameRef={idToNameRef}
 				selectedDM={selectedDM} 
-				/* --- CHANGED: Use currentUser.username for the sender --- */
 				sender={currentUser?.username} 
 			/>
     	</div>

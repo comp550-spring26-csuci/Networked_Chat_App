@@ -4,6 +4,7 @@ import "./FriendsList.css";
 const BASE_URL = "https://vg3jzw0g-7081.usw3.devtunnels.ms"; 
 
 export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpen }) {
+
   const [friends, setFriends] = useState([]); 
   const [addInput, setAddInput] = useState("");
   
@@ -181,7 +182,7 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
             isActuallySuccess = false;
             setErrorMsg(data.message || "The server rejected the friend request.");
           }
-        } catch(err) { /* Not JSON, assume true success */ }
+        } catch(err) { }
 
         if (isActuallySuccess) {
           setSuccessMsg(`${username} added successfully!`);
@@ -369,4 +370,4 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
       </div>
     </>
   );
-}
+} 
