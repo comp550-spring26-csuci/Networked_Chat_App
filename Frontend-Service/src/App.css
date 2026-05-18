@@ -33,7 +33,7 @@ html, body, #root {
   border: 1px solid #222;
   color: white;
   overflow-y: auto;
-  text-align: center;
+  text-align: left; /* changed from center*/
 }
 
 /* Right column */
@@ -217,4 +217,79 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   min-width: 0; 
+}
+
+/* --- NEW CLASSES FOR THE GROUP DRAWER --- */
+.dm-list-wrapper {
+  width: 250px;
+  background-color: #2b2d31;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #1e1f22;
+}
+
+.group-controls-container {
+  padding: 16px 12px 8px 12px;
+  display: flex;
+  gap: 8px;
+  background-color: #2b2d31;
+  border-bottom: 1px solid #1e1f22;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  z-index: 2;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-new-group {
+  background-color: #5865f2;
+  color: white;
+}
+
+.btn-new-group:hover {
+  background-color: #4752c4;
+}
+
+.btn-manage-group {
+  background-color: #1e1f22;
+  color: #dbdee1;
+}
+
+.btn-manage-group:hover {
+  background-color: #111214;
+  color: white;
+}
+
+.dm-item {
+  padding: 10px 12px;
+  margin-bottom: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #949ba4;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.dm-item:hover {
+  background-color: #35373c;
+  color: #dbdee1;
+}
+
+.dm-item.active {
+  background-color: #404249;
+  color: #ffffff;
 }
