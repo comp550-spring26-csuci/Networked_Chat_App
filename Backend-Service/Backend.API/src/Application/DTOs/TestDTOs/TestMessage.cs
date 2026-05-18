@@ -14,16 +14,7 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
         private MessageDto _message = default!;
         private string? _chatRoomName;
 
-        public MessageDto Message
-        {
-            get => _message;
-            set => _message = value;
-        }
-
-        public string? ChatRoomName
-        {
-            get => _chatRoomName;
-            set => _chatRoomName = value;
-        }
+        public MessageDto Message { get => _message; set => _message = value; }
+        public string? ChatRoomName { get => _chatRoomName; set => _chatRoomName = value; }
     }
 }

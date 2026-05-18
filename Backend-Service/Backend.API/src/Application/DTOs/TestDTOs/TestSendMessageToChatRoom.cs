@@ -17,28 +17,9 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
         private Guid? _senderUserId;
         private string? _senderUsername;
 
-        public SendMessageToChatRoom SendMessageToChatRoom
-        {
-            get => _sendMessageToChatRoom;
-            set => _sendMessageToChatRoom = value;
-        }
-
-        public string? ChatRoomName
-        {
-            get => _chatRoomName;
-            set => _chatRoomName = value;
-        }
-
-        public Guid? SenderUserId
-        {
-            get => _senderUserId;
-            set => _senderUserId = value;
-        }
-
-        public string? SenderUsername
-        {
-            get => _senderUsername;
-            set => _senderUsername = value;
-        }
+        public SendMessageToChatRoom SendMessageToChatRoom { get => _sendMessageToChatRoom; set => _sendMessageToChatRoom = value; }
+        public string? ChatRoomName { get => _chatRoomName; set => _chatRoomName = value; }
+        public Guid? SenderUserId { get => _senderUserId; set => _senderUserId = value; }
+        public string? SenderUsername { get => _senderUsername; set => _senderUsername = value; }
     }
 }

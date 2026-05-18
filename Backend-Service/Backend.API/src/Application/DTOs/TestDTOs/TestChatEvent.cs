@@ -14,16 +14,7 @@ namespace Backend.API.src.Application.DTOs.TestDTOs
         private ChatEventDto _chatEvent = default!;
         private string? _chatRoomName;
 
-        public ChatEventDto ChatEvent
-        {
-            get => _chatEvent;
-            set => _chatEvent = value;
-        }
-
-        public string? ChatRoomName
-        {
-            get => _chatRoomName;
-            set => _chatRoomName = value;
-        }
+        public ChatEventDto ChatEvent { get => _chatEvent; set => _chatEvent = value; }
+        public string? ChatRoomName { get => _chatRoomName; set => _chatRoomName = value; }
     }
 }
