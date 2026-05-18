@@ -6,6 +6,9 @@ First, you must run this to install all node modules with:
 ```
 npm install
 ```
+install react icons with:
+npm install react-icons
+
 To start the vite server and run the frontend in browser, use:
 ```
 npm run build
