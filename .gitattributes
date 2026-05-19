@@ -1,0 +1,6 @@
+# Handle general files automatically based on OS
+* text=auto
+
+# Force LF for scripts and Docker configuration on ALL operating systems
+*.sh text eol=lf
+Dockerfile text eol=lf
