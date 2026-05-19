@@ -20,6 +20,7 @@ namespace Backend.API.src.Core.Entities
         private Guid _chatGroupId;
         private Guid _userId;
         private DateTime _joinedAt = DateTime.UtcNow;
+        private int _unreadMessageCount;
 
 
 
@@ -49,6 +50,12 @@ namespace Backend.API.src.Core.Entities
             get { return _joinedAt; }
             set { _joinedAt = value; }
         
+        }
+
+        public int UnreadMessageCount
+        { 
+            get { return _unreadMessageCount; }
+            set { _unreadMessageCount = value; }
         }
 
         // ========================================================

@@ -8,6 +8,7 @@
 //  updates for chat group membership changes.
 // --------------------------------------------
 
+using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Interface;
 
 namespace Backend.API.src.Application.Services
@@ -15,26 +16,19 @@ namespace Backend.API.src.Application.Services
     public class ChatGroupEventPublisher
     {
         private readonly EventService _eventService;
-        //private readonly IChatGroupRepository _chatGroupRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IChatGroupRepository _chatGroupRepository;
         private readonly SignalRGroupService _signalRGroupService;
 
-        public ChatGroupEventPublisher(EventService eventService, /*IChatGroupRepository chatGroupRepository,*/ IUserRepository userRepository, SignalRGroupService signalRGroupService)
+        public ChatGroupEventPublisher(EventService eventService, IChatGroupRepository chatGroupRepository, IUserRepository userRepository, SignalRGroupService signalRGroupService)
         {
             _eventService = eventService;
-            //_chatGroupRepository = chatGroupRepository;
-            _userRepository = userRepository;
+            _chatGroupRepository = chatGroupRepository;
             _signalRGroupService = signalRGroupService;
         }
 
-        public async Task PublishMembershipAddAsync(Guid userId/*, ChatGroup chatGroup*/)
+        public async Task PublishMembershipAddAsync(Guid userId, ChatGroup chatGroup)
         {
-            // Get the user's friends
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null) return;
-            var friendIds = user.FriendIds; // Assuming User entity has a list of FriendIds
-    
-            await _eventService.MembershipAddEventAsync(userId/*, chatGroup*/);
+            await _eventService.MembershipAddEventAsync(userId, chatGroup);
         }
     
         public async Task PublishMembershipDeleteAsync(Guid userId, Guid chatGroupId)
@@ -46,11 +40,13 @@ namespace Backend.API.src.Application.Services
     
         public async Task PublishRoomDeleteAsync(Guid roomId)
         {
-            //var userIds = await _userRepository.GetAllUserIdsInChatGroupAsync(roomId);
+            await _eventService.RoomDeleteEventAsync(roomId); 
+            
+            var members = await _chatGroupRepository.GetGroupMembersAsync(roomId);
 
-            await _eventService.RoomDeleteEventAsync(roomId);
+            List<Guid> userIds = [.. members.Select(m => m.UserId)];
 
-            //await _signalRGroupService.RemoveConnectionsFromChatRoomAsync(roomId, userIds);
+            await _signalRGroupService.RemoveConnectionsFromChatRoomAsync(roomId, userIds);
         }
     }
 }

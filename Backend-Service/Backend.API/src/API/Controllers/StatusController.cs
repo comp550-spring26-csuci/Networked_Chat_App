@@ -12,6 +12,7 @@ using Backend.API.src.Core.Logging;
 using System.Threading.Tasks;
 using System;
 using Backend.API.Migrations;
+using Backend.API.src.Application.Services;
 
 namespace Backend.API.src.API.Controllers
 {
@@ -22,10 +23,12 @@ namespace Backend.API.src.API.Controllers
 
         // We inject the interface of the repository
         private readonly IUserRepository _userRepository;
+        private readonly UserEventPublisher _userEventPublisher;
 
-        public StatusController(IUserRepository userRepository)
+        public StatusController(IUserRepository userRepository, UserEventPublisher userEventPublisher)
         {
             _userRepository = userRepository;
+            _userEventPublisher = userEventPublisher;
             AppLogger.DebugState("StatusController", "Controller Initialized");
         }
 
@@ -49,7 +52,7 @@ namespace Backend.API.src.API.Controllers
             }
 
             // Using the Interface to avoid the "User" class naming conflict
-            IUser? user = await _userRepository.GetByIdAsync(request.UserId);
+            var user = await _userRepository.GetByIdAsync(request.UserId);
 
             if (user == null) 
             { 
@@ -61,10 +64,15 @@ namespace Backend.API.src.API.Controllers
 
             user.UpdatePresence(request.NewStatus, request.CustomText);
 
+            _userRepository.Update(user);
+
             try
             {
 
                 await _userRepository.SaveChangesAsync();
+
+                // Publish the status change event to notify friends
+                await _userEventPublisher.PublishUserStatusChangeAsync(request.UserId);
 
                 AppLogger.UserAction(request.UserId.ToString(), $"Successfully updated presence status to {request.NewStatus}");
                 return Ok(new { message = "Status correctly updated." });
@@ -86,7 +94,7 @@ namespace Backend.API.src.API.Controllers
 
             AppLogger.DebugState("StatusController", $"GetStatus requested for userId: {userId}");
 
-            IUser? user = await _userRepository.GetByIdAsync(userId);
+            var user = await _userRepository.GetByIdAsync(userId);
 
 
             if (user == null)

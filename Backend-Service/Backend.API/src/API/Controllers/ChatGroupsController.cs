@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using Backend.API.src.Application.Services;
 
 
 namespace Backend.API.src.API.Controllers
@@ -25,12 +26,14 @@ namespace Backend.API.src.API.Controllers
     {
         private readonly IChatGroupRepository _chatGroupRepository;
         private readonly IFriendshipRepository _friendshipRepository;
+        private readonly ChatGroupEventPublisher _chatGroupEventPublisher;
 
         // We inject both repositories so we can verify friendships before adding to a group!
-        public ChatGroupsController(IChatGroupRepository chatGroupRepository,IFriendshipRepository friendshipRepository)
+        public ChatGroupsController(IChatGroupRepository chatGroupRepository,IFriendshipRepository friendshipRepository, ChatGroupEventPublisher chatGroupEventPublisher)
         {
             _chatGroupRepository = chatGroupRepository;
             _friendshipRepository = friendshipRepository;
+            _chatGroupEventPublisher = chatGroupEventPublisher;
             AppLogger.DebugState("ChatGroupsController", "Controller Initialized");
         }
     
@@ -54,6 +57,9 @@ namespace Backend.API.src.API.Controllers
                 await _chatGroupRepository.AddMemberAsync(firstMember);
 
                 await _chatGroupRepository.SaveChangesAsync();
+
+                // Performs only read operations to AppDbContext, so we can call it after the changes are commited to the database.
+                await _chatGroupEventPublisher.PublishMembershipAddAsync(request.CreatorUserId, newGroup);
 
                 AppLogger.UserAction(request.CreatorUserId.ToString(), $"Created chat group: {newGroup.Name}");
                 return Ok(new { message = "Group created successfully", groupId = newGroup.Id });
@@ -105,6 +111,9 @@ namespace Backend.API.src.API.Controllers
                 await _chatGroupRepository.AddMemberAsync(newMember);
                 await _chatGroupRepository.SaveChangesAsync();
 
+                // Performs only read operations to AppDbContext, so we can call it after the changes are commited to the database.
+                await _chatGroupEventPublisher.PublishMembershipAddAsync(request.TargetUserId, group);
+
                 AppLogger.UserAction(request.RequesterId.ToString(), $"Added user {request.TargetUserId} to group {group.Name}");
                 return Ok(new { message = "Friend added to group successfully."});
 
@@ -128,16 +137,16 @@ namespace Backend.API.src.API.Controllers
 
             try
             {
-                var groups = await _chatGroupRepository.GetGroupsForUserAsync(userId);
+                var groupsWithUnreadCounts = await _chatGroupRepository.GetGroupsWithUnreadCountsForUserAsync(userId);
 
                 // We shape the data safely before sending it to the frontend
-                var result = groups.Select(g => new
+                var result = groupsWithUnreadCounts.Select(g => new
                 {
-                    id = g.Id,
-                    name = g.Name,
-                    createdAt = g.CreatedAt,
-                    createdByUserId = g.CreatedByUserId
-
+                    id = g.Group.Id,
+                    name = g.Group.Name,
+                    createdAt = g.Group.CreatedAt,
+                    createdByUserId = g.Group.CreatedByUserId,
+                    unreadCount = g.UnreadCount
                 });
 
 
@@ -205,6 +214,9 @@ namespace Backend.API.src.API.Controllers
                 await _chatGroupRepository.RemoveMemberAsync(groupId, userId);
                 await _chatGroupRepository.SaveChangesAsync();
 
+                // Performs only read operations to AppDbContext, so we can call it after the changes are commited to the database.
+                await _chatGroupEventPublisher.PublishRoomDeleteAsync(groupId);
+
                 AppLogger.UserAction(userId.ToString(), $"Left chat group {groupId}");
                 return Ok(new { message = "You have left the group." }); 
 
@@ -241,6 +253,9 @@ namespace Backend.API.src.API.Controllers
 
                 await _chatGroupRepository.DeleteGroupAsync(group);
                 await _chatGroupRepository.SaveChangesAsync();
+
+                // Performs only read operations to AppDbContext, so we can call it after the changes are commited to the database.
+                await _chatGroupEventPublisher.PublishRoomDeleteAsync(groupId);
 
                 AppLogger.UserAction(requesterId.ToString(), $"Deleted chat group {group.Name}");
                 return Ok(new { message = "Group deleted successfully." });

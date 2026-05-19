@@ -15,7 +15,7 @@ using Backend.API.src.Core.Enums;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
-using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
+//using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 namespace Backend.API.src.API.Hubs
@@ -25,7 +25,8 @@ namespace Backend.API.src.API.Hubs
     {
         private readonly MessageRepository _messageRepository;
         private readonly ChatEventRepository _chatEventRepository;
-        private readonly TestChatRoomRepository _testChatRoomRepository;
+        //private readonly TestChatRoomRepository _testChatRoomRepository;
+        private readonly ChatGroupRepository _chatGroupRepository;
         private readonly SignalRGroupService _signalRGroupService;
         private readonly ClientPresenceService _clientPresenceService;
         private readonly IUserRepository _userRepository;
@@ -34,7 +35,8 @@ namespace Backend.API.src.API.Hubs
         public ChatHub(
             MessageRepository messageRepositoy, 
             ChatEventRepository chatEventRepository, 
-            TestChatRoomRepository testChatRoomRepository, 
+            //TestChatRoomRepository testChatRoomRepository, 
+            ChatGroupRepository chatGroupRepository,
             SignalRGroupService signalRGroupService, 
             ClientPresenceService clientPresenceService, 
             IUserRepository userRepository,
@@ -42,7 +44,8 @@ namespace Backend.API.src.API.Hubs
         {
             _messageRepository = messageRepositoy;
             _chatEventRepository = chatEventRepository;
-            _testChatRoomRepository = testChatRoomRepository;
+            //_testChatRoomRepository = testChatRoomRepository;
+            _chatGroupRepository = chatGroupRepository;
             _signalRGroupService = signalRGroupService;
             _clientPresenceService = clientPresenceService;
             _userRepository = userRepository;
@@ -154,9 +157,9 @@ namespace Backend.API.src.API.Hubs
 
             var user = await _userRepository.GetByIdAsync(userId);
 
-            if (user != null /*&& user.PresenceStatus == UserStateType.Inactive*/)
+            if (user != null && user.PresenceStatus == UserStateType.Inactive)
             {
-                //user.PresenceStatus = UserStateType.Active;
+                user.PresenceStatus = UserStateType.Active;
                 _userRepository.Update(user);
                 await _userRepository.SaveChangesAsync();
 
@@ -177,8 +180,10 @@ namespace Backend.API.src.API.Hubs
             await _clientPresenceService.UserSessionStarted(userId, Context.ConnectionId);
 
             //////////////////// PENDING REWRITE /////////////////////////////////////////////
-            List<Guid> myChatRooms = _testChatRoomRepository.GetMyChatRoomIds(GetUsername());
+            //List<Guid> myChatRooms = _testChatRoomRepository.GetMyChatRoomIds(GetUsername());
             //////////////////// PENDING REWRITE /////////////////////////////////////////////
+            
+            List<Guid> myChatRooms = [.. _chatGroupRepository.GetGroupsForUserAsync(GetUserId()).Result.Select(g => g.Id)];
 
             await _signalRGroupService.SyncConnectionGroupsAsync(Context.ConnectionId, myChatRooms);
 
@@ -210,19 +215,17 @@ namespace Backend.API.src.API.Hubs
 
             User? user = await _userRepository.GetByIdAsync(userId);
 
-            if (user != null /* && user.PresenceStatus == UserStateType.Active */)
+            if (user != null && user.PresenceStatus == UserStateType.Active)
             {
-                // Logout/Disconnect from ANY 
+                // Logout/Disconnect from ANY chat groups the user is part of
 
-                //user.PresenceStatus = UserStateType.Inactive;
+                user.PresenceStatus = UserStateType.Inactive;
 
                 _userRepository.Update(user);
 
                 await _userRepository.SaveChangesAsync();
 
                 await _userEventPublisher.PublishUserStatusChangeAsync(user.Id);
-
-                //await SendStatusToFriends(user);
             }
 
             ChatEvent chatEvent = ConstructChatEvent(ChatEventType.UserLeft);
@@ -248,7 +251,7 @@ namespace Backend.API.src.API.Hubs
 
             Guid roomId = testPerformChatRoomAction.PerformChatRoomAction.ChatRoomId;
 
-            if (roomId == default || !_testChatRoomRepository.ChatRoomExists(roomId))
+            if (roomId == default || !await _chatGroupRepository.IsUserInGroupAsync(roomId, GetUserId()))
             {
                 await SendErrorToClientAsync($"Chat room id \"{roomId}\" does not exist. Please provide a valid ChatRoomId.");
                 return;
@@ -308,6 +311,10 @@ namespace Backend.API.src.API.Hubs
 
             await _messageRepository.AddAsync(message);
 
+            await _chatGroupRepository.IncrementUnreadCountAsync(message.ChatRoomId, message.SenderId);
+
+            await _chatGroupRepository.SaveChangesAsync();
+
             TestMessagePreview testMessagePreview = ConstructPreviewDto(testMessage.Message, testSendMessageToChatRoom.ChatRoomName);
 
             Guid roomId = testMessage.Message.ChatRoomId;
@@ -324,11 +331,15 @@ namespace Backend.API.src.API.Hubs
 
             Guid roomId = testPerformChatRoomAction.PerformChatRoomAction.ChatRoomId;
 
-            if (roomId == default || !_testChatRoomRepository.ChatRoomExists(roomId))
+            if (roomId == default || !await _chatGroupRepository.IsUserInGroupAsync(roomId, GetUserId()))
             {
                 await SendErrorToClientAsync($"Chat room id \"{roomId}\" does not exist. Please provide a valid ChatRoomId.");
                 return;
             }
+
+            await _chatGroupRepository.ResetUnreadCountAsync(roomId, GetUserId());
+
+            await _chatGroupRepository.SaveChangesAsync();
 
             // Notify the user's client instances that the room has been marked as read (e.g., to update the UI to show that there are no unread messages in that room)
             var testChatRoomRead = new TestChatRoomRead

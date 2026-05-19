@@ -158,6 +158,42 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
         }
 
 
+        public async Task<IEnumerable<(ChatGroup Group, int UnreadCount)>> GetGroupsWithUnreadCountsForUserAsync(Guid userId)
+        {
+            var members = await _context.ChatGroupMembers
+                .Where(cgm => cgm.UserId == userId)
+                .Include(cgm => cgm.ChatGroup)
+                .ToListAsync();
+            
+            return members.Select(cgm => (cgm.ChatGroup!, cgm.UnreadMessageCount));
+        }
+
+
+        public async Task IncrementUnreadCountAsync(Guid groupId, Guid excludeUserId)
+        {
+            var members = await _context.ChatGroupMembers
+                .Where(cgm => cgm.ChatGroupId == groupId && cgm.UserId != excludeUserId)
+                .ToListAsync();
+
+            foreach (var member in members)
+            {
+                member.UnreadMessageCount++;
+                _context.ChatGroupMembers.Update(member);
+            }
+        }
+
+        public async Task ResetUnreadCountAsync(Guid groupId, Guid userId)
+        {
+            var member = await _context.ChatGroupMembers
+                .FirstOrDefaultAsync(cgm => cgm.ChatGroupId == groupId && cgm.UserId == userId);
+            if (member != null)
+            {
+                member.UnreadMessageCount = 0;
+                _context.ChatGroupMembers.Update(member);
+            }
+        }
+
+
         /// <summary>
         /// SaveChangesAsync
         /// </summary>

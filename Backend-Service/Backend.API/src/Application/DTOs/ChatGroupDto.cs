@@ -9,6 +9,8 @@
 //  send chat group information to clients in real-time updates or API responses.
 // --------------------------------------------
 
+using Backend.API.src.Core.Entities;
+
 namespace Backend.API.src.Application.DTOs
 {
     public class ChatGroupDto
@@ -25,12 +27,12 @@ namespace Backend.API.src.Application.DTOs
         public Guid CreatedByUserId { get => _createdByUserId; set => _createdByUserId = value; }
         public int UnreadCount { get => _unreadCount; set => _unreadCount = value; }
 
-        public static ChatGroupDto FromEntity(/*ChatGroup chatGroup,*/ int unreadCount = 0) => new()
+        public static ChatGroupDto FromEntity(ChatGroup chatGroup, int unreadCount = 0) => new()
         {
-            /*Id = chatGroup.Id,
+            Id = chatGroup.Id,
             Name = chatGroup.Name,
             CreatedAt = chatGroup.CreatedAt,
-            CreatedByUserId = chatGroup.CreatedByUserId,*/
+            CreatedByUserId = chatGroup.CreatedByUserId,
             UnreadCount = unreadCount
         };
     }

@@ -16,13 +16,13 @@ namespace Backend.API.src.Application.Services
     {
         private readonly EventService _eventService;
         private readonly IUserRepository _userRepository;
-        // private readonly IFriendshipRepository _friendshipRepository;
+        private readonly IFriendshipRepository _friendshipRepository;
 
-        public UserEventPublisher(EventService eventService, IUserRepository userRepository/*, IFriendshipRepository friendshipRepository*/)
+        public UserEventPublisher(EventService eventService, IUserRepository userRepository, IFriendshipRepository friendshipRepository)
         {
             _eventService = eventService;
             _userRepository = userRepository;
-            // _friendshipRepository = friendshipRepository;
+            _friendshipRepository = friendshipRepository;
         }
 
         public async Task PublishUserStatusChangeAsync(Guid userId)
@@ -30,7 +30,9 @@ namespace Backend.API.src.Application.Services
             // Get the user's friends
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null) return;
-            var friendIds = user.FriendIds; // Assuming User entity has a list of FriendIds
+
+            var friends = await _friendshipRepository.GetFriendsByUserIdAsync(userId);
+            List<Guid> friendIds = [.. friends.Select(f => f.Id)];
 
             await _eventService.UserStatusChangeEventAsync(user, friendIds);
         }

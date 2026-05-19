@@ -28,12 +28,12 @@ namespace Backend.API.src.Application.Services
             _eventRepository = eventRepository;
         }
 
-        public async Task MembershipAddEventAsync(Guid userId/*, ChatGroup chatGroup*/)
+        public async Task MembershipAddEventAsync(Guid userId, ChatGroup chatGroup)
         {
             ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.ChatGroupMembershipAdded,
-                //ChatGroup = ChatGroupDto.FromEntity(chatGroup)
+                ChatGroup = ChatGroupDto.FromEntity(chatGroup)
             };
             
             await _eventRepository.AddAsync(chatEvent);
@@ -102,17 +102,23 @@ namespace Backend.API.src.Application.Services
             ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.UserStatusChanged,
-                //UserStatus = newStatus
+                UserStatus = new UserStatus
+                {
+                    UserId = user.Id,
+                    State = user.PresenceStatus,
+                    CustomText = user.CustomStatusText
+                }
             };
+
+            var chatEventDto = ChatEventDto.FromEntity(chatEvent);
 
             await _eventRepository.AddAsync(chatEvent);
             
-            await _hubContext.Clients.User(user.Id.ToString()).MyUserStatusChanged(ChatEventDto.FromEntity(chatEvent));
-
+            await _hubContext.Clients.User(user.Id.ToString()).MyUserStatusChanged(chatEventDto);
             var idStrings = friendIds.Select(id => id.ToString()).ToArray();
             if (idStrings.Length != 0)
             {
-                await _hubContext.Clients.Users(idStrings).FriendUserStatusChanged(ChatEventDto.FromEntity(chatEvent));
+                await _hubContext.Clients.Users(idStrings).FriendUserStatusChanged(chatEventDto);
             }
         }
     }

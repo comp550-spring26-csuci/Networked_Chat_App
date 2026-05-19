@@ -27,7 +27,7 @@ namespace Backend.API.src.Core.Entities
         private ChatGroupDto? _chatGroup;
         private EventChatGroupDeleted? _chatGroupDeleted;
         private EventChatGroupMembershipDeleted? _chatGroupMembershipDeleted;
-        //private UserStatus? _userStatus;
+        private UserStatus? _userStatus;
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -46,6 +46,6 @@ namespace Backend.API.src.Core.Entities
         public ChatGroupDto? ChatGroup { get => _chatGroup; set => _chatGroup = value; }
         public EventChatGroupDeleted? ChatGroupDeleted { get => _chatGroupDeleted; set => _chatGroupDeleted = value; }
         public EventChatGroupMembershipDeleted? ChatGroupMembershipDeleted { get => _chatGroupMembershipDeleted; set => _chatGroupMembershipDeleted = value; }
-        //public UserStatus? UserStatus { get => _userStatus; set => _userStatus = value; }
+        public UserStatus? UserStatus { get => _userStatus; set => _userStatus = value; }
     }
 }

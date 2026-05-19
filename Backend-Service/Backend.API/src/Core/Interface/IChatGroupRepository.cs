@@ -20,10 +20,14 @@ namespace Backend.API.src.Core.Interface
         Task<ChatGroup> CreateGroupAsync(ChatGroup group);
         Task AddMemberAsync(ChatGroupMember member);
 
+        // UPDATE
+        Task IncrementUnreadCountAsync(Guid groupId, Guid excludeUserId);
+        Task ResetUnreadCountAsync(Guid groupId, Guid userId);
 
         // READ
         Task<ChatGroup?> GetGroupByIdAsync(Guid groupId);
         Task<IEnumerable<ChatGroup>> GetGroupsForUserAsync(Guid userId);
+        Task<IEnumerable<(ChatGroup Group, int UnreadCount)>> GetGroupsWithUnreadCountsForUserAsync(Guid userId);
 
 
         // This helps us check if a user is already in a specific group

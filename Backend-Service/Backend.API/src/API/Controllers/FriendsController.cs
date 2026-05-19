@@ -10,6 +10,7 @@ using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Interface;
 using System.ComponentModel.DataAnnotations;
 using Backend.API.src.Application.DTOs;
+using Backend.API.src.Application.Services;
 
 
 namespace Backend.API.src.API.Controllers
@@ -21,17 +22,18 @@ namespace Backend.API.src.API.Controllers
 
         private readonly IFriendshipRepository _friendRepo;
         private readonly IUserRepository _userRepo;
+        private readonly UserEventPublisher _userEventPublisher;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="friendRepo"></param>
-        public FriendsController(IFriendshipRepository friendRepo, IUserRepository userRepo)
+        public FriendsController(IFriendshipRepository friendRepo, IUserRepository userRepo, UserEventPublisher userEventPublisher)
         {
 
             _friendRepo = friendRepo;
             _userRepo = userRepo;
-
+            _userEventPublisher = userEventPublisher;
         }
 
         /// <summary>
@@ -68,6 +70,8 @@ namespace Backend.API.src.API.Controllers
             // 5. Save changes
             if (await _friendRepo.SaveChangesAsync())
             {
+                // Performs only read operations to AppDbContext, so we can call it after the changes are commited to the database.
+                await _userEventPublisher.PublishFriendshipAddAsync(request.UserId, request.FriendId);
 
                 return Ok(new { message = "Friendship established successfully!" });
 
@@ -117,6 +121,8 @@ namespace Backend.API.src.API.Controllers
             //6. Save changes
             if (await _friendRepo.SaveChangesAsync())
             {
+                // Performs only read operations to AppDbContext, so we can call it after the changes are commited to the database.
+                await _userEventPublisher.PublishFriendshipAddAsync(request.UserId, friendUser.Id);
 
                 return Ok(new { message = $"Friendship established successfully! We added  '{friendUser.Username}'" });
 
@@ -180,6 +186,9 @@ namespace Backend.API.src.API.Controllers
             // 4. Save changes
             if (await _friendRepo.SaveChangesAsync())
             {
+                // Performs only read operations to AppDbContext, so we can call it after the changes are commited to the database.
+                await _userEventPublisher.PublishFriendshipDeleteAsync(request.UserId, friendUser.Id);
+
                 return Ok(new { message = $"Successfully removed '{request.FriendUsername}' from your list." });
             }
 

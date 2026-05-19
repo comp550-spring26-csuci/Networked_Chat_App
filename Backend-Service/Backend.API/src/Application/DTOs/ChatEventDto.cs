@@ -28,7 +28,7 @@ namespace Backend.API.src.Application.DTOs
         private ChatGroupDto? _chatGroup;
         private EventChatGroupDeleted? _chatGroupDeleted;
         private EventChatGroupMembershipDeleted? _chatGroupMembershipDeleted;
-        //private UserStatus? _userStatus;
+        private UserStatus? _userStatus;
 
         public string? Id { get => _id; set => _id = value; }
         public Guid ChatRoomId { get => _chatRoomId; set => _chatRoomId = value; }
@@ -42,7 +42,7 @@ namespace Backend.API.src.Application.DTOs
         public ChatGroupDto? Room { get => _chatGroup; set => _chatGroup = value; }
         public EventChatGroupDeleted? ChatGroupDeleted { get => _chatGroupDeleted; set => _chatGroupDeleted = value; }
         public EventChatGroupMembershipDeleted? ChatGroupMembershipDeleted { get => _chatGroupMembershipDeleted; set => _chatGroupMembershipDeleted = value; }
-        //public UserStatus? UserStatus { get => _userStatus; set => _userStatus = value; }
+        public UserStatus? UserStatus { get => _userStatus; set => _userStatus = value; }
 
         public static ChatEventDto FromEntity(ChatEvent chatEvent) => new()
         {
@@ -57,7 +57,7 @@ namespace Backend.API.src.Application.DTOs
             Room = chatEvent.ChatGroup,
             ChatGroupDeleted = chatEvent.ChatGroupDeleted,
             ChatGroupMembershipDeleted = chatEvent.ChatGroupMembershipDeleted,
-            //UserStatus = chatEvent.UserStatus
+            UserStatus = chatEvent.UserStatus
         };
     }
 }
