@@ -12,6 +12,7 @@ using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Application.DTOs;
 using Backend.API.src.Core.Logging;
+using Backend.API.src.Infrastructure.Security;
 
 
 
@@ -28,14 +29,18 @@ namespace Backend.API.src.Application.Services
         //-------  Private Fields ----------
         //----------------------------------
         private readonly IUserRepository _userRepository;
+        private readonly IPasswordHasher _passwordHasher;
+        private readonly JwtTokenService _jwtService;
 
 
         //----------------------------------
         //--------  Constructors -----------
         //----------------------------------
-        public AuthService(IUserRepository userRepository)
+        public AuthService(IUserRepository userRepository, IPasswordHasher passwordHasher, JwtTokenService jwtService)
         {
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
+            _jwtService = jwtService;
 
         }
 
@@ -68,19 +73,25 @@ namespace Backend.API.src.Application.Services
 
             }
 
+            // 2. SECURITY UPGRADE: Hash the raw password before creating the user
+            string secureHashefPassword = _passwordHasher.HashPassword(rawPassword);
 
-            // 2. CREATION: Generate the user entity
+            // 3. CREATION: Generate the user entity
             // TO DO: We are passing a raw password, we will change it once we implement IPasswordHasher
-            var newUser = new User(username, email, rawPassword);
+            var newUser = new User(username, email, secureHashefPassword);
 
-            // 3. PERSISTENCE: We will store the information onf the database
+            // 4. PERSISTENCE: We will store the information onf the database
             await _userRepository.AddAsync(newUser);
 
             // We save the changes in the PostgreSQL database
             await _userRepository.SaveChangesAsync();
 
-            AppLogger.DebugState("AuthService", "User registered successfully.");
-            return new AuthResult(newUser);
+            // 5. JWT GENERATION: WE use the JwtTokenService.cs to generate the token of welcome
+            // This allows the user to enter directly into the app after registration
+            var token = _jwtService.GenerateToken(newUser, TimeSpan.FromDays(1));
+
+            AppLogger.DebugState("AuthService", "User registered successfully and Token issued.");
+            return new AuthResult(newUser, token);
 
         
         }
@@ -100,15 +111,18 @@ namespace Backend.API.src.Application.Services
 
             //2. Security: Verify if it exists and if the password is correct and a match
             // TO DO: For now is clear text in teh future will be hashed
-            if (existingUser == null || existingUser.PasswordHash != passwordProvided)
+            if (existingUser == null || !_passwordHasher.VerifyPassword(passwordProvided, existingUser.PasswordHash))
             {
 
                 AppLogger.DebugState("AuthService", "Login failed: Invalid credentials.");
-                return new AuthResult("your credentials are not valid. Please check your username and password.");
+                return new AuthResult("Your credentials are not valid. Please check your username and password.");
             }
 
+            // We generate a token that lasts for 1 day
+            var token = _jwtService.GenerateToken(existingUser, TimeSpan.FromDays(1));
+
             AppLogger.DebugState("AuthService", "Login successful.");
-            return new AuthResult(existingUser);
+            return new AuthResult(existingUser, token);
         
         }
 

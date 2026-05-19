@@ -7,10 +7,12 @@
 //               This will match the "Users" table
 // --------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Backend.API.src.Core.Enums;
 
 namespace Backend.API.src.Core.Entities
 {
@@ -35,16 +37,10 @@ namespace Backend.API.src.Core.Entities
         private DateTime? _lastActive;
 
         //-----State of the User
-        // Options will be "Online", "Offline", "DoNotDIsturbe"
-        // Initialuser is defaulted to offline
-        private string _presenceStatus = "Offline";
-        private string? _customStatusText;
-
-        //-----Connections
-        // We just store the IDs or links to other classses
-        // They are initialized as empy lists
-        private ICollection<Guid> _joinedServerIds = new List<Guid>();
-        private ICollection<Guid> _friendIds = new List<Guid>();
+        // Options will be "Online", "Offline", "DoNotDisturbe"
+        // Initial user is defaulted to offline
+        private UserStateType _presenceStatus = UserStateType.Inactive;
+        private string? _customStatusText =  string.Empty;
 
 
         //----------------------------------
@@ -96,7 +92,7 @@ namespace Backend.API.src.Core.Entities
             get { return _passwordHash; }
             set
             {
-                // Validation -> the passwordhash can not be empty
+                // Validation -> the passwordHash can not be empty
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     _passwordHash = value;
@@ -122,38 +118,21 @@ namespace Backend.API.src.Core.Entities
 
 
         ///-----State of the User
-        public string PresenceStatus
+        public UserStateType PresenceStatus
         {
             get { return _presenceStatus; } 
-            set
-            {
-                if (!string.IsNullOrWhiteSpace(value))
-                {
-                    _presenceStatus = value; 
-                }
-            } 
+            set { _presenceStatus = value; }
+            
         }
 
-
-        public string? CustomStatusText { get; set; }
-
-
-
-        //-----Connections
-        public ICollection<Guid> JoinedServerIds 
-        { 
-            get { return _joinedServerIds; } 
-
-            // '??' if someone tries to set this to null, using an empy list instead
-            set { _joinedServerIds = value ?? new List<Guid>(); } 
-        } 
-        public ICollection<Guid> FriendIds 
-        { 
-            get { return _friendIds;  }
-
-            set { _friendIds = value ?? new List<Guid>(); }
-
+        // Added Data Annotation for security limits (Max 100 chars)
+        [MaxLength(100, ErrorMessage = "Custom status cannot exceed 100 characters.")]
+        public string? CustomStatusText 
+        {
+            get { return _customStatusText; }
+            set { _customStatusText = value; } 
         }
+
 
 
 
@@ -190,82 +169,6 @@ namespace Backend.API.src.Core.Entities
 
 
         /// <summary>
-        /// Handles user satus
-        /// </summary>
-        /// <param name="newStatus"></param>
-        /// <param name="customText"></param>
-        public void UpdatePresence(string newStatus, string? customText = null)
-        {
-            string oldStatus = _presenceStatus;
-            PresenceStatus = newStatus;
-            CustomStatusText = customText;
-            // Stamps moment
-            LastActive = DateTime.UtcNow;
-
-            // Logging the state change
-            AppLogger.DebugState("UserEntity", $"Status changed for {Username}: {oldStatus} -> {newStatus}");
-        
-        }
-
-
-        /// <summary>
-        /// Adding  a friend, avoiding adding the same person twice
-        /// </summary>
-        /// <param name="newFriendId"></param>
-        public void AddFriend(Guid newFriendId) 
-        {
-            if (!_friendIds.Contains(newFriendId))
-            { 
-                _friendIds.Add(newFriendId);
-                AppLogger.UserAction(Id.ToString(), $"Added friend {newFriendId}");
-            }
-        }
-
-
-        /// <summary>
-        /// Removing a friend
-        /// </summary>
-        /// <param name="friendId"></param>
-        public void RemoveFriend(Guid friendId)
-        {
-            if (_friendIds.Contains(friendId))
-            {
-                _friendIds.Remove(friendId);
-                AppLogger.UserAction(Id.ToString(), $"Removed friend {friendId}");
-            }
-        }
-
-
-        /// <summary>
-        /// Adds a server ID
-        /// </summary>
-        /// <param name="serverId"></param>
-        public void JoinServer(Guid serverId)
-        { 
-            if (!_joinedServerIds.Contains(serverId))
-            {
-                _joinedServerIds.Add(serverId);
-                AppLogger.UserAction(Id.ToString(), $"Joined server {serverId}");
-            }
-        }
-
-
-        /// <summary>
-        /// Drops the Server ID from the list
-        /// The user will be disconnected 
-        /// </summary>
-        /// <param name="serverId"></param>
-        public void LeaveServer(Guid serverId)
-        {
-            if (_joinedServerIds.Contains(serverId))
-            {
-                _joinedServerIds.Remove(serverId);
-                AppLogger.UserAction(Id.ToString(), $"Leaved server {serverId}");
-            }
-        }
-
-
-        /// <summary>
         /// To update the user being active
         /// </summary>
         public void MarkAsActive()
@@ -273,6 +176,53 @@ namespace Backend.API.src.Core.Entities
             LastActive = DateTime.UtcNow;
             AppLogger.UserAction(Id.ToString(), $"Last time user was active {LastActive}");
 
+        }
+
+        /// <summary>
+        /// Handles user  presence status with specific business rules that show status
+        /// </summary>
+        /// <param name="newStatus"></param>
+        /// <param name="customText"></param>
+        public void UpdatePresence(UserStateType newStatus, string? customText = null)
+        {
+            // 1. Guard Rail
+            // Rule: You can only set a Custom status (2) if you are currently Active (1)
+            if (newStatus == UserStateType.Custom && this.PresenceStatus == UserStateType.Inactive)
+            {
+
+                AppLogger.DebugState("UserEntity", $"Rejected status change: {Username} cannot go from Inactive to Custom directly.");
+                return; //Exit the method without changing anything
+            
+            }
+
+            // Rule: If you are Custom (2) and want to go back to Active (1), that is allowed.
+            // Rule: Going to Inactive (0) is always allowed (for Logout)
+
+            // 2. Capturing the old state ---
+            UserStateType oldStatus = this.PresenceStatus;
+
+            // 3. Apply Updates
+            this.PresenceStatus = newStatus;
+            this.LastActive = DateTime.UtcNow;
+
+            // 4.Text Cleanup Logic
+            if (newStatus == UserStateType.Custom)
+            {
+
+                this.CustomStatusText = customText;
+
+            }
+            else
+            {
+
+                this.CustomStatusText = null;
+            
+            }
+
+            // 5. Logging
+            AppLogger.DebugState("UserEntity", $"Status changed for {Username}: " +
+                $"{(int)oldStatus} ({oldStatus}) -> {(int)newStatus} ({newStatus})");
+        
         }
 
 

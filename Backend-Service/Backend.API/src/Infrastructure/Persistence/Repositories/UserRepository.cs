@@ -121,6 +121,20 @@ namespace Backend.API.src.Infrastructure.Persistence.Repositories
 
         }
 
+        // PURGE: Erase User table contents
+        public async Task ClearAllUsersAsync()
+        {
+            AppLogger.DebugState("UserRepository", "DANGER: Initiating purge of the Users table.");
+
+            // We use TRUNCATE to empty the table and RESTART IDENTITY so the IDs start from 1.
+            // CASCADE in case the future messages are connected to the users
+            // May be necessary to also create similar methods for the content of MongoDB related to the deleted users
+            await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"Users\" RESTART IDENTITY CASCADE;");
+
+            AppLogger.DebugState("UserRepository", "Purge completed successfully.");
+        
+        }
+
 
     }
 

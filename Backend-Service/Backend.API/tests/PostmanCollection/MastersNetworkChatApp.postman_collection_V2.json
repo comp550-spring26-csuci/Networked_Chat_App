@@ -1,0 +1,1608 @@
+{
+  "info": {
+    "_postman_id": "4b1b075c-d84f-4878-80d8-d1231936a50c",
+    "name": "MastersNetworkChatApp",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "4911722"
+  },
+  "item": [
+    {
+      "name": "BadEntries-Test",
+      "item": [
+        {
+          "name": "1-Testing_Age_Under_18",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"YoungStargazer\",\r\n  \"email\": \"star@cosmos.com\",\r\n  \"password\": \"SuperSecretPassword123!\",\r\n  \"age\": 16\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2-Testing_Bad_Format_Email",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"CosmicCoder\",\r\n  \"email\": \"this-is-not-an-email\",\r\n  \"password\": \"SuperSecretPassword123!\",\r\n  \"age\": 25\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3-Testing_Username_And_Password_min_Length",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"Io\",\r\n  \"email\": \"io@jupiter.com\",\r\n  \"password\": \"pass\",\r\n  \"age\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4-Testing_Missing_Everything",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"\",\r\n  \"email\": \"\",\r\n  \"password\": \"\",\r\n  \"age\": 0\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5-TestingEverything_Wrong",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"A\",\r\n  \"email\": \"void\",\r\n  \"password\": \"123\",\r\n  \"age\": 12\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/test/create-account",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "test",
+                "create-account"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Server",
+      "item": [
+        {
+          "name": "SignUp-Login",
+          "item": [
+            {
+              "name": "1-Create-Account-Tunnel-Port-7081",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Unicorn440\",\r\n  \"email\": \"unicorn440@14thdimension.com\",\r\n  \"password\": \"Iamlight\",\r\n  \"age\": 24\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/create-account",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "create-account"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-Create-Account-Tunnel-Port-7081 Copy",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Unicorn440\",\r\n  \"email\": \"unicorn440@14thdimension.com\",\r\n  \"password\": \"Iamlight\",\r\n  \"age\": 24\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/create-account",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "create-account"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-Create-Account-Tunnel-Port-7081 Copy",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Unicorn4403\",\r\n  \"email\": \"unicorn44013@14thdimension.com\",\r\n  \"password\": \"Iamlight\",\r\n  \"age\": 24\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/create-account",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "create-account"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-Create-Account-Tunnel-Port-7081-2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Alegria5\",\r\n  \"email\": \"ana4235@14thdimension.com\",\r\n  \"password\": \"SuperSecretPassword123882435!\",\r\n  \"age\": 24\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/create-account",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "create-account"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-Create-Account-Tunnel Copy",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Alegria88\",\r\n  \"email\": \"an88a@14thdimension.com\",\r\n  \"password\": \"Super8SecretPassword12388!\",\r\n  \"age\": 24\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://pl4nx3gd-5148.usw3.devtunnels.ms/api/users/create-account",
+                  "protocol": "https",
+                  "host": [
+                    "pl4nx3gd-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "create-account"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "2-Create-Account-Tunnel-Port-5481",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Co\",\r\n  \"email\": \"\",\r\n  \"password\": \"SuperSecretPassword12389!\",\r\n  \"age\": 24\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/users/create-account",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "create-account"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "3-Create-Account-Tunnel-https",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"CosmicCoder999\",\r\n  \"email\": \"ivynova999@13thdimension.com\",\r\n  \"password\": \"SuperSecretPassword129993!\",\r\n  \"age\": 24\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://vg3jzw0g-5148.usw3.devtunnels.ms/api/users/create-account",
+                  "protocol": "https",
+                  "host": [
+                    "vg3jzw0g-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "create-account"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-Login-Tunnel",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n        \"username\": \"testAdmin\",\r\n        \"password\": \"HashedPassword123\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/users/login",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-Login-Tunnel-Port-7081",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Unicorn440\",\r\n  \"password\": \"Iamlight\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/login",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "2-Login-Empty-Tunnel",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n        \"username\": \"\",\r\n        \"password\": \"\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/users/login",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Friendships",
+          "item": [
+            {
+              "name": "6-Add-Freind-Tunnel-Port-7081-By-Guid",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"58190c0f-3b74-4c56-80b3-8e86437344d0\",\r\n  \"friendId\": \"2da3bf5f-f19a-4928-b8d3-5b6186305da9\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/friends/add-by-guid",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "add-by-guid"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "6-Add-Freind-Tunnel-Port-7081-By-Guid-2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"58190c0f-3b74-4c56-80b3-8e86437344d0\",\r\n  \"friendId\": \"2da3bf5f-f19a-4928-b8d3-5b6186305da9\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/friends/add-by-guid",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "add-by-guid"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "8-Remove-Friend-Tunnel-Port-7081-By-Username",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"58190c0f-3b74-4c56-80b3-8e86437344d0\",\r\n  \"friendUsername\": \"Alegria6\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/friends/remove-friend-by-username",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "remove-friend-by-username"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "8-Remove-Friend-Tunnel-Port-7081-By-Username Copy",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"58190c0f-3b74-4c56-80b3-8e86437344d0\",\r\n  \"friendUsername\": \"Alegria6\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/friends/remove-friend-by-username",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "remove-friend-by-username"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "8-Remove-Friend-Tunnel-Port-7081-By-Username Copy 2",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"55afc099-5129-466a-b9f1-a8d290e39e32\",\r\n  \"friendUsername\": \"Unicorn440\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/friends/remove-friend-by-username",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "remove-friend-by-username"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "8-Remove-Friend-Tunnel-Port-7081-By-Username-PORT-5148",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"402c6ee2-dd88-4497-974d-19410e703eda\",\r\n  \"friendUsername\": \"Alegria4\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://https://pl4nx3gd-5148.usw3.devtunnels.ms/api/friends/remove-friend-by-username",
+                  "protocol": "http",
+                  "host": [
+                    "https"
+                  ],
+                  "port": "",
+                  "path": [
+                    "",
+                    "pl4nx3gd-5148.usw3.devtunnels.ms",
+                    "api",
+                    "friends",
+                    "remove-friend-by-username"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "5-Add-Friendst-Tunnel-Port-7081-by-username",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"402c6ee2-dd88-4497-974d-19410e703eda\",\r\n  \"friendUsername\": \"Alegria6\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://pl4nx3gd-5148.usw3.devtunnels.ms/api/friends/add-by-username",
+                  "protocol": "http",
+                  "host": [
+                    "pl4nx3gd-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "add-by-username"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "5-Add-Friendst-Tunnel-Port-7081-by-username Copy",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"402c6ee2-dd88-4497-974d-19410e703eda\",\r\n  \"friendUsername\": \"Unicorn440\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://pl4nx3gd-5148.usw3.devtunnels.ms/api/friends/add-by-username",
+                  "protocol": "http",
+                  "host": [
+                    "pl4nx3gd-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "add-by-username"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "5-Add-Friendst-Tunnel-Port-7081-by-username Copy 2",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"402c6ee2-dd88-4497-974d-19410e703eda\",\r\n  \"friendUsername\": \"Unicorn440\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://pl4nx3gd-5148.usw3.devtunnels.ms/api/friends/add-by-username",
+                  "protocol": "http",
+                  "host": [
+                    "pl4nx3gd-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "add-by-username"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "5-Add-Friendst-Tunnel-Port-7081-by-username Copy 3",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"55afc099-5129-466a-b9f1-a8d290e39e32\",\r\n  \"friendUsername\": \"Unicorn440\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://vg3jzw0g-7081.usw3.devtunnels.ms/api/friends/add-by-username",
+                  "protocol": "https",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "add-by-username"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "9-Check-If-Friend-By-Username",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/friends/check-friendship-by-username/402c6ee2-dd88-4497-974d-19410e703eda/Alegria6/",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "check-friendship-by-username",
+                    "402c6ee2-dd88-4497-974d-19410e703eda",
+                    "Alegria6",
+                    ""
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "7-Gett-List-Of-All-Freinds-For-User-Guid Copy",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://vg3jzw0g-7081.usw3.devtunnels.ms/api/friends/list/402c6ee2-dd88-4497-974d-19410e703eda",
+                  "protocol": "https",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "friends",
+                    "list",
+                    "402c6ee2-dd88-4497-974d-19410e703eda"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "User-Info",
+          "item": [
+            {
+              "name": "4-Purge-Users-Table-Port-7081",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Alegria3\",\r\n  \"email\": \"ana23@14thdimension.com\",\r\n  \"password\": \"SuperSecretPassword1238823!\",\r\n  \"age\": 24\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/purge-all-users",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "purge-all-users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "2-Get-All-Users-Tunnel-https",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://vg3jzw0g-5148.usw3.devtunnels.ms/api/users/all-users",
+                  "protocol": "https",
+                  "host": [
+                    "vg3jzw0g-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "all-users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-Get-All-Users-Tunnel-http",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://vg3jzw0g-5148.usw3.devtunnels.ms/api/users/all-users",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-5148",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "all-users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-get-Users-Id-Tunnel-Port-7081",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Alegria4\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/search",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "search"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-get-Users-Id-Tunnel-Port-7081 Copy",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-Tunnel-Skip-AntiPhishing-Page",
+                    "value": "true",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"Alegria4\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/search/Alegria4",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "search",
+                    "Alegria4"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-A-Local-SeedUser",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:5000/api/users/seed-user",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "5000",
+                  "path": [
+                    "api",
+                    "users",
+                    "seed-user"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1-A-Local-All-Users",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:5000/api/userst/all-users",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "5000",
+                  "path": [
+                    "api",
+                    "userst",
+                    "all-users"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Status",
+          "item": [
+            {
+              "name": "11-Status-Update",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"58190c0f-3b74-4c56-80b3-8e86437344d0\",\r\n  \"newStatus\": 2,\r\n  \"customText\": \"Coding right now! 🚀\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/status/update-status",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "status",
+                    "update-status"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "13-Logout-Status",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"58190c0f-3b74-4c56-80b3-8e86437344d0\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/logout",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "13-Logout-Status Copy",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"58190c0f-3b74-4c56-80b3-8e86437344d0\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/logout",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "13-Logout-Status Copy 2",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"55afc099-5129-466a-b9f1-a8d290e39e32\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/logout",
+                  "protocol": "https",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "13-Logout-Status Copy 3",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"45198528-9060-412e-aa34-953b22c9b6ed\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://vg3jzw0g-7081.usw3.devtunnels.ms/api/users/logout",
+                  "protocol": "https",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "12-Status-Update-Test",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"userId\": \"402c6ee2-dd88-4497-974d-19410e703eda\",\r\n  \"newStatus\": 2,\r\n  \"customText\": \"Trying to hack <script>alert('xss')</script>\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/status/update-status",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "status",
+                    "update-status"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "10-get-User-Current-Status",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/status/58190c0f-3b74-4c56-80b3-8e86437344d0",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "status",
+                    "58190c0f-3b74-4c56-80b3-8e86437344d0"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "ChatGroup",
+          "item": [
+            {
+              "name": "14-Create-Chat-Group",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"groupName\": \"Team 13 dimension\",\r\n  \"creatorUserId\": \"402c6ee2-dd88-4497-974d-19410e703eda\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/ChatGroups/create",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "ChatGroups",
+                    "create"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "15-Add-To-Chat-Group Copy",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"chatGroupId\": \"fef5a29c-f29a-4801-9b4d-07b7144a5524\",\r\n  \"requesterId\": \"402c6ee2-dd88-4497-974d-19410e703eda\",\r\n  \"targetUserId\": \"826de930-f589-45a3-8ece-ece148b4d91f\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/ChatGroups/add-member",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "ChatGroups",
+                    "add-member"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "16-Delete-chat-group",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "http://vg3jzw0g-7081.usw3.devtunnels.ms/api/ChatGroups/delete-group/4bf54c62-2a7b-4cdb-9d8a-93f7a516c74d/402c6ee2-dd88-4497-974d-19410e703eda",
+                  "protocol": "http",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "ChatGroups",
+                    "delete-group",
+                    "4bf54c62-2a7b-4cdb-9d8a-93f7a516c74d",
+                    "402c6ee2-dd88-4497-974d-19410e703eda"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "17-Leave-Group",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "https://localhost:7123/api/ChatGroups/leave-group/fef5a29c-f29a-4801-9b4d-07b7144a5524/826de930-f589-45a3-8ece-ece148b4d91f",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7123",
+                  "path": [
+                    "api",
+                    "ChatGroups",
+                    "leave-group",
+                    "fef5a29c-f29a-4801-9b4d-07b7144a5524",
+                    "826de930-f589-45a3-8ece-ece148b4d91f"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "16-Get-Group",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"chatGroupId\": \"THE-GROUP-ID-YOU-JUST-CREATED\",\r\n  \"requesterId\": \"402c6ee2-dd88-4497-974d-19410e703eda\",\r\n  \"targetUserId\": \"2da3bf5f-f19a-4928-b8d3-5b6186305da9\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://localhost:7123/api/ChatGroups/user/402c6ee2-dd88-4497-974d-19410e703eda",
+                  "protocol": "https",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7123",
+                  "path": [
+                    "api",
+                    "ChatGroups",
+                    "user",
+                    "402c6ee2-dd88-4497-974d-19410e703eda"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "19-Get-Group-All-Members",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"chatGroupId\": \"THE-GROUP-ID-YOU-JUST-CREATED\",\r\n  \"requesterId\": \"402c6ee2-dd88-4497-974d-19410e703eda\",\r\n  \"targetUserId\": \"2da3bf5f-f19a-4928-b8d3-5b6186305da9\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://vg3jzw0g-7081.usw3.devtunnels.ms/api/ChatGroups/fef5a29c-f29a-4801-9b4d-07b7144a5524/get-group-chat-members",
+                  "protocol": "https",
+                  "host": [
+                    "vg3jzw0g-7081",
+                    "usw3",
+                    "devtunnels",
+                    "ms"
+                  ],
+                  "path": [
+                    "api",
+                    "ChatGroups",
+                    "fef5a29c-f29a-4801-9b4d-07b7144a5524",
+                    "get-group-chat-members"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

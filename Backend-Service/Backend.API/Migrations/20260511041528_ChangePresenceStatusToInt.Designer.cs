@@ -3,6 +3,7 @@ using System;
 using Backend.API.src.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260511041528_ChangePresenceStatusToInt")]
+    partial class ChangePresenceStatusToInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,45 +24,6 @@ namespace Backend.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Backend.API.src.Core.Entities.ChatGroup", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ChatGroups");
-                });
-
-            modelBuilder.Entity("Backend.API.src.Core.Entities.ChatGroupMember", b =>
-                {
-                    b.Property<Guid>("ChatGroupId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("ChatGroupId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ChatGroupMembers");
-                });
 
             modelBuilder.Entity("Backend.API.src.Core.Entities.Friendship", b =>
                 {
@@ -131,25 +95,6 @@ namespace Backend.API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Backend.API.src.Core.Entities.ChatGroupMember", b =>
-                {
-                    b.HasOne("Backend.API.src.Core.Entities.ChatGroup", "ChatGroup")
-                        .WithMany("Members")
-                        .HasForeignKey("ChatGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.API.src.Core.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ChatGroup");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Backend.API.src.Core.Entities.Friendship", b =>
                 {
                     b.HasOne("Backend.API.src.Core.Entities.User", "Friend")
@@ -167,11 +112,6 @@ namespace Backend.API.Migrations
                     b.Navigation("Friend");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Backend.API.src.Core.Entities.ChatGroup", b =>
-                {
-                    b.Navigation("Members");
                 });
 #pragma warning restore 612, 618
         }

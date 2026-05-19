@@ -20,6 +20,6 @@ $Global:ProjectRoot = [System.IO.Path]::GetFullPath((Join-Path $BackendServiceDi
 $Global:CsprojPath = Join-Path $Global:BackendPath "Backend.API.csproj"
 $Global:DockerPath = Join-Path $Global:ProjectRoot "docker-compose.yml"
 
-Write-Host "Path Sync:" -ForgroundColor Gray
+Write-Host "Path Sync:" -ForegroundColor Gray
 Write-Host "Project root: $Global:ProjectRoot" -ForegroundColor Gray
 Write-Host "Project: $Global:ProjectRoot" -ForegroundColor Gray

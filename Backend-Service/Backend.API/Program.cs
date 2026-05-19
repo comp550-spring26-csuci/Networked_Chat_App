@@ -5,6 +5,8 @@ using Backend.API.src.Core.Interface;
 using Backend.API.src.Infrastructure.Persistence;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
 using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
+using Backend.API.src.Infrastructure.Security;
+
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -60,10 +62,14 @@ namespace Backend.API
 
                 // --- User Services
                 builder.Services.AddScoped<IUserRepository, UserRepository>();
+                builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
                 builder.Services.AddScoped<IAuthService, AuthService>();
                 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccountRequestValidator>();
 
-                // Messaging Services 
+                // --- Friendship Services
+                builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
+
+                // --- Messaging Services
                 builder.Services.AddScoped<MessageRepository>();
                 builder.Services.AddScoped<ChatEventRepository>();
                 builder.Services.AddScoped<TestChatRoomRepository>();
@@ -73,19 +79,22 @@ namespace Backend.API
                 builder.Services.AddScoped<ChatGroupEventPublisher>();
                 builder.Services.AddScoped<UserEventPublisher>();
 
+                // --- Chat Groups Repository
+                builder.Services.AddScoped<IChatGroupRepository, ChatGroupRepository>();
+
                 // --- COMPATIBILITY FIX ---
                 var jwtSettings = builder.Configuration.GetSection(key: "JwtSettings").Get<JwtSettings>() ?? new JwtSettings();
                 builder.Services.AddSingleton(Options.Create(jwtSettings));
-                
+
                 builder.Services.AddTransient<JwtTokenService>();
 
                 // --- ---
 
                 builder.Services.AddControllers();
                 builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
-                    .AddJsonProtocol(options => 
-                    { 
-                        options.PayloadSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase; 
+                    .AddJsonProtocol(options =>
+                    {
+                        options.PayloadSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
                     });
                 builder.Services.AddOpenApi();
 

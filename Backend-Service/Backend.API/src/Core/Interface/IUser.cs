@@ -7,8 +7,10 @@
 // --------------------------------------------
 
 
+using System;
 using System.Data;
 using System.Collections.Generic;
+using Backend.API.src.Core.Enums;
 
 namespace Backend.API.src.Core.Interface
 {
@@ -22,7 +24,7 @@ namespace Backend.API.src.Core.Interface
         Guid Id { get; set; }
         // VARCHAR
         string Username { get; set; }
-        // TIMESTAMP
+        // VARCHAR
         string Email { get; set; }
         // TEXT (allows NULL)
         string PasswordHash { get; set; }
@@ -34,13 +36,17 @@ namespace Backend.API.src.Core.Interface
 
         ///-----State of the User
         // Options will be "Online", "Offline", "DoNotDIsturbe"
-        string PresenceStatus { get; set; }
+        UserStateType PresenceStatus { get; set; }
         string? CustomStatusText { get; set; }
 
-        //-----Connections
-        // We just store the IDs or links to other classses
-        ICollection<Guid> JoinedServerIds { get; set; }
-        ICollection<Guid> FriendIds { get; set; }
+
+        //----------------------------------
+        //-----------  Methods -------------
+        //----------------------------------
+
+
+        void UpdatePresence(UserStateType newStatus, string? customText = null);
+        void MarkAsActive();
 
     }
 }
