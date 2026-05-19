@@ -23,8 +23,10 @@ namespace Backend.API.src.Core.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get => _id; set => _id = value; }
+        [BsonRepresentation(BsonType.String)]
         public Guid SenderId { get => _senderId; set => _senderId = value; }
         public string? SenderUsername { get => _senderUsername; set => _senderUsername = value; }
+        [BsonRepresentation(BsonType.String)]
         public Guid ChatRoomId { get => _chatRoomId; set => _chatRoomId = value; }
         public required string Content { get => _content; set => _content = value; }
         [BsonRepresentation(BsonType.DateTime)]

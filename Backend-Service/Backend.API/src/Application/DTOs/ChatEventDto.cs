@@ -11,6 +11,7 @@
 
 using Backend.API.src.Core.Entities;
 using Backend.API.src.Core.Enums;
+using System.Text.Json.Serialization;
 
 namespace Backend.API.src.Application.DTOs
 {
@@ -31,6 +32,7 @@ namespace Backend.API.src.Application.DTOs
 
         public string? Id { get => _id; set => _id = value; }
         public Guid ChatRoomId { get => _chatRoomId; set => _chatRoomId = value; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public required ChatEventType EventType { get => _eventType; set => _eventType = value; }
         public string Details { get => _details; set => _details = value; }
         public DateTime Timestamp { get => _timestamp; set => _timestamp = value; }

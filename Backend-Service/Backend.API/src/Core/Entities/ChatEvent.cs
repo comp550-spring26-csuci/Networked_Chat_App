@@ -32,6 +32,7 @@ namespace Backend.API.src.Core.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get => _id; set => _id = value; }
+        [BsonRepresentation(BsonType.String)]
         public Guid ChatRoomId { get => _chatRoomId; set => _chatRoomId = value; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         [BsonRepresentation(BsonType.String)]
