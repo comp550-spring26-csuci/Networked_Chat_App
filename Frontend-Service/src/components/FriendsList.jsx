@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
 import "./FriendsList.css";
 
-const BASE_URL = "https://vg3jzw0g-7081.usw3.devtunnels.ms"; 
+let ivanaAddress = 1;
+let BASE_URL = " "; 
+
+if (ivanaAddress == 0)
+{
+  BASE_URL = "https://vg3jzw0g-7081.usw3.devtunnels.ms"; 
+}
+else 
+{
+  BASE_URL = "https://vg3jzw0g-5148.usw3.devtunnels.ms";
+}
 
 export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpen }) {
 
@@ -18,7 +28,27 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
   const [activeStatus, setActiveStatus] = useState(currentUser?.status ?? 1);
   const [activeCustomText, setActiveCustomText] = useState(currentUser?.customText || currentUser?.customStatus || "");
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (currentUser?.userId) {
+      try {
+        await fetch(`${BASE_URL}/api/Status/update-status`, {
+          method: "PUT",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${currentUser?.token}`,
+            "X-Tunnel-Skip-AntiPhishing-Page": "true" 
+          },
+          body: JSON.stringify({ 
+            userId: currentUser?.userId,
+            newStatus: 0, // 0 represents Offline
+            customText: "" 
+          }),
+        });
+      } catch (error) {
+        console.error("Failed to update status on logout:", error);
+      }
+    }
+
     localStorage.removeItem("access_token");
     localStorage.removeItem("userId");
     window.location.reload();
@@ -89,11 +119,48 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
         
         const friendsArray = Array.isArray(fetchedData) ? fetchedData : (fetchedData.$values || []);
         
-        const formattedFriends = friendsArray.map(f => ({
-          id: f.id,
-          username: f.username || "Unknown",
-          status: f.presenceStatus !== undefined ? f.presenceStatus : (f.status !== undefined ? f.status : "Offline"),
-          customStatus: f.customStatusText || f.customStatus || f.customText || "" 
+        // Fetch the live status for each friend individually
+        const formattedFriends = await Promise.all(friendsArray.map(async (f) => {
+          let liveStatus = f.presenceStatus !== undefined ? f.presenceStatus : (f.status !== undefined ? f.status : "Offline");
+          let liveCustomText = f.customStatusText || f.customStatus || f.customText || "";
+
+          try {
+            const statusRes = await fetch(`${BASE_URL}/api/Status/${f.id}`, {
+              method: "GET",
+              headers: {
+                "X-Tunnel-Skip-AntiPhishing-Page": "true",
+                "Authorization": `Bearer ${currentUser?.token}`
+              }
+            });
+
+            if (statusRes.ok) {
+              const statusText = await statusRes.text();
+              if (statusText) {
+                const statusData = JSON.parse(statusText);
+                
+                if (statusData.presenceStatus !== undefined) {
+                  liveStatus = statusData.presenceStatus;
+                } else if (statusData.status !== undefined) {
+                  liveStatus = statusData.status;
+                }
+                
+                if (statusData.customStatusText !== undefined) {
+                  liveCustomText = statusData.customStatusText;
+                } else if (statusData.customText !== undefined || statusData.customStatus !== undefined) {
+                  liveCustomText = statusData.customText || statusData.customStatus || "";
+                }
+              }
+            }
+          } catch (err) {
+            console.error(`Failed to fetch status for ${f.username}:`, err);
+          }
+
+          return {
+            id: f.id,
+            username: f.username || "Unknown",
+            status: liveStatus,
+            customStatus: liveCustomText 
+          };
         }));
         
         setFriends(formattedFriends);
@@ -104,11 +171,12 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
   };
 
   useEffect(() => {
-    if (currentUser?.userId) {
+    // Only fetch if we have a user AND the drawer has just been opened
+    if (currentUser?.userId && isOpen) {
       fetchMyProfile();
       refreshFriendsList();
     }
-  }, [currentUser]);
+  }, [currentUser, isOpen]);
 
   const handleUpdateStatus = async () => {
     setStatusFeedback("");
@@ -370,4 +438,4 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
       </div>
     </>
   );
-} 
+}

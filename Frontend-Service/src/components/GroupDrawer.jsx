@@ -84,7 +84,7 @@ export default function GroupDrawer({
                                         ) : (
                                             <button 
                                                 className="gd-btn-remove"
-                                                onClick={() => onRemoveMember(selectedDM.id, member.username)}
+                                                onClick={() => onRemoveMember(selectedDM.id, member.userId, member.username)}
                                             >
                                                 Remove
                                             </button>
@@ -112,12 +112,12 @@ export default function GroupDrawer({
                             <div className="gd-add-friends-wrapper">
                                 {availableFriends.filter(f => !currentMembers.some(m => m.username === f.username)).map((friend, idx) => (
                                     <button 
-                                        key={idx} 
-                                        className="gd-btn-add"
-                                        onClick={() => onAddMember(selectedDM.id, friend.username)}
-                                    >
-                                        + {friend.username}
-                                    </button>
+                                    key={idx} 
+                                    className="gd-btn-add"
+                                    onClick={() => onAddMember(selectedDM.id, friend.userId, friend.username)}
+                                >
+                                    + {friend.username}
+                                </button>
                                 ))}
                             </div>
                         </div>
