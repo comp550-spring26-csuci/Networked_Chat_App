@@ -30,6 +30,17 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
 
   const handleLogout = async () => {
     if (currentUser?.userId) {
+      
+      // If their status is Custom (2), keep it as 2 and keep their text.
+      // Otherwise, set them to Offline (0).
+      const statusToLeave = activeStatus === 2 ? 2 : 0;
+      const textToLeave = activeStatus === 2 ? activeCustomText : "";
+
+      // We'll still back it up locally just to be safe!
+      if (activeCustomText) {
+        localStorage.setItem(`saved_status_${currentUser.userId}`, activeCustomText);
+      }
+
       try {
         await fetch(`${BASE_URL}/api/Status/update-status`, {
           method: "PUT",
@@ -40,8 +51,8 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
           },
           body: JSON.stringify({ 
             userId: currentUser?.userId,
-            newStatus: 0, // 0 represents Offline
-            customText: "" 
+            newStatus: statusToLeave, 
+            customText: textToLeave 
           }),
         });
       } catch (error) {
@@ -70,22 +81,42 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
         const rawText = await res.text();
         if (rawText) {
           const data = JSON.parse(rawText);
-          if (data.presenceStatus !== undefined) {
-            setMyStatus(data.presenceStatus);
-            setActiveStatus(data.presenceStatus);
-          } else if (data.status !== undefined) {
-            setMyStatus(data.status);
-            setActiveStatus(data.status);
+          let dbStatus = data.presenceStatus !== undefined ? data.presenceStatus : (data.status !== undefined ? data.status : 1);
+          let text = data.customStatusText || data.customText || data.customStatus || "";
+
+          // If the backend wiped the text, check our local backup
+          if (!text) {
+            text = localStorage.getItem(`saved_status_${currentUser.userId}`) || "";
           }
-          
-          if (data.customStatusText !== undefined) {
-            setMyCustomText(data.customStatusText);
-            setActiveCustomText(data.customStatusText);
-          } else if (data.customText !== undefined || data.customStatus !== undefined) {
-            const text = data.customText || data.customStatus || "";
-            setMyCustomText(text);
-            setActiveCustomText(text);
+
+          // Auto-restore logic for logins
+          if (dbStatus === 0) {
+            dbStatus = text ? 2 : 1; // 2 = Custom Status, 1 = Online
+            
+            // Sync the restored status straight back to the backend
+            try {
+              await fetch(`${BASE_URL}/api/Status/update-status`, {
+                method: "PUT",
+                headers: { 
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${currentUser?.token}`,
+                  "X-Tunnel-Skip-AntiPhishing-Page": "true" 
+                },
+                body: JSON.stringify({ 
+                  userId: currentUser?.userId,
+                  newStatus: dbStatus, 
+                  customText: text 
+                }),
+              });
+            } catch (err) {
+              console.error("Failed to auto-update status to online:", err);
+            }
           }
+
+          setMyStatus(dbStatus);
+          setActiveStatus(dbStatus);
+          setMyCustomText(text);
+          setActiveCustomText(text);
         }
       }
     } catch (err) {
@@ -119,7 +150,6 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
         
         const friendsArray = Array.isArray(fetchedData) ? fetchedData : (fetchedData.$values || []);
         
-        // Fetch the live status for each friend individually
         const formattedFriends = await Promise.all(friendsArray.map(async (f) => {
           let liveStatus = f.presenceStatus !== undefined ? f.presenceStatus : (f.status !== undefined ? f.status : "Offline");
           let liveCustomText = f.customStatusText || f.customStatus || f.customText || "";
@@ -170,16 +200,31 @@ export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpe
     }
   };
 
+  // Run automatically on login / initial load
   useEffect(() => {
-    // Only fetch if we have a user AND the drawer has just been opened
+    if (currentUser?.userId) {
+      fetchMyProfile();
+    }
+  }, [currentUser]);
+
+  // Run fresh fetch when sidebar is opened
+  useEffect(() => {
     if (currentUser?.userId && isOpen) {
       fetchMyProfile();
       refreshFriendsList();
     }
-  }, [currentUser, isOpen]);
+  }, [isOpen]);
 
   const handleUpdateStatus = async () => {
     setStatusFeedback("");
+    
+    // Save locally if they set a custom status
+    if (myStatus === 2) {
+      localStorage.setItem(`saved_status_${currentUser?.userId}`, myCustomText);
+    } else {
+      localStorage.removeItem(`saved_status_${currentUser?.userId}`);
+    }
+
     try {
       const res = await fetch(`${BASE_URL}/api/Status/update-status`, {
         method: "PUT",
