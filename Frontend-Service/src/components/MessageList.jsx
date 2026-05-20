@@ -1,4 +1,5 @@
 import Message from "./Message";
+import { useRef, useEffect } from "react";
 
 export default function MessageList({ messages }) {
 	function shouldGroup(prev, current) {
@@ -13,6 +14,14 @@ export default function MessageList({ messages }) {
 		return sameUser && timeDiff;
 	}
 
+	const bottomRef = useRef(null);
+
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView({
+			behavior: "auto", // can use "smooth" instead but its a little slower
+		});
+	}, [messages]);
+
 	return (
 		<div className="messages">
 			{messages.map((msg, index) => {
@@ -26,6 +35,7 @@ export default function MessageList({ messages }) {
 					/>
 				);
 			})}
+			<div ref={bottomRef} />
 		</div>
 	)
 }

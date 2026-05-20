@@ -70,6 +70,7 @@ html, body, #root {
   padding-left: 40px;
   padding-top: 15px;
   overflow-y: auto;
+  padding-bottom: 10px; /* including a bit of padding so the message that is dynamically scrolled to isn't colliding with the textbox */
 }
 
 .message {
