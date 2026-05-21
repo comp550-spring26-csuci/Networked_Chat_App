@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
+import { FiMenu } from "react-icons/fi";
 import { getConnection, TUNNEL_URL } from "../signalr/chatConnection";
 
 export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
@@ -86,8 +87,18 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 
   	return (
     	<div className="chat-window">
-    		<div className="recipient-name">
+			<div className="recipient-name">
 				{selectedDM?.name || `Welcome ${currentUser.username}`}
+				{selectedDM && (
+					<button 
+						className="manage-group-btn"
+						// onClick={() => {
+						// 	// open drawer here
+						// }}
+					>
+						<FiMenu />
+					</button>
+				)}
 			</div>
 			<MessageList 
 				messages={currentMessages} 
