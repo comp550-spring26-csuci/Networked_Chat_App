@@ -176,6 +176,7 @@ export default function LoginPage() {
           const userInfo = {
             username: username,
             userId: data.userId,
+            token: data.token,
             status: data.status,
             customText: data.customText || data.customStatus
           };
