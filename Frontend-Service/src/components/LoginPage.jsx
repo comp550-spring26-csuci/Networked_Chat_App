@@ -4,7 +4,7 @@ import '../login.css'
 import { useNavigate } from "react-router-dom";
 import { startSignalRConnection } from "../signalr/chatConnection";
 
-const BASE_URL = "http://vg3jzw0g-5148.usw3.devtunnels.ms";
+const BASE_URL = "https://vg3jzw0g-7081.usw3.devtunnels.ms";
  
 const EyeIcon = ({ open }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -174,16 +174,18 @@ export default function LoginPage() {
       if (!username.trim()) { setLoginError("Username is required."); return; }
 	    else { onLoginSuccess(); console.log(`TESTING USER: ${username}`); localStorage.setItem("username", username); } // FOR FRONTEND TESTING ONLY
       if (!password) { setLoginError("Password is required."); return; }
+      
       setLoading(true);
       setLoginError("");
+
       try {
-        // 1. Login Request
-        const res = await fetch(`${BASE_URL}/api/test/login`, {
+        const res = await fetch(`${BASE_URL}/api/users/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
         });
         const data = await res.json();
+        
         if (res.ok) {
           alert(`Welcome back, ${username}!`);
 
@@ -193,6 +195,18 @@ export default function LoginPage() {
           // 3. Start SignalR process after login works
           onLoginSuccess();
 		      
+          console.log("User ID:", data.userId);
+          localStorage.setItem("access_token", data.token); 
+          localStorage.setItem("userId", data.userId);
+          
+          // --- pass status and customText up to the main app layout ---
+          onLogin({ 
+            username, 
+            token: data.token, 
+            userId: data.userId,
+            status: data.status,
+            customText: data.customText || data.customStatus 
+          }); 
         } else {
           setLoginError(data.message || "Invalid username or password.");
         }
@@ -201,6 +215,7 @@ export default function LoginPage() {
       } finally {
         setLoading(false);
       }
+      
     } else {
       // Validate all fields filled
       if (!suUsername.trim()) { setSignupError("Username is required."); return; }
@@ -223,7 +238,7 @@ export default function LoginPage() {
       setLoading(true);
       setSignupError("");
       try {
-        const res = await fetch(`${BASE_URL}/api/test/create-account`, {
+        const res = await fetch(`${BASE_URL}/api/users/create-account`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
