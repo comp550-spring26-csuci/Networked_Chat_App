@@ -1,8 +1,13 @@
+import { GoPlus } from "react-icons/go";
+
 export default function DMList({ dms, selectedDM, onSelect }) {
   return (
     <div className="dm-list">
 		<div className="dm-list-header">
 			Direct Messages
+			<button className="create-dm-btn" data-tooltip="Create DM">
+				<GoPlus size={20}/>
+			</button>
 		</div>
     	{dms.map(dm => (
     		<div
