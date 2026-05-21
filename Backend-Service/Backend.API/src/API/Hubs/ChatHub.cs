@@ -26,7 +26,7 @@ namespace Backend.API.src.API.Hubs
         private readonly MessageRepository _messageRepository;
         private readonly ChatEventRepository _chatEventRepository;
         //private readonly TestChatRoomRepository _testChatRoomRepository;
-        private readonly ChatGroupRepository _chatGroupRepository;
+        private readonly IChatGroupRepository _chatGroupRepository;
         private readonly SignalRGroupService _signalRGroupService;
         private readonly ClientPresenceService _clientPresenceService;
         private readonly IUserRepository _userRepository;
@@ -34,9 +34,9 @@ namespace Backend.API.src.API.Hubs
 
         public ChatHub(
             MessageRepository messageRepositoy, 
-            ChatEventRepository chatEventRepository, 
+            ChatEventRepository chatEventRepository,
             //TestChatRoomRepository testChatRoomRepository, 
-            ChatGroupRepository chatGroupRepository,
+            IChatGroupRepository chatGroupRepository,
             SignalRGroupService signalRGroupService, 
             ClientPresenceService clientPresenceService, 
             IUserRepository userRepository,

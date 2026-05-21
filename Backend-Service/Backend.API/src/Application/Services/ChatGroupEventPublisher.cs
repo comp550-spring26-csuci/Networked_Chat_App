@@ -19,7 +19,7 @@ namespace Backend.API.src.Application.Services
         private readonly IChatGroupRepository _chatGroupRepository;
         private readonly SignalRGroupService _signalRGroupService;
 
-        public ChatGroupEventPublisher(EventService eventService, IChatGroupRepository chatGroupRepository, IUserRepository userRepository, SignalRGroupService signalRGroupService)
+        public ChatGroupEventPublisher(EventService eventService, IChatGroupRepository chatGroupRepository, SignalRGroupService signalRGroupService)
         {
             _eventService = eventService;
             _chatGroupRepository = chatGroupRepository;
@@ -29,6 +29,8 @@ namespace Backend.API.src.Application.Services
         public async Task PublishMembershipAddAsync(Guid userId, ChatGroup chatGroup)
         {
             await _eventService.MembershipAddEventAsync(userId, chatGroup);
+            
+            //await _signalRGroupService.AddGlobalConnectionFromChatRoomAsync(chatGroup.Id, userId);
         }
     
         public async Task PublishMembershipDeleteAsync(Guid userId, Guid chatGroupId)

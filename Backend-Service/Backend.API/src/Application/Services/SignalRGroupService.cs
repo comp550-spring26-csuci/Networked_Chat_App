@@ -58,6 +58,17 @@ namespace Backend.API.src.Application.Services
             }
         }
 
+        //public async Task AddGlobalConnectionFromChatRoomAsync(Guid roomId, Guid userId)
+        //{
+        //    string globalGroupId = GetGlobalGroupId(roomId);
+
+        //    IEnumerable<string> connections = await _presenceService.GetUserConnections(userId);
+        //    foreach (string connectionId in connections)
+        //    {
+        //        await _hubContext.Groups.AddToGroupAsync(connectionId, globalGroupId);
+        //    }
+        //}
+
         public async Task SyncConnectionGroupsAsync(string connectionId, IEnumerable<Guid> UserRoomIds)
         {
             foreach (Guid roomId in UserRoomIds)
