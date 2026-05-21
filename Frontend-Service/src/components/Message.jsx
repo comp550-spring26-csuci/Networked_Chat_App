@@ -1,13 +1,14 @@
 export default function Message({ message, hideHeader }) {
-	console.log("MSG in message:", message);
-	console.log(`MSG SENDER in message: ${message.message.senderUsername}`);
+	// This formats the timestamp similar to Discord
+	// Messages from today have a timestamp like: 5:40 PM
+	// Messages from yesterday have a timestamp like: Yesterday at 5:40 PM
+	// Messages that are older have a timestamp like: 5/18/26 at 5:40 PM
 
-	const msgDate = new Date(message.Message.timestamp);
+	const msgDate = new Date(message.message.timestamp);
 	const timeNow = new Date();
 
 	const isToday = msgDate.toDateString() === timeNow.toDateString();
-
-	const isYesterday = new Date(timeNow.setDate(timeNow.getDate() - 1)).toDateString === msgDate.toDateString();
+	const isYesterday = new Date(timeNow.setDate(timeNow.getDate() - 1)).toDateString() === msgDate.toDateString();
 
 	const timePart = msgDate.toLocaleTimeString([], {
 		hour: "numeric",
