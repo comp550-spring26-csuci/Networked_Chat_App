@@ -3,8 +3,7 @@ import "./FriendsList.css";
 
 const BASE_URL = "https://vg3jzw0g-7081.usw3.devtunnels.ms"; 
 
-export default function FriendsList({ currentUser, onStartChat }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function FriendsList({ currentUser, onStartChat, isOpen, setIsOpen }) {
   const [friends, setFriends] = useState([]); 
   const [addInput, setAddInput] = useState("");
   
@@ -282,7 +281,7 @@ export default function FriendsList({ currentUser, onStartChat }) {
 
   return (
     <>
-      {!isOpen && (
+      {/* {!isOpen && (
         <button className="fl-hamburger" onClick={() => setIsOpen(true)}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -290,7 +289,7 @@ export default function FriendsList({ currentUser, onStartChat }) {
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
-      )}
+      )} */}
 
       <div className={`fl-overlay ${isOpen ? "open" : ""}`} onClick={() => setIsOpen(false)}></div>
 

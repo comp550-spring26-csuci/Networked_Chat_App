@@ -1,5 +1,5 @@
 import { useState } from "react";
-import '../login.css'
+import './login.css'
 
 import { useNavigate } from "react-router-dom";
 import { startSignalRConnection } from "../signalr/chatConnection";
@@ -152,7 +152,7 @@ export default function LoginPage() {
       console.log("SignalR login response:", data);
 
       // Store SignalR token
-      localStorage.setItem("access_token", data.token);
+      localStorage.setItem("sr_access_token", data.token);
 
       if(!seedRes.ok) {
         setLoginError("Failed to initialize chat user for SignalR");

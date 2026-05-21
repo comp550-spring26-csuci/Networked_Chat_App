@@ -1,21 +1,31 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
 import { MdEmail } from "react-icons/md";
 import { FaUserFriends } from "react-icons/fa";
+
+import FriendsList from "./FriendsList";
 
 export default function AppLayout() {
 	const navigate = useNavigate();
 	const location = useLocation();
+
+	const [friendsOpen, setFriendsOpen] = useState(false);
 
 	return (
 		<div className="app-shell">
 			<div className="sidebar">
 				{/* currrently the friends route doesnt exist on this branch so this will redirect you to nothing */}
 				<button
-  					className={`sidebar-icon ${location.pathname === "/friends" ? "active" : ""}`}
-  					onClick={() => navigate("/friends")}
+					className="sidebar-icon"
+					onClick={() => setFriendsOpen(true)}
 				>
 					<FaUserFriends size={30}/>
 				</button>
+
+				<FriendsList
+					isOpen={friendsOpen}
+					setIsOpen={setFriendsOpen}
+				/>
 
 				<button 
 					className={`sidebar-icon ${location.pathname === "/chat" ? "active" : ""}`}
