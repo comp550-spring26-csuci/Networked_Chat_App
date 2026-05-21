@@ -14,7 +14,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	useEffect(() => {
 		if(!selectedDM) return;
 		async function fetchHistory() {
-			const token = localStorage.getItem("access_token");
+			const token = localStorage.getItem("sr_access_token");
 			const res = await fetch(`${TUNNEL_URL}/api/chathistory/room/${selectedDM.id}/messages`, {
 				method: 'GET',
 				headers : {
@@ -46,6 +46,8 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 		function handleReceiveMessage(paylode) {
 			const DMId = paylode.message.chatRoomId;
 
+			console.log(`RECEIVE MESSAGE, SENDER USERNAME: ${paylode.message.senderUsername}`);
+
 			setMessages((prev) => ({
 				...prev,
 				[DMId]: [...(prev[DMId] || []), paylode]
@@ -65,6 +67,9 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 		const DMId = selectedDM.id;
 		try {
 			const connection = getConnection();
+			if(!connection) {
+				return;
+			}
 			await connection.invoke("SendMessageToChatRoom", {
 				SendMessageToChatRoom: {
 					ChatRoomId: DMId,

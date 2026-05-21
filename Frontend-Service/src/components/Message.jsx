@@ -1,5 +1,6 @@
 export default function Message({ message, hideHeader }) {
 	console.log("MSG in message:", message);
+	console.log(`MSG SENDER in message: ${message.message.senderUsername}`);
 
 	const time = new Date(message.message.timestamp).toLocaleTimeString([], {
 		hour: "numeric",
@@ -10,7 +11,7 @@ export default function Message({ message, hideHeader }) {
 		<div className={`message ${hideHeader ? "grouped" : ""}`}>
 			{!hideHeader && (
 				<div className="message-header">
-					<strong>{message.senderUsername}</strong>
+					<strong>{message.message.senderUsername}</strong>
 					<span className="time">{time}</span>
 				</div>
 			)}

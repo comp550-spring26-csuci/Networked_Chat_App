@@ -152,7 +152,7 @@ export default function LoginPage() {
       console.log("SignalR login response:", data);
 
       // Store SignalR token
-      localStorage.setItem("access_token", data.token);
+      localStorage.setItem("sr_access_token", data.token);
 
       if(!seedRes.ok) {
         setLoginError("Failed to initialize chat user for SignalR");
@@ -189,6 +189,7 @@ export default function LoginPage() {
 
           // 2. Store the username
           localStorage.setItem("username", data.username);
+          //localStorage.setItem("");
           // Can store tokens here or status information
           // 3. Start SignalR process after login works
           onLoginSuccess();
