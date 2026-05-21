@@ -4,7 +4,7 @@ import ChatInput from "./ChatInput";
 import { FiMenu } from "react-icons/fi";
 import { getConnection, TUNNEL_URL } from "../signalr/chatConnection";
 
-export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
+export default function ChatWindow({ idToNameRef, selectedDM, sender, onManageGroup }) {
 	const currentUser = JSON.parse(localStorage.getItem("user"));
 
 	// Focuses input box when swapping DMs
@@ -92,9 +92,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 				{selectedDM && (
 					<button 
 						className="manage-group-btn"
-						// onClick={() => {
-						// 	// open drawer here
-						// }}
+						onClick={() => onManageGroup(selectedDM)}
 					>
 						<FiMenu />
 					</button>

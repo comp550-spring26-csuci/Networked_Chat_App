@@ -6,17 +6,16 @@ export default function GroupManager({
 	setIsGroupDrawerOpen,
 	drawerMode,
 	setDrawerMode,
-	setOpenCreateDrawerFn,
+	availableFriends,
+	setAvailableFriends,
+	currentRoomMembers,
+	setCurrentRoomMembers,
     dms, 
     setDms, 
     selectedDM, 
     setSelectedDM, 
     currentUser 
 }) {
-    const [currentRoomMembers, setCurrentRoomMembers] = useState([]);
-    const [roomMembersMap, setRoomMembersMap] = useState({}); 
-    const [availableFriends, setAvailableFriends] = useState([]); 
-
     // --- Persistence: Fetch existing groups on load ---
     useEffect(() => {
         const fetchUserGroups = async () => {
@@ -55,71 +54,43 @@ export default function GroupManager({
         fetchUserGroups();
     }, [currentUser?.userId, setDms]);
 
-    // --- Fetch Friends (Includes userId to prevent 400 errors) ---
-    const fetchFriends = async () => {
-        if (!currentUser?.userId) return;
+    // const openCreateGroupDrawer = () => {
+    //     setDrawerMode("create");
+    //     fetchFriends(); 
+    //     setIsGroupDrawerOpen(true);
+    // };
 
-        try {
-            const res = await fetch(`/api/friends/list/${currentUser.userId}`, {
-                method: "GET",
-                headers: {
-                    "X-Tunnel-Skip-AntiPhishing-Page": "true",
-                    "Authorization": `Bearer ${currentUser?.token}`
-                }
-            });
-            
-            if (res.ok) {
-                const rawText = await res.text();
-                let fetchedData = [];
-                if (rawText) {
-                    try { fetchedData = JSON.parse(rawText); } catch(e) {}
-                }
-                
-                const friendsArray = Array.isArray(fetchedData) ? fetchedData : (fetchedData.$values || []);
-                setAvailableFriends(friendsArray.map(f => ({ 
-                    username: f.username, 
-                    userId: f.id || f.userId 
-                })));
-            }
-        } catch (err) {
-            console.error("Failed to fetch friends for group drawer:", err);
-        }
-    };
+    // const openManageGroupDrawer = async () => {
+	// 	setDrawerMode("manage");
 
-    const openCreateGroupDrawer = () => {
-        setDrawerMode("create");
-        fetchFriends(); 
-        setIsGroupDrawerOpen(true);
-    };
+	// 	fetchFriends();
 
-	useEffect(() => {
-		setOpenCreateDrawerFn(() => openCreateGroupDrawer);
-	}, []);
+	// 	console.log("BEFORE ID CHECK");
 
-    const openManageGroupDrawer = async () => {
-        setDrawerMode("manage");
-        fetchFriends(); // Still fetch friends so the user can add new ones
-        
-        // Temporarily set it to just the current user while loading
-        setCurrentRoomMembers([{ username: currentUser?.username || "You", userId: currentUser?.userId }]);
-        setIsGroupDrawerOpen(true);
+	// 	console.log("selectedDM:", selectedDM);
+	// 	console.log("selectedDM.id:", selectedDM?.id);
 
-        if (selectedDM?.id) {
-            // Fetch the real, up-to-date members from your C# database
-            const fetchedMembers = await getGroupChatMembers(selectedDM.id);
+	// 	if (!selectedDM?.id) return;
 
-            if (fetchedMembers && fetchedMembers.length > 0) {
-                // Update the drawer UI with the real members
-                setCurrentRoomMembers(fetchedMembers);
-                
-                // Update our local cache map so it stays synced
-                setRoomMembersMap(prev => ({
-                    ...prev,
-                    [selectedDM.id]: fetchedMembers
-                }));
-            }
-        }
-    };
+	// 	console.log("AFTER ID CHECK");
+
+	// 	const fetchedMembers = await getGroupChatMembers(selectedDM.id);
+
+	// 	console.log("AFTER MEMBER FETCH");
+
+	// 	const safeMembers = fetchedMembers?.length
+	// 		? fetchedMembers
+	// 		: [];
+
+	// 	setCurrentRoomMembers(safeMembers);
+
+	// 	setRoomMembersMap(prev => ({
+	// 		...prev,
+	// 		[selectedDM.id]: safeMembers
+	// 	}));
+
+	// 	setIsGroupDrawerOpen(true);
+	// };
 
 	// THIS DOESNT EXIST ANYMORE
     // --- Get Group ID by Name ---
@@ -151,6 +122,7 @@ export default function GroupManager({
     // --- Get Group Chat Members ---
     const getGroupChatMembers = async (groupId) => {
         try {
+			console.log("GET GROUP CHAT MEMBERS");
             const response = await fetch(`/api/ChatGroups/${groupId}/get-group-chat-members`, {
                 method: 'GET',
                 headers: {
@@ -278,128 +250,128 @@ export default function GroupManager({
         }
     };
 
-// --- Remove Member  ---
-const handleRemoveMember = async (roomId, targetUserId, username) => {
-    if (!currentUser?.userId) {
-        console.error("Cannot remove member: User ID is missing.");
-        return;
-    }
+	// --- Remove Member  ---
+	const handleRemoveMember = async (roomId, targetUserId, username) => {
+		if (!currentUser?.userId) {
+			console.error("Cannot remove member: User ID is missing.");
+			return;
+		}
 
-    try {
-        const response = await fetch(`/api/ChatGroups/remove-member/${roomId}/${currentUser.userId}/${targetUserId}`, {
-            method: 'DELETE', 
-            headers: {
-                "X-Tunnel-Skip-AntiPhishing-Page": "true",
-                "Authorization": `Bearer ${currentUser?.token}`
-            }
-        });
+		try {
+			const response = await fetch(`/api/ChatGroups/remove-member/${roomId}/${currentUser.userId}/${targetUserId}`, {
+				method: 'DELETE', 
+				headers: {
+					"X-Tunnel-Skip-AntiPhishing-Page": "true",
+					"Authorization": `Bearer ${currentUser?.token}`
+				}
+			});
 
-        if (response.ok) {
-            console.log(`Successfully removed ${username} from the group.`);
+			if (response.ok) {
+				console.log(`Successfully removed ${username} from the group.`);
 
-            setCurrentRoomMembers(prev => prev.filter(m => m.username !== username));
-            setRoomMembersMap(prev => ({
-                ...prev,
-                [roomId]: (prev[roomId] || []).filter(m => m.username !== username)
-            }));
-        } else {
-            const errorText = await response.text();
-            console.error("Failed to remove member:", errorText);
-            alert("Failed to remove member: " + (errorText || "Unknown error"));
-        }
-    } catch (error) {
-        console.error("Network Error when removing member:", error);
-        alert("A network error occurred while attempting to remove the member.");
-    }
-};
+				setCurrentRoomMembers(prev => prev.filter(m => m.username !== username));
+				setRoomMembersMap(prev => ({
+					...prev,
+					[roomId]: (prev[roomId] || []).filter(m => m.username !== username)
+				}));
+			} else {
+				const errorText = await response.text();
+				console.error("Failed to remove member:", errorText);
+				alert("Failed to remove member: " + (errorText || "Unknown error"));
+			}
+		} catch (error) {
+			console.error("Network Error when removing member:", error);
+			alert("A network error occurred while attempting to remove the member.");
+		}
+	};
 
-// --- Delete Group  ---
-const handleDeleteRoom = async (roomId) => {
-    // Guard clause to ensure we have a user
-    if (!currentUser?.userId) {
-        console.error("Cannot delete group: User ID is missing.");
-        return;
-    }
+	// --- Delete Group  ---
+	const handleDeleteRoom = async (roomId) => {
+		// Guard clause to ensure we have a user
+		if (!currentUser?.userId) {
+			console.error("Cannot delete group: User ID is missing.");
+			return;
+		}
 
-    try {
-        const response = await fetch(`/api/ChatGroups/delete-group/${roomId}/${currentUser.userId}`, {
-            method: 'DELETE',
-            headers: {
-                "X-Tunnel-Skip-AntiPhishing-Page": "true",
-                "Authorization": `Bearer ${currentUser?.token}`
-            }
-        });
+		try {
+			const response = await fetch(`/api/ChatGroups/delete-group/${roomId}/${currentUser.userId}`, {
+				method: 'DELETE',
+				headers: {
+					"X-Tunnel-Skip-AntiPhishing-Page": "true",
+					"Authorization": `Bearer ${currentUser?.token}`
+				}
+			});
 
-        if (response.ok) {
-            const result = await response.json();
-            console.log("Group Deleted:", result.message);
+			if (response.ok) {
+				const result = await response.json();
+				console.log("Group Deleted:", result.message);
 
-            setDms(prev => prev.filter(dm => dm.id !== roomId));
-            setSelectedDM(prev => prev?.id === roomId ? null : prev);
-            
-            setRoomMembersMap(prev => {
-                const newMap = { ...prev };
-                delete newMap[roomId];
-                return newMap;
-            });
-        } else if (response.status === 401) {
-            const errorText = await response.text();
-            console.warn("Unauthorized:", errorText);
-            alert("Cannot delete group: " + (errorText || "You must be the creator to delete this group."));
-        } else {
-            const errorText = await response.text();
-            console.error("Failed to delete group:", errorText);
-            alert("Failed to delete group: " + (errorText || "Unknown error"));
-        }
-    } catch (error) {
-        console.error("Network Error when deleting group:", error);
-        alert("A network error occurred while attempting to delete the group.");
-    }
-};
+				setDms(prev => prev.filter(dm => dm.id !== roomId));
+				setSelectedDM(prev => prev?.id === roomId ? null : prev);
+				
+				setRoomMembersMap(prev => {
+					const newMap = { ...prev };
+					delete newMap[roomId];
+					return newMap;
+				});
+			} else if (response.status === 401) {
+				const errorText = await response.text();
+				console.warn("Unauthorized:", errorText);
+				alert("Cannot delete group: " + (errorText || "You must be the creator to delete this group."));
+			} else {
+				const errorText = await response.text();
+				console.error("Failed to delete group:", errorText);
+				alert("Failed to delete group: " + (errorText || "Unknown error"));
+			}
+		} catch (error) {
+			console.error("Network Error when deleting group:", error);
+			alert("A network error occurred while attempting to delete the group.");
+		}
+	};
 
-// --- Leave a Group ---
-const handleLeaveGroup = async (roomId) => {
-    if (!currentUser?.userId) {
-        console.error("Cannot leave group: User ID is missing.");
-        return;
-    }
+	// --- Leave a Group ---
+	const handleLeaveGroup = async (roomId) => {
+		if (!currentUser?.userId) {
+			console.error("Cannot leave group: User ID is missing.");
+			return;
+		}
 
-    try {
-        const response = await fetch(`/api/ChatGroups/leave-group/${roomId}/${currentUser.userId}`, {
-            method: 'DELETE',
-            headers: {
-                "X-Tunnel-Skip-AntiPhishing-Page": "true",
-                "Authorization": `Bearer ${currentUser?.token}`
-            }
-        });
+		try {
+			const response = await fetch(`/api/ChatGroups/leave-group/${roomId}/${currentUser.userId}`, {
+				method: 'DELETE',
+				headers: {
+					"X-Tunnel-Skip-AntiPhishing-Page": "true",
+					"Authorization": `Bearer ${currentUser?.token}`
+				}
+			});
 
-        if (response.ok) {
-            const result = await response.json();
-            console.log("Left Group:", result.message);
+			if (response.ok) {
+				const result = await response.json();
+				console.log("Left Group:", result.message);
 
-            // Remove the room from your frontend DM list
-            setDms(prev => prev.filter(dm => dm.id !== roomId));
-            
-            // Deselect the room if you are currently looking at it
-            setSelectedDM(prev => prev?.id === roomId ? null : prev);
-            
-            // Clean up the memory map so it doesn't take up space
-            setRoomMembersMap(prev => {
-                const newMap = { ...prev };
-                delete newMap[roomId];
-                return newMap;
-            });
-        } else {
-            // If it fails, read the raw text response as your example expects
-            const errorText = await response.text();
-            console.error("Failed to leave group:", errorText);
-            alert("Failed to leave group: " + (errorText || "Unknown error"));
-        }
-    } catch (error) {
-        console.error("Network Error when leaving group:", error);
-        alert("A network error occurred while attempting to leave the group.");
-    }
-};
+				// Remove the room from your frontend DM list
+				setDms(prev => prev.filter(dm => dm.id !== roomId));
+				
+				// Deselect the room if you are currently looking at it
+				setSelectedDM(prev => prev?.id === roomId ? null : prev);
+				
+				// Clean up the memory map so it doesn't take up space
+				setRoomMembersMap(prev => {
+					const newMap = { ...prev };
+					delete newMap[roomId];
+					return newMap;
+				});
+			} else {
+				// If it fails, read the raw text response as your example expects
+				const errorText = await response.text();
+				console.error("Failed to leave group:", errorText);
+				alert("Failed to leave group: " + (errorText || "Unknown error"));
+			}
+		} catch (error) {
+			console.error("Network Error when leaving group:", error);
+			alert("A network error occurred while attempting to leave the group.");
+		}
+	};
 
     return (
         <>
@@ -417,14 +389,6 @@ const handleLeaveGroup = async (roomId) => {
                 onLeaveGroup={handleLeaveGroup} 
                 currentUser={currentUser}
             />
-
-            <div className="group-controls-container">
-                {selectedDM && (
-                    <button className="action-btn btn-manage-group" onClick={openManageGroupDrawer}>
-                        Manage Group
-                    </button>
-                )}
-            </div>
         </>
     );
 }
