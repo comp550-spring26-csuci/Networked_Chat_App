@@ -1,0 +1,211 @@
+/* Dimmed Background Overlay */
+.gd-overlay {
+    position: fixed;
+    inset: 0; 
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  /* Modal Content Box */
+  .gd-modal {
+    width: 440px;
+    background-color: #313338;
+    border-radius: 8px;
+    color: #dbdee1;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    
+    /* Subtle pop-in animation */
+    animation: modalFadeIn 0.2s ease-out;
+  }
+  
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  /* Header */
+  .gd-header {
+    padding: 16px;
+    border-bottom: 1px solid #1e1f22;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .gd-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: white;
+  }
+  
+  .gd-close-btn {
+    background: none;
+    border: none;
+    color: #80848e;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  .gd-close-btn:hover {
+    color: white;
+  }
+  
+  /* Body Elements */
+  .gd-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .gd-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #b5bac1;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .gd-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: none;
+    background-color: #1e1f22;
+    color: white;
+    outline: none;
+    box-sizing: border-box;
+  }
+  
+  /* Lists */
+  .gd-list-container {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #2b2d31;
+    padding: 8px;
+    border-radius: 4px;
+  }
+  
+  .gd-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    background-color: #1e1f22;
+    border-radius: 4px;
+  }
+  
+  .gd-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  
+  .gd-checkbox-label:hover {
+    background-color: #35373c;
+  }
+  
+  .gd-empty {
+    color: #80848e;
+    font-size: 14px;
+    text-align: center;
+    padding: 10px;
+  }
+  
+  /* Buttons */
+  .gd-btn-remove {
+    background: none;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .gd-btn-remove:hover {
+    text-decoration: underline;
+  }
+  
+  .gd-add-friends-wrapper {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .gd-btn-add {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    background-color: #00e5ff;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+  }
+  
+  .gd-btn-add:hover {
+    background-color: #00e5ff;
+  }
+  
+  /* Footer */
+  .gd-footer {
+    padding: 16px;
+    background-color: #2b2d31;
+    border-top: 1px solid #1e1f22;
+    display: flex;
+    align-items: center;
+  }
+  
+  .gd-footer.manage {
+    justify-content: space-between;
+  }
+  
+  .gd-footer.create {
+    justify-content: flex-end;
+  }
+  
+  .gd-btn-primary {
+    padding: 10px 16px;
+    border-radius: 4px;
+    border: none;
+    background-color: #00e5ff;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  
+  .gd-btn-primary:hover {
+    background-color: #00e5ff;
+  }
+  
+  .gd-btn-danger {
+    padding: 10px 16px;
+    border-radius: 4px;
+    border: none;
+    background-color: #af0000;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  
+  .gd-btn-danger:hover {
+    background-color: #af0000;
+  }

@@ -4,6 +4,8 @@ import ChatInput from "./ChatInput";
 import { getConnection, TUNNEL_URL } from "../signalr/chatConnection";
 
 export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
+	const currentUser = JSON.parse(localStorage.getItem("user"));
+
 	// Focuses input box when swapping DMs
 	const inputRef = useRef(null);
 	const [messages, setMessages] = useState({});
@@ -85,7 +87,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
   	return (
     	<div className="chat-window">
     		<div className="recipient-name">
-				{selectedDM?.name || `Welcome ${sender}`}
+				{selectedDM?.name || `Welcome ${currentUser.username}`}
 			</div>
 			<MessageList 
 				messages={currentMessages} 

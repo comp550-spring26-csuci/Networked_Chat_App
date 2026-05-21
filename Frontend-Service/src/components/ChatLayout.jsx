@@ -1,9 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import DMList from "./DMList";
 import ChatWindow from "./ChatWindow";
+import GroupManager from "./GroupManager";
 import { joinChatRoom, leaveChatRoom, TUNNEL_URL } from "../signalr/chatConnection";
 
 export default function ChatLayout() {
+	const currentUser = JSON.parse(localStorage.getItem("user"));
+
+	const [isGroupDrawerOpen, setIsGroupDrawerOpen] = useState(false);
+	const [drawerMode, setDrawerMode] = useState("create");
+	const [openCreateDrawerFn, setOpenCreateDrawerFn] = useState(null);
+
 	const username = localStorage.getItem("username");
 
 	const [dms, setDms] = useState([]);
@@ -77,10 +84,29 @@ export default function ChatLayout() {
 
   	return (
 		<div className="chat-container">
+			<GroupManager
+				isGroupDrawerOpen={isGroupDrawerOpen}
+				setIsGroupDrawerOpen={setIsGroupDrawerOpen}
+				drawerMode={drawerMode}
+				setDrawerMode={setDrawerMode}
+				setOpenCreateDrawerFn={setOpenCreateDrawerFn}
+
+				dms={dms}
+				setDms={setDms}
+				selectedDM={selectedDM}
+				setSelectedDM={setSelectedDM}
+				currentUser={currentUser}
+			/>
+
       		<DMList 
         		dms={dms} 
         		selectedDM={selectedDM}
         		onSelect={setSelectedDM}
+				onCreateGroup={() => {
+					if (openCreateDrawerFn) {
+						openCreateDrawerFn();
+					}
+				}}
       		/>
 			<ChatWindow
 				idToNameRef={idToNameRef}
