@@ -8,11 +8,6 @@ export default function MessageList({ messages }) {
 		}
 		const sameUser = prev.message.senderUsername === current.message.senderUsername;
 
-		console.log("prev sender: ", prev.message.senderUsername);
-		console.log("current sender: ", current.message.senderUsername);
-
-		console.log("IS SAME USER FROM MSG PREVIOUS?: ", sameUser);
-
 		// optional: time gap rule (currently set to group messages within 5 minutes of each other)
 		const timeDiff =
 			new Date(current.message.timestamp) - new Date(prev.message.timestamp) < 5 * 60 * 1000;

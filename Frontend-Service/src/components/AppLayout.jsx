@@ -1,14 +1,37 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { MdEmail } from "react-icons/md";
 import { FaUserFriends } from "react-icons/fa";
+import { useEffect } from "react";
 import FriendsList from "./FriendsList";
 import { useState } from "react";
+import { ensureSignalRConnection } from "../signalr/chatConnection";
 
 export default function AppLayout() {
 	const navigate = useNavigate();
 	const location = useLocation();
 
 	const [isFriendsListOpen, setIsFriendsListOpen] = useState(false);
+    const [signalRReady, setSignalRReady] = useState(false);
+
+
+	// Gates the app from trying to load before the reconnection is made
+    useEffect(() => {
+        let mounted = true;
+
+        ensureSignalRConnection()
+            .then(() => {
+                if (mounted) setSignalRReady(true);
+            })
+            .catch(console.error);
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    if (!signalRReady) {
+        return <div style={{ color: "white" }}>Connecting...</div>;
+    }
 
 	return (
 		<div className="app-shell">
