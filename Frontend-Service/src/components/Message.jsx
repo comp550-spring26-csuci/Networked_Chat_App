@@ -4,6 +4,8 @@ export default function Message({ message, hideHeader }) {
 	// Messages from yesterday have a timestamp like: Yesterday at 5:40 PM
 	// Messages that are older have a timestamp like: 5/18/26 at 5:40 PM
 
+	console.log(message.message.senderUsername);
+
 	const msgDate = new Date(message.message.timestamp);
 	const timeNow = new Date();
 
