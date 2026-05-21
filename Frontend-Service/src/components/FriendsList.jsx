@@ -97,7 +97,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 								}),
 							});
 						} catch (err) {
-						console.error("Failed to auto-update status to online:", err);
+							console.error("Failed to auto-update status to online:", err);
 						}
 					}
 
@@ -192,13 +192,15 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 	useEffect(() => {
 		if (currentUser?.userId) {
 			fetchMyProfile();
+			console.log("FETCH PROFILE ON LOGIN");
 		}
-	}, [currentUser]);
+	}, []);
 
 	// Run fresh fetch when sidebar is opened
 	useEffect(() => {
 		if (currentUser?.userId && isOpen) {
 			fetchMyProfile();
+			console.log("FETCH ON SIDEBAR OPEN");
 			refreshFriendsList();
 		}
 	}, [isOpen]);
