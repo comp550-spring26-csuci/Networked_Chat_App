@@ -14,8 +14,8 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender }) {
 	useEffect(() => {
 		if(!selectedDM) return;
 		async function fetchHistory() {
-			const token = localStorage.getItem("sr_access_token");
-			const res = await fetch(`${TUNNEL_URL}/api/chathistory/room/${selectedDM.id}/messages`, {
+			const token = localStorage.getItem("access_token");
+			const res = await fetch(`/api/chathistory/room/${selectedDM.id}/messages`, {
 				method: 'GET',
 				headers : {
 					Authorization: `Bearer ${token}`

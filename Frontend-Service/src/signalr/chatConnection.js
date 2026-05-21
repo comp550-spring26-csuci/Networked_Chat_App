@@ -10,11 +10,11 @@ export function getConnection() {
 }
 
 export function startSignalRConnection() {
-  console.log(`TOKEN in startSignalRConnection: ${localStorage.getItem("sr_access_token")}`);
+  console.log(`TOKEN in startSignalRConnection: ${localStorage.getItem("access_token")}`);
 
   connection = new signalR.HubConnectionBuilder()
     .withUrl("https://sslk8rt0-7081.usw3.devtunnels.ms/chathub", {
-      accessTokenFactory: () => localStorage.getItem("sr_access_token")
+      accessTokenFactory: () => localStorage.getItem("access_token")
     })
     .withAutomaticReconnect()
     .build();

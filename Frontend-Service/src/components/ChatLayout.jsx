@@ -14,10 +14,10 @@ export default function ChatLayout() {
 	useEffect(() => {
 		async function fetchDMRooms() {
 			try {
-				const res = await fetch(`${TUNNEL_URL}/api/chathistory/user/mine/rooms`, {
+				const res = await fetch("/api/chathistory/user/mine/rooms", {
 					method: 'GET',
 					headers: {
-						'Authorization': `Bearer ${localStorage.getItem("sr_access_token")}`,
+						'Authorization': `Bearer ${localStorage.getItem("access_token")}`,
 						'Content-Type': 'application/json'
 					}
 				});
@@ -30,7 +30,7 @@ export default function ChatLayout() {
 
 				setDms(roomsArray);
 
-				const resp = await fetch(`${TUNNEL_URL}/api/users/all-users`, {
+				const resp = await fetch("/api/users/all-users", {
 					method: 'GET'
 				});
 

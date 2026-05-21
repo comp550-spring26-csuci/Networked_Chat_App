@@ -3,8 +3,9 @@ import '../login.css'
 
 import { useNavigate } from "react-router-dom";
 import { startSignalRConnection } from "../signalr/chatConnection";
+import { TUNNEL_URL } from "../signalr/chatConnection";
 
-const BASE_URL = "http://vg3jzw0g-5148.usw3.devtunnels.ms";
+const BASE_URL = TUNNEL_URL;
  
 const EyeIcon = ({ open }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -142,23 +143,6 @@ export default function LoginPage() {
 
   const onLoginSuccess = async () => {
     try {
-      console.log("Name:", username);
-      const seedRes = await fetch(
-        `https://sslk8rt0-7081.usw3.devtunnels.ms/api/testdm/seed-user?UserName=${username}&OverWrite=false`, {
-        method: 'POST'
-      });
-
-      const data = await seedRes.json();
-      console.log("SignalR login response:", data);
-
-      // Store SignalR token
-      localStorage.setItem("sr_access_token", data.token);
-
-      if(!seedRes.ok) {
-        setLoginError("Failed to initialize chat user for SignalR");
-        return;
-      }
-
       await startSignalRConnection();
 
       // Redirect to chat
@@ -172,13 +156,14 @@ export default function LoginPage() {
   const handleSubmit = async () => {
     if (mode === "login") {
       if (!username.trim()) { setLoginError("Username is required."); return; }
-	    else { onLoginSuccess(); console.log(`TESTING USER: ${username}`); localStorage.setItem("username", username); } // FOR FRONTEND TESTING ONLY
+	    //else { onLoginSuccess(); console.log(`TESTING USER: ${username}`); localStorage.setItem("username", username); } // FOR FRONTEND TESTING ONLY
       if (!password) { setLoginError("Password is required."); return; }
       setLoading(true);
       setLoginError("");
+
       try {
         // 1. Login Request
-        const res = await fetch(`${BASE_URL}/api/test/login`, {
+        const res = await fetch("/api/users/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
@@ -187,10 +172,15 @@ export default function LoginPage() {
         if (res.ok) {
           alert(`Welcome back, ${username}!`);
 
-          // 2. Store the username
-          localStorage.setItem("username", data.username);
-          //localStorage.setItem("");
-          // Can store tokens here or status information
+          // 2. Store the user data
+          const userInfo = {
+            username: username,
+            userId: data.userId,
+            status: data.status,
+            customText: data.customText || data.customStatus
+          };
+          localStorage.setItem("access_token", data.token)
+          localStorage.setItem("user", JSON.stringify(userInfo));
           // 3. Start SignalR process after login works
           onLoginSuccess();
 		      
@@ -224,7 +214,7 @@ export default function LoginPage() {
       setLoading(true);
       setSignupError("");
       try {
-        const res = await fetch(`${BASE_URL}/api/test/create-account`, {
+        const res = await fetch("/api/users/create-account", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
