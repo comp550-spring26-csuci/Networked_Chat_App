@@ -48,15 +48,23 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender, onManageGr
 	useEffect(() => {
 		const connection = getConnection();
 
-		function handleReceiveMessage(paylode) {
-			const DMId = paylode.message.chatRoomId;
+		function handleReceiveMessage(payload) {
+			const dmId = payload.message.chatRoomId;
 
-			console.log(`RECEIVE MESSAGE, SENDER USERNAME: ${paylode.message.senderUsername}`);
+			console.log(`RECEIVE MESSAGE, SENDER USERNAME: ${payload.message.senderUsername}`);
 
 			setMessages((prev) => ({
 				...prev,
-				[DMId]: [...(prev[DMId] || []), paylode]
+				[dmId]: [...(prev[dmId] || []), payload]
 			}));
+
+			connection.invoke(
+				"MarkRoomAsRead", { 
+					performChatRoomAction: { 
+						chatRoomId: dmId
+					} 
+				}
+			).catch(console.error);
 		}
 
 		connection.on("ReceiveMessage", handleReceiveMessage);

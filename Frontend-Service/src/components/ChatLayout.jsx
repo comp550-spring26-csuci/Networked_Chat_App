@@ -20,11 +20,16 @@ export default function ChatLayout() {
 	// may have to change the start useState to null and then fetch DMs with api
 	const [selectedDM, setSelectedDM] = useState(null);
 	const selectedDMRef = useRef(selectedDM);
+	const dmsRef = useRef(dms);
 	const idToNameRef = useRef({});
 
 	useEffect(() => {
 		selectedDMRef.current = selectedDM;
 	}, [selectedDM]);
+
+	useEffect(() => {
+		dmsRef.current = dms;
+	}, [dms]);
 
 	// --- Persistence: Fetch existing groups on load ---
     useEffect(() => {
@@ -547,36 +552,6 @@ export default function ChatLayout() {
 
 		const connection = getConnection();
 
-		connection.on("ReceiveMarkedAsRead", (TestChatRoomRead) => { 
-			// See: TestChatRoomRead > ChatRoomRead
-			const chatRoomRead = TestChatRoomRead.chatRoomRead;
-			console.log("CHATROOMREAD: ", chatRoomRead);
-			// TODO: Render your local unread count for the associated room being zero
-			const roomId = chatRoomRead.id;
-
-			let removedCount = 0;
-
-			setDms(prev => {
-				const updated = prev.map(dm =>
-					dm.id === roomId
-						? { ...dm, unreadCount: 0 }
-						: dm
-				);
-
-				// compute how much we removed
-				removedCount =
-					prev.find(dm => dm.id === roomId)?.unreadCount || 0;
-
-				return updated;
-			});
-
-			if(removedCount > 0) {
-				setNotificationCount(prevTotal => prevTotal - removedCount);
-			}
-			
-			console.log("MARKED AS READ:", roomId);
-        });
-
 		console.log(`SELECTED DM ROOM NAME: ${selectedDM.name}`)
 	}, [selectedDM]);
 
@@ -591,8 +566,11 @@ export default function ChatLayout() {
 		const notificationHandler = (testMessagePreview) => {
 			const messagePreview = testMessagePreview.messagePreview;
 
+			console.log("MESSAGE PREVIEW: ", messagePreview);
+			console.log("USER ID: ", currentUser.userId);
+
 			if (messagePreview.senderId !== currentUser.userId &&
-				selectedDMRef.current?.id !== messagePreview.chatRoomIds) {
+				selectedDMRef.current?.id !== messagePreview.chatRoomId) {
 
 				setDms(prev =>
 					prev.map(dm =>
@@ -663,16 +641,45 @@ export default function ChatLayout() {
 			removeDMFromList(room.id);
 		}
 
+		const markedAsReadHandler = (TestChatRoomRead) => {
+			// See: TestChatRoomRead > ChatRoomRead
+			const chatRoomRead = TestChatRoomRead.chatRoomRead;
+			console.log("CHATROOMREAD: ", chatRoomRead);
+			// TODO: Render your local unread count for the associated room being zero
+			const roomId = chatRoomRead.id;
+
+			const removedCount =
+			dmsRef.current.find(dm => dm.id === roomId)?.unreadCount || 0;
+
+			setDms(prev =>
+				prev.map(dm =>
+				dm.id === roomId
+					? { ...dm, unreadCount: 0 }
+					: dm
+				)
+			);
+
+			console.log("REMOVED COUNT: ", removedCount);
+
+			if(removedCount > 0) {
+				setNotificationCount(prevTotal => prevTotal - removedCount);
+			}
+			
+			console.log("MARKED AS READ:", roomId);
+		}
+
 		connection.on("ReceiveMessagePreview", notificationHandler);
 		connection.on("ChatGroupMembershipAdded", membershipAddedHandler);
 		connection.on("ChatGroupMembershipDeleted", membershipRevokedHandler);
 		connection.on("ChatGroupDeleted", groupDeletedHandler);
+		connection.on("ReceiveMarkedAsRead", markedAsReadHandler);
 
 		return () => {
 			connection.off("ReceiveMessagePreview", notificationHandler);
 			connection.off("ChatGroupMembershipAdded", membershipAddedHandler);
 			connection.off("ChatGroupMembershipDeleted", membershipRevokedHandler);
 			connection.off("ChatGroupDeleted", groupDeletedHandler);
+			connection.off("ReceiveMarkedAsRead", markedAsReadHandler);
 		};
 	}, []);
 
