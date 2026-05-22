@@ -592,8 +592,7 @@ export default function ChatLayout() {
 			const messagePreview = testMessagePreview.messagePreview;
 
 			if (messagePreview.senderId !== currentUser.userId &&
-				selectedDMRef.current?.id !== messagePreview.chatRoomId &&
-				messagePreview.senderUsername !== currentUser.username) {
+				selectedDMRef.current?.id !== messagePreview.chatRoomIds) {
 
 				setDms(prev =>
 					prev.map(dm =>
