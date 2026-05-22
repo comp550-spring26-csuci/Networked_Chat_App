@@ -11,7 +11,13 @@ function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        {/* redirect root */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/* login page */}
+        <Route path="/login" element={<LoginPage />} />
+        
+        {/* authenticated app */}
         <Route path="/" element={<AppLayout />}>
           <Route path="chat" element={<ChatLayout />} />
         </Route>

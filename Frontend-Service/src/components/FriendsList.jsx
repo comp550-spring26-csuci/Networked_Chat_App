@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./FriendsList.css";
 
 export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 	const currentUser = JSON.parse(localStorage.getItem("user"));
+	const navigate = useNavigate();
 
 	const [friends, setFriends] = useState([]); 
 	const [addInput, setAddInput] = useState("");
@@ -21,8 +23,10 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 		if (currentUser?.userId) {
 			// If their status is Custom (2), keep it as 2 and keep their text.
 			// Otherwise, set them to Offline (0).
-			const statusToLeave = activeStatus === 2 ? 2 : 0;
-			const textToLeave = activeStatus === 2 ? activeCustomText : "";
+			// const statusToLeave = activeStatus === 2 ? 2 : 0;
+			const statusToLeave = 0;
+			// const textToLeave = activeStatus === 2 ? activeCustomText : "";
+			const textToLeave = "";
 
 			// We'll still back it up locally just to be safe!
 			if (activeCustomText) {
@@ -48,9 +52,10 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 			}
 		}
 
-		localStorage.removeItem("access_token");
-		localStorage.removeItem("userId");
-		window.location.reload();
+		// Clear local storage and navigate to the login page
+		localStorage.clear();
+		console.log("Logging out.");
+		navigate("/");
 	};
 
 	const fetchMyProfile = async () => {
