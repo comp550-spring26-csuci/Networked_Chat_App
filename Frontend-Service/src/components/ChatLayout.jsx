@@ -19,7 +19,12 @@ export default function ChatLayout() {
 	const [dms, setDms] = useState([]);
 	// may have to change the start useState to null and then fetch DMs with api
 	const [selectedDM, setSelectedDM] = useState(null);
+	const selectedDMRef = useRef(selectedDM);
 	const idToNameRef = useRef({});
+
+	useEffect(() => {
+		selectedDMRef.current = selectedDM;
+	}, [selectedDM]);
 
 	// --- Persistence: Fetch existing groups on load ---
     useEffect(() => {
@@ -203,14 +208,14 @@ export default function ChatLayout() {
 
                 const newRoom = { id: data.groupId, name: groupName };
                 
-                // 3. Update the UI state
-                setDms(prev => [...prev, newRoom]);
+                // 3. Update the UI state 
+                //setDms(prev => [...prev, newRoom]);
                 setSelectedDM(newRoom);
 
-                setRoomMembersMap(prev => ({
-                    ...prev,
-                    [newRoom.id]: [{ username: currentUser?.username || "You", userId: currentUser.userId }]
-                }));
+                // setRoomMembersMap(prev => ({
+                //     ...prev,
+                //     [newRoom.id]: [{ username: currentUser?.username || "You", userId: currentUser.userId }]
+                // }));
 
                 // 4. Add selected friends using the fetched roomId
                 if (memberUsernames.length > 0) {
@@ -549,6 +554,8 @@ export default function ChatLayout() {
 			// TODO: Render your local unread count for the associated room being zero
 			const roomId = chatRoomRead.id;
 
+			let removedCount = 0;
+
 			setDms(prev => {
 				const updated = prev.map(dm =>
 					dm.id === roomId
@@ -557,16 +564,17 @@ export default function ChatLayout() {
 				);
 
 				// compute how much we removed
-				const removedCount =
+				removedCount =
 					prev.find(dm => dm.id === roomId)?.unreadCount || 0;
-
-				setNotificationCount(prevTotal => prevTotal - removedCount);
 
 				return updated;
 			});
 
-			console.log("MARKED AS READ:", roomId);
+			if(removedCount > 0) {
+				setNotificationCount(prevTotal => prevTotal - removedCount);
+			}
 			
+			console.log("MARKED AS READ:", roomId);
         });
 
 		console.log(`SELECTED DM ROOM NAME: ${selectedDM.name}`)
@@ -580,16 +588,12 @@ export default function ChatLayout() {
 			return;
 		}
 
-		const handler = (testMessagePreview) => {
+		const notificationHandler = (testMessagePreview) => {
 			const messagePreview = testMessagePreview.messagePreview;
 
-			console.log("MESSAGE PREVIEW!");
-
-			if (
-				messagePreview.senderId !== currentUser.userId &&
-				selectedDM?.id !== messagePreview.chatRoomId
-			) {
-				console.log("INCREMENT NOTIF");
+			if (messagePreview.senderId !== currentUser.userId &&
+				selectedDMRef.current?.id !== messagePreview.chatRoomId &&
+				messagePreview.senderUsername !== currentUser.username) {
 
 				setDms(prev =>
 					prev.map(dm =>
@@ -606,10 +610,57 @@ export default function ChatLayout() {
 			}
 		};
 
-		connection.on("ReceiveMessagePreview", handler);
+		const membershipAddedHandler = (chatEvent) => {
+			console.log("MEMBERSHIP ADDED");
+			const room = chatEvent.room;
+
+			const newRoom = { 
+				id: room.id, 
+				name: room.name
+			};
+
+			console.log("ROOM: ", room);
+			console.log("NEW ROOM: ", newRoom);
+                
+			// update dm list to include the chatroom you were added to
+			setDms(prev => [...prev, newRoom]);
+			//setSelectedDM(newRoom); removed so only the creator focuses into the DM
+
+			setRoomMembersMap(prev => ({
+				...prev,
+				[newRoom.id]: [{ username: currentUser?.username || "You", userId: currentUser.userId }]
+			}));
+		}
+
+		const membershipRevokedHandler = (chatEvent) => {
+			console.log("MEMBERSHIP REVOKED");
+			const room = chatEvent.chatGroupMembershipDeleted;
+			console.log("REVOKED ROOM: ", room);
+
+			// update dm list by removing the chatroom you were removed from
+			// Remove the room from your frontend DM list
+			setDms(prev => prev.filter(dm => dm.id !== room.id));
+			
+			// Deselect the room if you are currently looking at it
+			setSelectedDM(prev => prev?.id === room.id ? null : prev);
+			
+			// Clean up the memory map so it doesn't take up space
+			setRoomMembersMap(prev => {
+				const newMap = { ...prev };
+				delete newMap[room.id];
+				return newMap;
+			});
+		}
+
+		connection.on("ReceiveMessagePreview", notificationHandler);
+		connection.on("ChatGroupMembershipAdded", membershipAddedHandler);
+		connection.on("ChatGroupMembershipDeleted", membershipRevokedHandler);
+		// maybe have ChatGroupDeleted do the exact same thing as ChatGroupMembershipDeleted
 
 		return () => {
-			connection.off("ReceiveMessagePreview", handler);
+			connection.off("ReceiveMessagePreview", notificationHandler);
+			connection.off("ChatGroupMembershipAdded", membershipAddedHandler);
+			connection.off("ChatGroupMembershipDeleted", membershipRevokedHandler);
 		};
 	}, []);
 

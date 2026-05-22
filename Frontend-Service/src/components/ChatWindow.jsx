@@ -46,6 +46,8 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender, onManageGr
 	}, [selectedDM]);
 
 	useEffect(() => {
+		const connection = getConnection();
+
 		function handleReceiveMessage(paylode) {
 			const DMId = paylode.message.chatRoomId;
 
@@ -56,8 +58,6 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender, onManageGr
 				[DMId]: [...(prev[DMId] || []), paylode]
 			}));
 		}
-
-		const connection = getConnection();
 
 		connection.on("ReceiveMessage", handleReceiveMessage);
 
