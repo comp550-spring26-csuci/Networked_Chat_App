@@ -339,14 +339,14 @@ export default function ChatLayout() {
 				const result = await response.json();
 				console.log("Group Deleted:", result.message);
 
-				setDms(prev => prev.filter(dm => dm.id !== roomId));
-				setSelectedDM(prev => prev?.id === roomId ? null : prev);
+				// setDms(prev => prev.filter(dm => dm.id !== roomId));
+				// setSelectedDM(prev => prev?.id === roomId ? null : prev);
 				
-				setRoomMembersMap(prev => {
-					const newMap = { ...prev };
-					delete newMap[roomId];
-					return newMap;
-				});
+				// setRoomMembersMap(prev => {
+				// 	const newMap = { ...prev };
+				// 	delete newMap[roomId];
+				// 	return newMap;
+				// });
 			} else if (response.status === 401) {
 				const errorText = await response.text();
 				console.warn("Unauthorized:", errorText);
@@ -631,35 +631,48 @@ export default function ChatLayout() {
 			}));
 		}
 
+		const removeDMFromList = (roomId) => {
+			// update dm list by removing the chatroom you were removed from
+			// Remove the room from your frontend DM list
+			setDms(prev => prev.filter(dm => dm.id !== roomId));
+			
+			// Deselect the room if you are currently looking at it
+			setSelectedDM(prev => prev?.id === roomId ? null : prev);
+			
+			// Clean up the memory map so it doesn't take up space
+			setRoomMembersMap(prev => {
+				const newMap = { ...prev };
+				delete newMap[roomId];
+				return newMap;
+			});
+		}
+
 		const membershipRevokedHandler = (chatEvent) => {
 			console.log("MEMBERSHIP REVOKED");
 			const room = chatEvent.chatGroupMembershipDeleted;
 			console.log("REVOKED ROOM: ", room);
 
-			// update dm list by removing the chatroom you were removed from
-			// Remove the room from your frontend DM list
-			setDms(prev => prev.filter(dm => dm.id !== room.id));
-			
-			// Deselect the room if you are currently looking at it
-			setSelectedDM(prev => prev?.id === room.id ? null : prev);
-			
-			// Clean up the memory map so it doesn't take up space
-			setRoomMembersMap(prev => {
-				const newMap = { ...prev };
-				delete newMap[room.id];
-				return newMap;
-			});
+			removeDMFromList(room.id);
+		}
+
+		const groupDeletedHandler = (chatEvent) => {
+			console.log("GROUP DELETED HANDLER");
+			const room = chatEvent.chatGroupDeleted;
+			console.log("DELETED ROOM: ", room);
+
+			removeDMFromList(room.id);
 		}
 
 		connection.on("ReceiveMessagePreview", notificationHandler);
 		connection.on("ChatGroupMembershipAdded", membershipAddedHandler);
 		connection.on("ChatGroupMembershipDeleted", membershipRevokedHandler);
-		// maybe have ChatGroupDeleted do the exact same thing as ChatGroupMembershipDeleted
+		connection.on("ChatGroupDeleted", groupDeletedHandler);
 
 		return () => {
 			connection.off("ReceiveMessagePreview", notificationHandler);
 			connection.off("ChatGroupMembershipAdded", membershipAddedHandler);
 			connection.off("ChatGroupMembershipDeleted", membershipRevokedHandler);
+			connection.off("ChatGroupDeleted", groupDeletedHandler);
 		};
 	}, []);
 
