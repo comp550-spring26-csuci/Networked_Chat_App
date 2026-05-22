@@ -12,6 +12,7 @@ export default function AppLayout() {
 
 	const [isFriendsListOpen, setIsFriendsListOpen] = useState(false);
     const [signalRReady, setSignalRReady] = useState(false);
+	const [notificationCount, setNotificationCount] = useState(0);
 
 
 	// Gates the app from trying to load before the reconnection is made
@@ -54,12 +55,14 @@ export default function AppLayout() {
 					onClick={() => navigate("/chat")}
 				>
 					<MdEmail size={30}/>
-					<span className="badge">3</span>
+					{notificationCount > 0 && (
+						<span className="badge">{notificationCount}</span>
+					)}
 				</button>
 			</div>
 			{/* all the content to the sight of the sidebar is rendered in Outlet (Possible routes are nested in AppLayout in App.jsx */}
 			<div className="main-view">
-				<Outlet />
+				<Outlet context={{ setNotificationCount }}/>
 			</div>
 		</div>
 	);

@@ -2,10 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import DMList from "./DMList";
 import ChatWindow from "./ChatWindow";
 import GroupDrawer from "./GroupDrawer";
-import { joinChatRoom, leaveChatRoom, TUNNEL_URL } from "../signalr/chatConnection";
+import { getConnection, joinChatRoom, leaveChatRoom, TUNNEL_URL } from "../signalr/chatConnection";
+import { useOutletContext } from "react-router-dom";
 
 export default function ChatLayout() {
 	const currentUser = JSON.parse(localStorage.getItem("user"));
+	const { setNotificationCount } = useOutletContext();
 
 	const [isGroupDrawerOpen, setIsGroupDrawerOpen] = useState(false);
 	const [drawerMode, setDrawerMode] = useState("create");
@@ -35,11 +37,24 @@ export default function ChatLayout() {
 
                 if (response.ok) {
                     const groupsData = await response.json();
+
+					let notificationCount = 0;
+					
+					for(const groupData of groupsData) {
+						notificationCount += groupData.unreadCount;
+					}
+
+					console.log("UNREAD NOTIFICATIONS: ", notificationCount);
                     
+					// Include unreadCount for individual DMs
                     const formattedGroups = groupsData.map(group => ({
                         id: group.groupId || group.id,
-                        name: group.groupName || group.name 
+                        name: group.groupName || group.name,
+						unreadCount: group.unreadCount || 0 
                     }));
+					
+					// Set total notification count
+					setNotificationCount(notificationCount);
 
                     // setDms(prev => {
                     //     // Filter out old group items to prevent duplicates
@@ -262,8 +277,17 @@ export default function ChatLayout() {
 		}
 
 		try {
-			const response = await fetch(`/api/ChatGroups/remove-member/${roomId}/${currentUser.userId}/${targetUserId}`, {
-				method: 'DELETE', 
+			// THIS DOESNT EXIST
+			// const response = await fetch(`/api/ChatGroups/remove-member/${roomId}/${currentUser.userId}/${targetUserId}`, {
+			// 	method: 'DELETE', 
+			// 	headers: {
+			// 		"X-Tunnel-Skip-AntiPhishing-Page": "true",
+			// 		"Authorization": `Bearer ${currentUser?.token}`
+			// 	}
+			// });
+
+			const response = await fetch(`/api/ChatGroups/leave-group/${roomId}/${targetUserId}`, {
+				method: 'DELETE',
 				headers: {
 					"X-Tunnel-Skip-AntiPhishing-Page": "true",
 					"Authorization": `Bearer ${currentUser?.token}`
@@ -442,43 +466,43 @@ export default function ChatLayout() {
 		return members; // optional if you want to pass down later
 	};
 
-	useEffect(() => {
-		async function fetchDMRooms() {
-			try {
-				const res = await fetch("/api/chathistory/user/mine/rooms", {
-					method: 'GET',
-					headers: {
-						'Authorization': `Bearer ${localStorage.getItem("access_token")}`,
-						'Content-Type': 'application/json'
-					}
-				});
+	// useEffect(() => {
+	// 	async function fetchDMRooms() {
+	// 		try {
+	// 			// const res = await fetch("/api/chathistory/user/mine/rooms", {
+	// 			// 	method: 'GET',
+	// 			// 	headers: {
+	// 			// 		'Authorization': `Bearer ${localStorage.getItem("access_token")}`,
+	// 			// 		'Content-Type': 'application/json'
+	// 			// 	}
+	// 			// });
 
-				const data = await res.json();
-				const roomsArray = Object.entries(data).map(([id, name]) => ({
-					id,
-					name
-				}));
+	// 			// const data = await res.json();
+	// 			// const roomsArray = Object.entries(data).map(([id, name]) => ({
+	// 			// 	id,
+	// 			// 	name
+	// 			// }));
 
-				//setDms(roomsArray); // try commenting this out to see if it resolves duplicates in the dm list on launch
+	// 			//setDms(roomsArray); // try commenting this out to see if it resolves duplicates in the dm list on launch
 
-				const resp = await fetch("/api/users/all-users", {
-					method: 'GET'
-				});
+	// 			// const resp = await fetch("/api/users/all-users", {
+	// 			// 	method: 'GET'
+	// 			// });
 
-				const dataUsers = await resp.json();
-				idToNameRef.current = Object.fromEntries(
-					dataUsers.map(user => [user.id, user.username])
-				);
+	// 			// const dataUsers = await resp.json();
+	// 			// idToNameRef.current = Object.fromEntries(
+	// 			// 	dataUsers.map(user => [user.id, user.username])
+	// 			// );
 				
-				if(roomsArray.length > 0) {
-					setSelectedDM(roomsArray[0]);
-				}
-			} catch(err) {
-				console.error("Failed to fetch rooms:", err);
-			}
-		}
-		fetchDMRooms();
-	}, []);
+	// 			// if(roomsArray.length > 0) {
+	// 			// 	setSelectedDM(roomsArray[0]);
+	// 			// }
+	// 		} catch(err) {
+	// 			console.error("Failed to fetch rooms:", err);
+	// 		}
+	// 	}
+	// 	fetchDMRooms();
+	// }, []);
 
 	// track previous DM
 	const prevDMRef = useRef(null);
@@ -496,6 +520,18 @@ export default function ChatLayout() {
 				}
 
 				await joinChatRoom(newDMId);
+
+
+				const connection = getConnection();
+
+				connection.invoke(
+					"MarkRoomAsRead", { 
+						performChatRoomAction: { 
+							chatRoomId: newDMId 
+						}
+					}
+                ).catch(console.error);
+
 				prevDMRef.current = newDMId;
 				console.log("Switched room:", newDMId);
 			} catch (err) {
@@ -503,8 +539,161 @@ export default function ChatLayout() {
       		}
 		}
 		switchDM();
+
+		const connection = getConnection();
+
+		connection.on("ReceiveMarkedAsRead", (TestChatRoomRead) => { 
+			// See: TestChatRoomRead > ChatRoomRead
+			const chatRoomRead = TestChatRoomRead.chatRoomRead;
+			console.log("CHATROOMREAD: ", chatRoomRead);
+			// TODO: Render your local unread count for the associated room being zero
+			const roomId = chatRoomRead.id;
+
+			setDms(prev => {
+				const updated = prev.map(dm =>
+					dm.id === roomId
+						? { ...dm, unreadCount: 0 }
+						: dm
+				);
+
+				// compute how much we removed
+				const removedCount =
+					prev.find(dm => dm.id === roomId)?.unreadCount || 0;
+
+				setNotificationCount(prevTotal => prevTotal - removedCount);
+
+				return updated;
+			});
+
+			console.log("MARKED AS READ:", roomId);
+			
+        });
+
 		console.log(`SELECTED DM ROOM NAME: ${selectedDM.name}`)
 	}, [selectedDM]);
+
+	useEffect(() => {
+		const connection = getConnection();
+
+		if (!connection) {
+			console.warn("No SignalR connection yet");
+			return;
+		}
+
+		const handler = (testMessagePreview) => {
+			const messagePreview = testMessagePreview.messagePreview;
+
+			console.log("MESSAGE PREVIEW!");
+
+			if (
+				messagePreview.senderId !== currentUser.userId &&
+				selectedDM?.id !== messagePreview.chatRoomId
+			) {
+				console.log("INCREMENT NOTIF");
+
+				setDms(prev =>
+					prev.map(dm =>
+						dm.id === messagePreview.chatRoomId
+							? {
+								...dm,
+								unreadCount: (dm.unreadCount ?? 0) + 1
+							}
+							: dm
+					)
+				);
+
+				setNotificationCount(prev => prev + 1);
+			}
+		};
+
+		connection.on("ReceiveMessagePreview", handler);
+
+		return () => {
+			connection.off("ReceiveMessagePreview", handler);
+		};
+	}, []);
+
+	// useEffect(() => {
+	// 	const connection = getConnection();
+
+	// 	if (!connection) {
+	// 		console.warn("No SignalR connection yet");
+	// 		return;
+	// 	}
+
+	// 	connection.on("ReceiveMessagePreview", (testMessagePreview) => {
+	// 		// See: TestMessagePreview > MessagePreview
+	// 		const messagePreview = testMessagePreview.messagePreview;
+
+	// 		console.log("MESSAGE PREVIEW!");
+
+	// 		if (messagePreview.senderId !== currentUser.userId 
+	// 			&& selectedDM?.id !== messagePreview.chatRoomId) {
+			
+	// 			console.log("INCREMENT NOTIF");	
+	// 			// This method is invoked regardless of what any client is
+	// 			// viewing or doing. If the user has the corresponding room
+	// 			// membership, they are receiving this notification
+
+	// 			// TODO: Increment locally-stored unread badge for the associated room if you are not viewing it 
+	// 			// (The server will also increment and persist this unread counter for your membership, so don’t worry about communicating with the server about that.)
+	// 			setDms(prev =>
+	// 				prev.map(dm => {
+	// 					if (dm.id !== messagePreview.chatRoomId) return dm;
+
+	// 					return {
+	// 						...dm,
+	// 						unreadCount: (dm.unreadCount ?? 0) + 1
+	// 					};
+	// 				})
+	// 			);
+
+	// 			setNotificationCount(prev => prev + 1);
+	// 		}
+			
+	// 		// if (messagePreview.senderId !== /*userIdRef*/.current 
+	// 		// 	&& /*activeRoomIdRef*/.current !== messagePreview.chatRoomId) {
+			
+	// 		// 	// This method is invoked regardless of what any client is
+	// 		// 	// viewing or doing. If the user has the corresponding room
+	// 		// 	// membership, they are receiving this notification
+
+	// 		// 	// TODO: Increment locally-stored unread badge for the associated room if you are not viewing it 
+	// 		// 	// (The server will also increment and persist this unread counter for your membership, so don’t worry about communicating with the server about that.)
+	// 		// }
+	// 	}); 
+
+	// 	// connection.on("ReceiveMessagePreview", (testMessagePreview) => {
+	// 	// 	// See: TestMessagePreview > MessagePreview
+	// 	// 	const messagePreview = testMessagePreview.messagePreview;
+
+	// 	// 	console.log("RECEIVE MSG PREVIEW");
+			
+	// 	// 	if (messagePreview.senderId !== currentUser.userId 
+	// 	// 		&& selectedDM?.id !== messagePreview.chatRoomId) {
+			
+	// 	// 		console.log("INCREMENT NOTIF");	
+	// 	// 		// This method is invoked regardless of what any client is
+	// 	// 		// viewing or doing. If the user has the corresponding room
+	// 	// 		// membership, they are receiving this notification
+
+	// 	// 		// TODO: Increment locally-stored unread badge for the associated room if you are not viewing it 
+	// 	// 		// (The server will also increment and persist this unread counter for your membership, so don’t worry about communicating with the server about that.)
+	// 	// 		setDms(prev =>
+	// 	// 			prev.map(dm => {
+	// 	// 				if (dm.id !== messagePreview.chatRoomId) return dm;
+
+	// 	// 				return {
+	// 	// 					...dm,
+	// 	// 					unreadCount: (dm.unreadCount ?? 0) + 1
+	// 	// 				};
+	// 	// 			})
+	// 	// 		);
+
+	// 	// 		//setNotificationCount(prev => prev + 1);
+	// 	// 	}
+	// 	// }); 
+	// }, []);
 
   	return (
 		<div className="chat-container">

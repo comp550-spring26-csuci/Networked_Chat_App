@@ -100,6 +100,9 @@ button:focus-visible {
   margin: 6px 8px;
   border-radius: 12px;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
 }
 
 .dm-item:hover {
@@ -253,7 +256,7 @@ button:focus-visible {
   top: 6px;
   right: 6px;
 
-  width: 18px;
+  width: 9px;
   height: 18px;
   padding: 0 5px;
 
@@ -269,6 +272,30 @@ button:focus-visible {
 
   border-radius: 999px;
   line-height: 1;
+}
+
+.dm-badge {
+  top: 6px;
+  right: 6px;
+
+  width: 9px;
+  height: 18px;
+  padding: 0 5px;
+
+  background: #ff3b30;
+  color: white;
+
+  font-size: 11px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  line-height: 1;
+
+  margin-left: auto;
 }
 
 /* container for content to the right of the sidebar */

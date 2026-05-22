@@ -20,6 +20,11 @@ export default function DMList({ dms, selectedDM, onSelect, onCreateGroup }) {
           		onClick={() => onSelect(dm)}
         	>
         		{dm.name}
+				{dm.unreadCount > 0 && (
+					<span className="dm-badge">
+						{dm.unreadCount}
+					</span>
+				)}
     		</div>
     	))}
     </div>
