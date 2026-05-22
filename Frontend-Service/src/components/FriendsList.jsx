@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./FriendsList.css";
+import { getConnection } from "../signalr/chatConnection";
 
 export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 	const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -82,30 +83,33 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 						text = localStorage.getItem(`saved_status_${currentUser.userId}`) || "";
 					}
 
+					console.log("DB STATUS: ", dbStatus);
+
 					// Auto-restore logic for logins
 					if (dbStatus === 0) {
 						dbStatus = text ? 2 : 1; // 2 = Custom Status, 1 = Online
-						
-						// Sync the restored status straight back to the backend
-						try {
-							await fetch(`/api/Status/update-status`, {
-								method: "PUT",
-								headers: { 
-									"Content-Type": "application/json",
-									"Authorization": `Bearer ${currentUser?.token}`,
-									"X-Tunnel-Skip-AntiPhishing-Page": "true" 
-								},
-								body: JSON.stringify({ 
-									userId: currentUser?.userId,
-									newStatus: dbStatus, 
-									customText: text 
-								}),
-							});
-						} catch (err) {
-							console.error("Failed to auto-update status to online:", err);
-						}
 					}
+					// Sync the restored status straight back to the backend
+					try {
+						await fetch(`/api/Status/update-status`, {
+							method: "PUT",
+							headers: { 
+								"Content-Type": "application/json",
+								"Authorization": `Bearer ${currentUser?.token}`,
+								"X-Tunnel-Skip-AntiPhishing-Page": "true" 
+							},
+							body: JSON.stringify({ 
+								userId: currentUser?.userId,
+								newStatus: dbStatus, 
+								customText: text 
+							}),
+						});
 
+						console.log("AUTO UPDATE ON LOGIN");
+					} catch (err) {
+						console.error("Failed to auto-update status to online:", err);
+					}
+					
 					setMyStatus(dbStatus);
 					setActiveStatus(dbStatus);
 					setMyCustomText(text);
@@ -143,7 +147,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 			
 				const friendsArray = Array.isArray(fetchedData) ? fetchedData : (fetchedData.$values || []);
 				
-					const formattedFriends = await Promise.all(friendsArray.map(async (f) => {
+				const formattedFriends = await Promise.all(friendsArray.map(async (f) => {
 					let liveStatus = f.presenceStatus !== undefined ? f.presenceStatus : (f.status !== undefined ? f.status : "Offline");
 					let liveCustomText = f.customStatusText || f.customStatus || f.customText || "";
 
@@ -163,15 +167,15 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 								const statusData = JSON.parse(statusText);
 								
 								if (statusData.presenceStatus !== undefined) {
-								liveStatus = statusData.presenceStatus;
+									liveStatus = statusData.presenceStatus;
 								} else if (statusData.status !== undefined) {
-								liveStatus = statusData.status;
+									liveStatus = statusData.status;
 								}
 								
 								if (statusData.customStatusText !== undefined) {
-								liveCustomText = statusData.customStatusText;
+									liveCustomText = statusData.customStatusText;
 								} else if (statusData.customText !== undefined || statusData.customStatus !== undefined) {
-								liveCustomText = statusData.customText || statusData.customStatus || "";
+									liveCustomText = statusData.customText || statusData.customStatus || "";
 								}
 							}
 						}
@@ -189,24 +193,135 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 				setFriends(formattedFriends);
 			}
 		} catch (error) {
-		console.error("Network error fetching friends:", error);
+			console.error("Network error fetching friends:", error);
 		}
 	};
 
+
+	useEffect(() => {
+		const connection = getConnection();
+
+		const updateStatusOnline = () => { 
+			connection.invoke("UpdateStatusOnline").catch(console.error);
+			console.log("UpDATE STATUS ONLINE");
+		};
+		
+		window.addEventListener('click', updateStatusOnline);
+		return () => {
+			window.removeEventListener('click', updateStatusOnline);
+		};
+	}, []);
+
+
 	// Run automatically on login / initial load
 	useEffect(() => {
+		const connection = getConnection();		
+
+		const addedAsAFriendHandler = (chatEvent) => {
+			const friendship = chatEvent.friendship;
+			console.log("ADDING FRIEND HANDLER: ", friendship);
+
+			const addedFriend = currentUser.userId === friendship.affectedUser.userId 
+                        ? friendship.initiatingUser : friendship.affectedUser;
+
+			const friend = {
+				id: addedFriend.userId,
+				username: addedFriend.username,
+				status: addedFriend.presenceStatus,
+				customStatus: addedFriend.customStatusText ?? ""
+			};
+
+			console.log("ADDED FRIEND: ", friend);
+
+			setFriends(prev => [...prev, friend]);
+
+			if(addedFriend === friendship.affectedUser) {
+				setSuccessMsg(`${addedFriend.username} added successfully!`);
+			}
+			else {
+				setSuccessMsg(`${addedFriend.username} added you!`);
+			}
+			setAddInput("");
+			setTimeout(() => setSuccessMsg(""), 3000); 
+		}
+		const removedAsAFriendHandler = (chatEvent) => {
+			const friendship = chatEvent.friendshipDeleted;
+			console.log("REMOVED FRIEND HANDLER: ", friendship);
+
+			const removedFriend = currentUser.userId === friendship.affectedUser.userId 
+                        ? friendship.initiatingUser : friendship.affectedUser;
+
+			setFriends(prev =>
+				prev.filter(f => f.id !== removedFriend.userId)
+			);
+
+			console.log("REMOVED FRIEND: ", removedFriend);
+
+			if(removedFriend === friendship.affectedUser) {
+				setSuccessMsg(`${removedFriend.username} unadded successfully!`);
+			}
+			else {
+				setSuccessMsg(`${removedFriend.username} unadded you!`);
+			}
+			setAddInput("");
+			setTimeout(() => setSuccessMsg(""), 3000); 
+		}
+		const changingStatusHandler = (chatEvent) => {
+			const userStatus = chatEvent.userStatus;
+
+			console.log(userStatus);
+
+			setMyStatus(userStatus.state);
+			setActiveStatus(userStatus.state);
+			setMyCustomText(userStatus.customText ?? "");
+			setActiveCustomText(userStatus.customText ?? "");
+
+			setStatusFeedback("Status updated successfully!");
+			setTimeout(() => setStatusFeedback(""), 3000);
+		}
+		const friendChangedStatusHandler = (chatEvent) => {
+			const userStatus = chatEvent.userStatus;
+
+			console.log(userStatus);
+
+			setFriends(prev =>
+				prev.map(friend =>
+				friend.id === userStatus.userId
+					? {
+						...friend,
+						status: userStatus.state,
+						customStatus: userStatus.customText ?? ""
+					}
+					: friend
+				)
+			);
+		};
+
+		connection.on("FriendshipAdded", addedAsAFriendHandler);
+		connection.on("FriendshipDeleted", removedAsAFriendHandler);
+		connection.on("MyUserStatusChanged", changingStatusHandler);
+		connection.on("FriendUserStatusChanged", friendChangedStatusHandler);
+
 		if (currentUser?.userId) {
+			console.log("CONNECTION STATE: ", connection.state);
 			fetchMyProfile();
 			console.log("FETCH PROFILE ON LOGIN");
 		}
+
+		return () => {
+			connection.off("FriendshipAdded", addedAsAFriendHandler);
+			connection.off("FriendshipDeleted", removedAsAFriendHandler);
+			connection.off("MyUserStatusChanged", changingStatusHandler);
+			connection.off("FriendUserStatusChanged", friendChangedStatusHandler);
+		};
 	}, []);
 
 	// Run fresh fetch when sidebar is opened
 	useEffect(() => {
 		if (currentUser?.userId && isOpen) {
-			fetchMyProfile();
+			//fetchMyProfile();
 			console.log("FETCH ON SIDEBAR OPEN");
-			refreshFriendsList();
+			refreshFriendsList(); // may remove
 		}
 	}, [isOpen]);
 
@@ -236,10 +351,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 			});
 		
 			if (res.ok) {
-				setStatusFeedback("Status updated successfully!");
-				setActiveStatus(myStatus);
-				setActiveCustomText(myStatus === 2 ? myCustomText : "");
-				setTimeout(() => setStatusFeedback(""), 3000); 
+				 
 			} else {
 				setStatusFeedback("Failed to update status.");
 			}
@@ -293,9 +405,8 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 				} catch(err) { }
 
 				if (isActuallySuccess) {
-					setSuccessMsg(`${username} added successfully!`);
-					setAddInput("");
-					await refreshFriendsList(); 
+					
+					//await refreshFriendsList(); // this code might be removed to handlers
 				}
 			} else {
 				let errorMessage = "User not found or could not be added.";
@@ -328,7 +439,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 		});
 		
 		if (res.ok) {
-			await refreshFriendsList();
+			//await refreshFriendsList();
 		} else {
 			setFriends(friends.filter(f => f.id !== id));
 		}
