@@ -24,7 +24,7 @@ namespace Backend.API.src.Application.DTOs
         private DateTime _timestamp = DateTime.UtcNow;
         //private EventFriendRequest? _friendRequest;
         private EventFriendship? _friendship;
-        private EventFriendshipDeleted? _friendshipRemoved;
+        private EventFriendshipDeleted? _friendshipDeleted;
         private ChatGroupDto? _chatGroup;
         private EventChatGroupDeleted? _chatGroupDeleted;
         private EventChatGroupMembershipDeleted? _chatGroupMembershipDeleted;
@@ -38,7 +38,7 @@ namespace Backend.API.src.Application.DTOs
         public DateTime Timestamp { get => _timestamp; set => _timestamp = value; }
         //public EventFriendRequest? FriendRequest { get => _friendRequest; set => _friendRequest = value; }
         public EventFriendship? Friendship { get => _friendship; set => _friendship = value; }
-        public EventFriendshipDeleted? FriendshipRemoved { get => _friendshipRemoved; set => _friendshipRemoved = value; }
+        public EventFriendshipDeleted? FriendshipDeleted { get => _friendshipDeleted; set => _friendshipDeleted = value; }
         public ChatGroupDto? Room { get => _chatGroup; set => _chatGroup = value; }
         public EventChatGroupDeleted? ChatGroupDeleted { get => _chatGroupDeleted; set => _chatGroupDeleted = value; }
         public EventChatGroupMembershipDeleted? ChatGroupMembershipDeleted { get => _chatGroupMembershipDeleted; set => _chatGroupMembershipDeleted = value; }
@@ -53,7 +53,7 @@ namespace Backend.API.src.Application.DTOs
             Timestamp = chatEvent.Timestamp,
             //FriendRequest = chatEvent.FriendRequest,
             Friendship = chatEvent.Friendship,
-            FriendshipRemoved = chatEvent.FriendshipRemoved,
+            FriendshipDeleted = chatEvent.FriendshipDeleted,
             Room = chatEvent.ChatGroup,
             ChatGroupDeleted = chatEvent.ChatGroupDeleted,
             ChatGroupMembershipDeleted = chatEvent.ChatGroupMembershipDeleted,

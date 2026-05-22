@@ -215,7 +215,7 @@ namespace Backend.API.src.API.Controllers
                 await _chatGroupRepository.SaveChangesAsync();
 
                 // Performs only read operations to AppDbContext, so we can call it after the changes are commited to the database.
-                await _chatGroupEventPublisher.PublishRoomDeleteAsync(groupId);
+                await _chatGroupEventPublisher.PublishMembershipDeleteAsync(userId, groupId);
 
                 AppLogger.UserAction(userId.ToString(), $"Left chat group {groupId}");
                 return Ok(new { message = "You have left the group." }); 

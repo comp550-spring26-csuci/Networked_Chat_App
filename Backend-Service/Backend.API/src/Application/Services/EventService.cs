@@ -46,7 +46,10 @@ namespace Backend.API.src.Application.Services
             ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.ChatGroupMembershipDeleted,
-                ChatRoomId = roomId
+                ChatGroupMembershipDeleted = new EventChatGroupMembershipDeleted
+                {
+                    Id = roomId
+                }
             };
 
             await _eventRepository.AddAsync(chatEvent);
@@ -59,7 +62,10 @@ namespace Backend.API.src.Application.Services
             ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.ChatGroupDeleted,
-                ChatRoomId = roomId
+                ChatGroupDeleted = new EventChatGroupDeleted
+                {
+                    Id = roomId
+                }
             };
 
             await _eventRepository.AddAsync(chatEvent);
@@ -82,17 +88,17 @@ namespace Backend.API.src.Application.Services
             await _hubContext.Clients.Users(userIds).FriendshipAdded(ChatEventDto.FromEntity(chatEvent));
         }
 
-        public async Task FriendshipDeleteEventAsync(Guid initiatingUser, Guid affectedUser)
+        public async Task FriendshipDeleteEventAsync(User initiatingUser, User affectedUser)
         {
             ChatEvent chatEvent = new()
             {
                 EventType = ChatEventType.FriendshipDeleted,
-                FriendshipRemoved = EventFriendshipDeleted.FromIds(initiatingUser, affectedUser)
+                FriendshipDeleted = EventFriendshipDeleted.FromUsers(initiatingUser, affectedUser)
             };
 
             await _eventRepository.AddAsync(chatEvent);
 
-            var userIds = new[] { initiatingUser, affectedUser }.Select(id => id.ToString()).ToArray(); 
+            var userIds = new[] { initiatingUser.Id, affectedUser.Id }.Select(id => id.ToString()).ToArray(); 
             
             await _hubContext.Clients.Users(userIds).FriendshipDeleted(ChatEventDto.FromEntity(chatEvent));
         }

@@ -15,7 +15,6 @@ using Backend.API.src.Core.Enums;
 using Backend.API.src.Core.Interface;
 using Backend.API.src.Core.Logging;
 using Backend.API.src.Infrastructure.Persistence.Repositories;
-//using Backend.API.src.Infrastructure.Persistence.Repositories.TestRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 namespace Backend.API.src.API.Hubs
@@ -25,7 +24,6 @@ namespace Backend.API.src.API.Hubs
     {
         private readonly MessageRepository _messageRepository;
         private readonly ChatEventRepository _chatEventRepository;
-        //private readonly TestChatRoomRepository _testChatRoomRepository;
         private readonly IChatGroupRepository _chatGroupRepository;
         private readonly SignalRGroupService _signalRGroupService;
         private readonly ClientPresenceService _clientPresenceService;
@@ -35,7 +33,6 @@ namespace Backend.API.src.API.Hubs
         public ChatHub(
             MessageRepository messageRepositoy, 
             ChatEventRepository chatEventRepository,
-            //TestChatRoomRepository testChatRoomRepository, 
             IChatGroupRepository chatGroupRepository,
             SignalRGroupService signalRGroupService, 
             ClientPresenceService clientPresenceService, 
@@ -44,7 +41,6 @@ namespace Backend.API.src.API.Hubs
         {
             _messageRepository = messageRepositoy;
             _chatEventRepository = chatEventRepository;
-            //_testChatRoomRepository = testChatRoomRepository;
             _chatGroupRepository = chatGroupRepository;
             _signalRGroupService = signalRGroupService;
             _clientPresenceService = clientPresenceService;
@@ -90,6 +86,7 @@ namespace Backend.API.src.API.Hubs
 
             var messagePreview = new MessagePreview
             {
+                SenderId = message.SenderId,
                 MessageId = message.Id,
                 ChatRoomId = message.ChatRoomId,
                 Content = preview,
@@ -151,7 +148,7 @@ namespace Backend.API.src.API.Hubs
         // ***STATUS REPORTING HELPER METHODS***
         // -------------------------------------
 
-        private async Task UpdateStatusOnline()
+        public async Task UpdateStatusOnline()
         {
             Guid userId = GetUserId();
 
@@ -178,10 +175,6 @@ namespace Backend.API.src.API.Hubs
             Guid userId = GetUserId();
 
             await _clientPresenceService.UserSessionStarted(userId, Context.ConnectionId);
-
-            //////////////////// PENDING REWRITE /////////////////////////////////////////////
-            //List<Guid> myChatRooms = _testChatRoomRepository.GetMyChatRoomIds(GetUsername());
-            //////////////////// PENDING REWRITE /////////////////////////////////////////////
             
             List<Guid> myChatRooms = [.. _chatGroupRepository.GetGroupsForUserAsync(GetUserId()).Result.Select(g => g.Id)];
 
@@ -303,13 +296,13 @@ namespace Backend.API.src.API.Hubs
 
             Message message = ConstructMessage(testSendMessageToChatRoom.SendMessageToChatRoom);
 
+            await _messageRepository.AddAsync(message);
+
             var testMessage = new TestMessage
             {
                 Message = MessageDto.FromEntity(message),
                 ChatRoomName = testSendMessageToChatRoom.ChatRoomName
             };
-
-            await _messageRepository.AddAsync(message);
 
             await _chatGroupRepository.IncrementUnreadCountAsync(message.ChatRoomId, message.SenderId);
 

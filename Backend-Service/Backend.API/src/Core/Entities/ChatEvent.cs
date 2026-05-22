@@ -23,7 +23,7 @@ namespace Backend.API.src.Core.Entities
         private DateTime _timestamp = DateTime.UtcNow;
         //private EventFriendRequest? _friendRequest;
         private EventFriendship? _friendship;
-        private EventFriendshipDeleted? _friendshipRemoved;
+        private EventFriendshipDeleted? _friendshipDeleted;
         private ChatGroupDto? _chatGroup;
         private EventChatGroupDeleted? _chatGroupDeleted;
         private EventChatGroupMembershipDeleted? _chatGroupMembershipDeleted;
@@ -42,7 +42,7 @@ namespace Backend.API.src.Core.Entities
         public DateTime Timestamp { get => _timestamp; set => _timestamp = value; }
         //public EventFriendRequest? FriendRequest { get => _friendRequest; set => _friendRequest = value; }
         public EventFriendship? Friendship { get => _friendship; set => _friendship = value; }
-        public EventFriendshipDeleted? FriendshipRemoved { get => _friendshipRemoved; set => _friendshipRemoved = value; }
+        public EventFriendshipDeleted? FriendshipDeleted { get => _friendshipDeleted; set => _friendshipDeleted = value; }
         public ChatGroupDto? ChatGroup { get => _chatGroup; set => _chatGroup = value; }
         public EventChatGroupDeleted? ChatGroupDeleted { get => _chatGroupDeleted; set => _chatGroupDeleted = value; }
         public EventChatGroupMembershipDeleted? ChatGroupMembershipDeleted { get => _chatGroupMembershipDeleted; set => _chatGroupMembershipDeleted = value; }

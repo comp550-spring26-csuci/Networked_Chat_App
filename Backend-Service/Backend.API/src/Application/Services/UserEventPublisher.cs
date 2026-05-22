@@ -51,7 +51,13 @@ namespace Backend.API.src.Application.Services
 
         public async Task PublishFriendshipDeleteAsync(Guid initiatingUser, Guid affectedUser)
         {
-            await _eventService.FriendshipDeleteEventAsync(initiatingUser, affectedUser);
+            var initiatingUserEntity = await _userRepository.GetByIdAsync(initiatingUser);
+            var affectedUserEntity = await _userRepository.GetByIdAsync(affectedUser);
+
+            if (initiatingUserEntity != null && affectedUserEntity != null)
+            {
+                await _eventService.FriendshipDeleteEventAsync(initiatingUserEntity, affectedUserEntity);
+            }
         }
     }
 }

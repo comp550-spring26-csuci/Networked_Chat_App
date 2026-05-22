@@ -9,20 +9,22 @@
 //  status between users.
 // --------------------------------------------
 
+using Backend.API.src.Core.Entities;
+
 namespace Backend.API.src.Application.DTOs
 {
     public class EventFriendshipDeleted
     {
-        private Guid _initiatingUser;
-        private Guid _affectedUser;
+        private EventFriend _initiatingUser = default!;
+        private EventFriend _affectedUser = default!;
 
-        public Guid InitiatingUser { get => _initiatingUser; set => _initiatingUser = value; }
-        public Guid AffectedUser { get => _affectedUser; set => _affectedUser = value; }
+        public EventFriend InitiatingUser { get => _initiatingUser; set => _initiatingUser = value; }
+        public EventFriend AffectedUser { get => _affectedUser; set => _affectedUser = value; }
 
-        public static EventFriendshipDeleted FromIds(Guid initiatingUser, Guid affectedUser) => new()
+        public static EventFriendshipDeleted FromUsers(User initiatingUser, User affectedUser) => new()
         {
-            InitiatingUser = initiatingUser,
-            AffectedUser = affectedUser
+            InitiatingUser = EventFriend.FromUser(initiatingUser),
+            AffectedUser = EventFriend.FromUser(affectedUser)
         };
     }
 }

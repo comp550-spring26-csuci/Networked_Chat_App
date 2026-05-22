@@ -30,7 +30,7 @@ namespace Backend.API.src.Application.Services
         {
             await _eventService.MembershipAddEventAsync(userId, chatGroup);
             
-            //await _signalRGroupService.AddGlobalConnectionFromChatRoomAsync(chatGroup.Id, userId);
+            await _signalRGroupService.AddGlobalConnectionFromChatRoomAsync(chatGroup.Id, userId);
         }
     
         public async Task PublishMembershipDeleteAsync(Guid userId, Guid chatGroupId)
