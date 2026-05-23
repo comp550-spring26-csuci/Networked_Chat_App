@@ -37,7 +37,7 @@ export default function ChatLayout() {
             if (!currentUser?.userId) return;
 
             try {
-                const response = await fetch(`/api/ChatGroups/user/${currentUser.userId}`, {
+                const response = await fetch(`${TUNNEL_URL}/api/ChatGroups/user/${currentUser.userId}`, {
                     method: 'GET',
                     headers: {
                         "X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -152,7 +152,7 @@ export default function ChatLayout() {
     const getGroupChatMembers = async (groupId) => {
         try {
 			console.log("GET GROUP CHAT MEMBERS");
-            const response = await fetch(`/api/ChatGroups/${groupId}/get-group-chat-members`, {
+            const response = await fetch(`${TUNNEL_URL}/api/ChatGroups/${groupId}/get-group-chat-members`, {
                 method: 'GET',
                 headers: {
                     "X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -195,7 +195,7 @@ export default function ChatLayout() {
 
         try {
             // 1. Create the group
-            const response = await fetch("/api/ChatGroups/create", {
+            const response = await fetch(`${TUNNEL_URL}/api/ChatGroups/create`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -252,7 +252,7 @@ export default function ChatLayout() {
         };
 
         try {
-            const response = await fetch("/api/ChatGroups/add-member", {
+            const response = await fetch(`${TUNNEL_URL}/api/ChatGroups/add-member`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
@@ -296,7 +296,7 @@ export default function ChatLayout() {
 			// 	}
 			// });
 
-			const response = await fetch(`/api/ChatGroups/leave-group/${roomId}/${targetUserId}`, {
+			const response = await fetch(`${TUNNEL_URL}/api/ChatGroups/leave-group/${roomId}/${targetUserId}`, {
 				method: 'DELETE',
 				headers: {
 					"X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -332,7 +332,7 @@ export default function ChatLayout() {
 		}
 
 		try {
-			const response = await fetch(`/api/ChatGroups/delete-group/${roomId}/${currentUser.userId}`, {
+			const response = await fetch(`${TUNNEL_URL}/api/ChatGroups/delete-group/${roomId}/${currentUser.userId}`, {
 				method: 'DELETE',
 				headers: {
 					"X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -375,7 +375,7 @@ export default function ChatLayout() {
 		}
 
 		try {
-			const response = await fetch(`/api/ChatGroups/leave-group/${roomId}/${currentUser.userId}`, {
+			const response = await fetch(`${TUNNEL_URL}/api/ChatGroups/leave-group/${roomId}/${currentUser.userId}`, {
 				method: 'DELETE',
 				headers: {
 					"X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -416,7 +416,7 @@ export default function ChatLayout() {
         if (!currentUser?.userId) return;
 
         try {
-            const res = await fetch(`/api/friends/list/${currentUser.userId}`, {
+            const res = await fetch(`${TUNNEL_URL}/api/friends/list/${currentUser.userId}`, {
                 method: "GET",
                 headers: {
                     "X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -458,7 +458,7 @@ export default function ChatLayout() {
 		await fetchFriends();
 
 		// fetch members
-		const res = await fetch(`/api/ChatGroups/${targetDM.id}/get-group-chat-members`);
+		const res = await fetch(`${TUNNEL_URL}/api/ChatGroups/${targetDM.id}/get-group-chat-members`);
 		const data = await res.json();
 
 		const members = Array.isArray(data)
@@ -543,7 +543,6 @@ export default function ChatLayout() {
                 ).catch(console.error);
 
 				prevDMRef.current = newDMId;
-				console.log("Switched room:", newDMId);
 			} catch (err) {
         		console.error("Room switch failed:", err);
       		}

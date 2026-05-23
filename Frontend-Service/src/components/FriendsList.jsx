@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./FriendsList.css";
-import { getConnection } from "../signalr/chatConnection";
+import { getConnection, TUNNEL_URL } from "../signalr/chatConnection";
 
 export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 	const currentUser = JSON.parse(localStorage.getItem("user"));
@@ -35,7 +35,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 			}
 
 			try {
-				await fetch("/api/Status/update-status", {
+				await fetch(`${TUNNEL_URL}/api/Status/update-status`, {
 					method: "PUT",
 					headers: { 
 						"Content-Type": "application/json",
@@ -63,7 +63,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 		if (!currentUser?.userId) return;
 
 		try {
-			const res = await fetch(`/api/Status/${currentUser.userId}`, {
+			const res = await fetch(`${TUNNEL_URL}/api/Status/${currentUser.userId}`, {
 				method: "GET",
 				headers: {
 					"X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -91,7 +91,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 					}
 					// Sync the restored status straight back to the backend
 					try {
-						await fetch(`/api/Status/update-status`, {
+						await fetch(`${TUNNEL_URL}/api/Status/update-status`, {
 							method: "PUT",
 							headers: { 
 								"Content-Type": "application/json",
@@ -125,7 +125,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 		if (!currentUser?.userId) return;
 
 		try {
-			const response = await fetch(`/api/friends/list/${currentUser.userId}`, {
+			const response = await fetch(`${TUNNEL_URL}/api/friends/list/${currentUser.userId}`, {
 				method: "GET",
 				headers: {
 					"X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -152,7 +152,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 					let liveCustomText = f.customStatusText || f.customStatus || f.customText || "";
 
 					try {
-						const statusRes = await fetch(`/api/Status/${f.id}`, {
+						const statusRes = await fetch(`${TUNNEL_URL}/api/Status/${f.id}`, {
 							method: "GET",
 							headers: {
 								"X-Tunnel-Skip-AntiPhishing-Page": "true",
@@ -336,7 +336,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 		}
 
 		try {
-			const res = await fetch("/api/Status/update-status", {
+			const res = await fetch(`${TUNNEL_URL}/api/Status/update-status`, {
 				method: "PUT",
 				headers: { 
 					"Content-Type": "application/json",
@@ -382,7 +382,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 		};
 
 		try {
-			const res = await fetch("/api/friends/add-by-username", {
+			const res = await fetch(`${TUNNEL_URL}/api/friends/add-by-username`, {
 				method: "POST",
 				headers: { 
 					"Content-Type": "application/json",
@@ -425,7 +425,7 @@ export default function FriendsList({ onStartChat, isOpen, setIsOpen }) {
 
 	const handleRemove = async (id, username) => {
 		try {
-		const res = await fetch("/api/friends/remove-friend-by-username", {
+		const res = await fetch(`${TUNNEL_URL}/api/friends/remove-friend-by-username`, {
 			method: "DELETE", 
 			headers: { 
 				"Content-Type": "application/json",

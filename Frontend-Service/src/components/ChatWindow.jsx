@@ -18,7 +18,7 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender, onManageGr
 		if(!selectedDM) return;
 		async function fetchHistory() {
 			const token = localStorage.getItem("access_token");
-			const res = await fetch(`/api/chathistory/room/${selectedDM.id}/messages`, {
+			const res = await fetch(`${TUNNEL_URL}/api/chathistory/room/${selectedDM.id}/messages`, {
 				method: 'GET',
 				headers : {
 					Authorization: `Bearer ${token}`
@@ -50,8 +50,6 @@ export default function ChatWindow({ idToNameRef, selectedDM, sender, onManageGr
 
 		function handleReceiveMessage(payload) {
 			const dmId = payload.message.chatRoomId;
-
-			console.log(`RECEIVE MESSAGE, SENDER USERNAME: ${payload.message.senderUsername}`);
 
 			setMessages((prev) => ({
 				...prev,

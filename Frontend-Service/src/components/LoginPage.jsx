@@ -163,7 +163,7 @@ export default function LoginPage() {
 
       try {
         // 1. Login Request
-        const res = await fetch("/api/users/login", {
+        const res = await fetch(`${TUNNEL_URL}/api/users/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
@@ -215,7 +215,7 @@ export default function LoginPage() {
       setLoading(true);
       setSignupError("");
       try {
-        const res = await fetch("/api/users/create-account", {
+        const res = await fetch(`${TUNNEL_URL}/api/users/create-account`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
