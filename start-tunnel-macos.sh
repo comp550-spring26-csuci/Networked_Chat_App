@@ -37,7 +37,19 @@ fi
 CREATE_NAME=""
 TUNNEL_NAME=""
 for arg in "$@"; do
-    case $arg in
+	case $arg in
+		-h|--help)
+			echo "Usage: $0 [OPTIONS]"
+            echo "Starts a Dev Tunnel for the Matrix Chat backend and updates the React client configuration."
+            echo ""
+            echo "Options:"
+            echo "  -h, --help            Show this help message and exit"
+            echo "  --create=<NAME>       Create a new persistent tunnel with the specified description"
+            echo "  --name=<NAME>         Use an existing persistent tunnel with the specified description"
+            echo ""
+            echo "If no arguments are provided, a temporary tunnel will be created and deleted on exit."
+            exit 0
+            ;;
         --create=*)
             CREATE_NAME="${arg#*=}"
             ;;

@@ -31,11 +31,11 @@ namespace Backend.API.src.API.Hubs
         private readonly UserEventPublisher _userEventPublisher;
 
         public ChatHub(
-            MessageRepository messageRepositoy, 
+            MessageRepository messageRepositoy,
             ChatEventRepository chatEventRepository,
             IChatGroupRepository chatGroupRepository,
-            SignalRGroupService signalRGroupService, 
-            ClientPresenceService clientPresenceService, 
+            SignalRGroupService signalRGroupService,
+            ClientPresenceService clientPresenceService,
             IUserRepository userRepository,
             UserEventPublisher userEventPublisher)
         {
@@ -171,11 +171,11 @@ namespace Backend.API.src.API.Hubs
         public override async Task OnConnectedAsync()
         {
             AppLogger.ConnectionEvent(Context.ConnectionId, "Connected", GetUserId().ToString());
-            
+
             Guid userId = GetUserId();
 
             await _clientPresenceService.UserSessionStarted(userId, Context.ConnectionId);
-            
+
             List<Guid> myChatRooms = [.. _chatGroupRepository.GetGroupsForUserAsync(GetUserId()).Result.Select(g => g.Id)];
 
             await _signalRGroupService.SyncConnectionGroupsAsync(Context.ConnectionId, myChatRooms);
@@ -192,7 +192,7 @@ namespace Backend.API.src.API.Hubs
             await SendEventToAllAsync(testChatEvent);
 
             await UpdateStatusOnline();
-               
+
             await base.OnConnectedAsync();
 
             AppLogger.DebugState("ChatHub", $"User connection initialization completed for Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()}");
@@ -201,7 +201,7 @@ namespace Backend.API.src.API.Hubs
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             AppLogger.ConnectionEvent(Context.ConnectionId, "Disconnected", GetUserId().ToString());
-            
+
             Guid userId = GetUserId();
 
             await _clientPresenceService.UserSessionEnded(userId, Context.ConnectionId);
@@ -291,8 +291,15 @@ namespace Backend.API.src.API.Hubs
         public async Task SendMessageToChatRoom(TestSendMessageToChatRoom testSendMessageToChatRoom)
         {
             AppLogger.DebugState("ChatHub.SendMessageToChatRoom", $"User with Connection ID: {Context.ConnectionId}, User ID: {GetUserId()}, Username: {GetUsername()} is attempting to send a message to Chat Room ID: {testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId}");
-            
+
             await UpdateStatusOnline();
+
+            if (testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId == default
+            || !await _chatGroupRepository.IsUserInGroupAsync(testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId, GetUserId()))
+            {
+                await SendErrorToClientAsync($"Chat room id \"{testSendMessageToChatRoom.SendMessageToChatRoom.ChatRoomId}\" does not exist. Please provide a valid ChatRoomId.");
+                return;
+            }
 
             Message message = ConstructMessage(testSendMessageToChatRoom.SendMessageToChatRoom);
 
